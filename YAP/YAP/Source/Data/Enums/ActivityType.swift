@@ -7,10 +7,10 @@
 
 import Foundation
 
-enum ActivityType: String, CaseIterable {
-  case a = "매우 적은 활동"
-  case b = "적은 활동"
-  case c = "중간 활동"
-  case d = "격한 활동"
-  case e = "매우 격한 활동"
+enum ActivityType: String, CaseIterable, Codable {
+  case verylittleActivity = "매우 적은 활동"
+  case littleActivity = "적은 활동"
+  case middleActivity = "중간 활동"
+  case vigorousActivity = "격한 활동"
+  case veryVigorousActivity = "매우 격한 활동"
 }
