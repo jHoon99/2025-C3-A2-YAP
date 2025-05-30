@@ -15,9 +15,6 @@ class CalorieCalorieRequirements {
   var lipid: Double // 지방
   var calorie: Int // 요구 칼로리
   
-//  @Relationship(inverse: \Inbody.calorie)
-//  var inbody: Inbody
-  
   init(
     carbohydrates: Double,
     protein: Double,
