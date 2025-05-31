@@ -18,8 +18,9 @@ struct Data {
     var id: String { name }
   }
   
+  /// preview를 위한 예시 데이터
   static let bodyCompositionData: [Series] = [
-    .init(name: "weight", measurements: [
+    .init(name: "체중 (kg)", measurements: [
       (day: date(year: 2022, month: 5, day: 2), amount: 80.2),
       (day: date(year: 2022, month: 5, day: 9), amount: 80.0),
       (day: date(year: 2022, month: 5, day: 16), amount: 79.8),
@@ -28,7 +29,7 @@ struct Data {
       (day: date(year: 2022, month: 6, day: 7), amount: 78.6),
       (day: date(year: 2022, month: 6, day: 14), amount: 78.2)
     ]),
-    .init(name: "body fat mass", measurements: [
+    .init(name: "체지방 (kg)", measurements: [
       (day: date(year: 2022, month: 5, day: 2), amount: 15.2),
       (day: date(year: 2022, month: 5, day: 9), amount: 15.0),
       (day: date(year: 2022, month: 5, day: 16), amount: 14.8),
@@ -37,7 +38,7 @@ struct Data {
       (day: date(year: 2022, month: 6, day: 7), amount: 14.0),
       (day: date(year: 2022, month: 6, day: 14), amount: 13.2)
     ]),
-    .init(name: "skeletal muscle mass", measurements: [
+    .init(name: "골격근량 (kg)", measurements: [
       (day: date(year: 2022, month: 5, day: 2), amount: 17.2),
       (day: date(year: 2022, month: 5, day: 9), amount: 17.2),
       (day: date(year: 2022, month: 5, day: 16), amount: 17.3),

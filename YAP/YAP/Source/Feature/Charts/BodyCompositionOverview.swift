@@ -11,18 +11,19 @@ import SwiftUI
 struct BodyCompositionOverviewChart: View {
   let symbolSize: CGFloat = 100
   let lineWidth: CGFloat = 3
+  var data: Data.Series
   
   @Binding var rawSelectedDate: Date?
   @Environment(\.calendar) var calendar
   
   var body: some View {
-    let values = Data.bodyCompositionData[0].measurements
+    let values = data.measurements
       .map { $0.amount }
     let minValue = values.min() ?? 0
     let maxValue = values.max() ?? 0
     
     Chart {
-      ForEach(Data.bodyCompositionData[0].measurements, id: \.day) { element in
+      ForEach(data.measurements, id: \.day) { element in
         LineMark(
           x: .value("Day", element.day, unit: .day),
           y: .value("Value", element.amount)
@@ -49,15 +50,14 @@ struct BodyCompositionOverviewChart: View {
       }
     }
     .chartXAxis(.hidden)
-    .chartYAxis(.hidden)
     .chartYScale(domain: minValue...maxValue, range: .plotDimension(endPadding: 8))
     .chartXSelection(value: $rawSelectedDate)
   }
   
-  /// rawSelectedDate이 그래프상에서 점에 해당하는지 확인합니다.
+  /// rawSelectedDate이 그래프상에서 점에 해당하는지 확인
   private var selectedDate: Date? {
     if let rawSelectedDate {
-      return Data.bodyCompositionData[0].measurements.first(where: {
+      return data.measurements.first(where: {
         return ($0.day ... nextDay(for: $0.day)).contains(rawSelectedDate)
       })?.day
     }
@@ -87,17 +87,21 @@ struct BodyCompositionOverviewChart: View {
 struct BodyCompositionOverview: View {
   // swiftlint:disable:next redundant_optional_initialization
   @State var rawSelectedDate: Date? = nil
+  var data: Data.Series
   
   var body: some View {
     VStack(alignment: .leading) {
-      Text("골격근량")
+      Text(data.name)
         .font(.title2.bold())
-      BodyCompositionOverviewChart(rawSelectedDate: $rawSelectedDate)
+      BodyCompositionOverviewChart(
+        data: data,
+        rawSelectedDate: $rawSelectedDate
+      )
         .frame(height: 100)
     }
   }
 }
 
 #Preview {
-  BodyCompositionOverview()
+  BodyCompositionOverview(data: Data.bodyCompositionData[0])
 }
