@@ -50,7 +50,10 @@ struct BodyCompositionOverviewChart: View {
       }
     }
     .chartXAxis(.hidden)
-    .chartYScale(domain: minValue...maxValue, range: .plotDimension(endPadding: 8))
+    .chartYScale(
+      domain: minValue...maxValue,
+      range: .plotDimension(startPadding: 8, endPadding: 8)
+    )
     .chartXSelection(value: $rawSelectedDate)
   }
   
@@ -92,7 +95,7 @@ struct BodyCompositionOverview: View {
   var body: some View {
     VStack(alignment: .leading) {
       Text(data.name)
-        .font(.title2.bold())
+        .font(.headline.bold())
       BodyCompositionOverviewChart(
         data: data,
         rawSelectedDate: $rawSelectedDate

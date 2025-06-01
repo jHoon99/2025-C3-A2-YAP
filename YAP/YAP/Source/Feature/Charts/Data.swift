@@ -29,7 +29,7 @@ struct Data {
       (day: date(year: 2022, month: 6, day: 7), amount: 78.6),
       (day: date(year: 2022, month: 6, day: 14), amount: 78.2)
     ]),
-    .init(name: "체지방 (kg)", measurements: [
+    .init(name: "체지방량 (kg)", measurements: [
       (day: date(year: 2022, month: 5, day: 2), amount: 15.2),
       (day: date(year: 2022, month: 5, day: 9), amount: 15.0),
       (day: date(year: 2022, month: 5, day: 16), amount: 14.8),
