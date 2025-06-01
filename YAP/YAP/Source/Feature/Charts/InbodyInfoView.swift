@@ -21,12 +21,12 @@ struct InbodyInfoView: View {
               selectedRange = range
             }, label: {
               Text(range.rawValue)
-                .foregroundStyle(selectedRange == range ? Color.white : Color.black)
+                .foregroundStyle(selectedRange == range ? Color("background") : Color("textColor"))
                 .padding(8)
                 .frame(maxWidth: .infinity)
                 .background(
                   Capsule()
-                    .fill(selectedRange == range ? Color.blue : Color.white)
+                    .fill(selectedRange == range ? Color("main") : Color.white)
                 )
             })
           }
@@ -62,7 +62,7 @@ struct InbodyInfoView: View {
           .frame(height: 300)
           .padding(16)
       }
-      .background(Color(red: 243 / 256, green: 244 / 256, blue: 246 / 256))
+      .background(Color("subBackground"))
     }
   }
   
