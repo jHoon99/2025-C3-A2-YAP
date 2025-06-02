@@ -54,8 +54,8 @@ final class NutritionService: ObservableObject {
     components.path = "/1471000/FoodNtrCpntDbInfo02/getFoodNtrCpntDbInq02"
     
     components.queryItems = [
-      URLQueryItem(name: "servicekey", value: serviceKey),
       URLQueryItem(name: "type", value: "json"),
+      URLQueryItem(name: "serviceKey", value: serviceKey),
       URLQueryItem(name: "FOOD_NM_KR", value: query)
     ]
     
