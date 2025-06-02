@@ -11,14 +11,20 @@ import SwiftUI
 struct InbodyInfoView: View {
   @Query var inbody: [Inbody]
   @State private var selectedRange: TimeRange = .threeMonths
+  @State private var startDate: Date = Date()
+  @State private var endDate: Date = Date()
   
   var body: some View {
     ScrollView {
-      VStack(spacing: 0) {
+      VStack(spacing: 16) {
         HStack {
           ForEach(TimeRange.allCases) { range in
             Button(action: {
-              selectedRange = range
+              withAnimation {
+                selectedRange = range
+                endDate = Date()
+                startDate = range.startDate(endDate: endDate)
+              }
             }, label: {
               Text(range.rawValue)
                 .foregroundStyle(selectedRange == range ? Color("background") : Color("textColor"))
@@ -31,7 +37,11 @@ struct InbodyInfoView: View {
             })
           }
         }
-        .padding(16)
+        
+        if selectedRange == .custom {
+          DatePicker("Start Date", selection: $startDate, displayedComponents: [.date])
+          DatePicker("End Date", selection: $endDate, displayedComponents: [.date])
+        }
         
         BodyCompositionOverview(data: weightSeries)
           .padding(16)
@@ -39,50 +49,52 @@ struct InbodyInfoView: View {
             RoundedRectangle(cornerRadius: 8)
               .fill(Color.white)
           )
-          .padding(16)
+
         BodyCompositionOverview(data: bodyFatMassSeries)
           .padding(16)
           .background(
             RoundedRectangle(cornerRadius: 8)
               .fill(Color.white)
           )
-          .padding(16)
+
         BodyCompositionOverview(data: skeletalMuscleMassSeries)
           .padding(16)
           .background(
             RoundedRectangle(cornerRadius: 8)
               .fill(Color.white)
           )
-          .padding(16)
         
         Text("기록 보기")
           .frame(maxWidth: .infinity, alignment: .leading)
-          .padding(16)
+
         Rectangle()
           .frame(height: 300)
-          .padding(16)
       }
+      .padding(16)
       .background(Color("subBackground"))
+    }
+    .onAppear {
+      startDate = selectedRange.startDate(endDate: endDate)
     }
   }
   
   var weightSeries: Data.Series {
     let measurements = inbody
-      .filter { $0.date >= selectedRange.startDate() }
+      .filter { $0.date >= startDate && $0.date <= endDate }
       .map { ($0.date, $0.weight) }
     return Data.Series(name: "체중", measurements: measurements)
   }
   
   var bodyFatMassSeries: Data.Series {
     let measurements = inbody
-      .filter { $0.date >= selectedRange.startDate() }
+      .filter { $0.date >= startDate && $0.date <= endDate }
       .map { ($0.date, $0.bodyFatMass) }
     return Data.Series(name: "체지방량", measurements: measurements)
   }
   
   var skeletalMuscleMassSeries: Data.Series {
     let measurements = inbody
-      .filter { $0.date >= selectedRange.startDate() }
+      .filter { $0.date >= startDate && $0.date <= endDate }
       .map { ($0.date, $0.skeletalMuscleMass) }
     return Data.Series(name: "골격근량", measurements: measurements)
   }
@@ -92,10 +104,11 @@ enum TimeRange: String, CaseIterable, Identifiable {
   case threeMonths = "3개월"
   case sixMonths = "6개월"
   case oneYear = "1년"
+  case custom = "기간 설정"
   
   var id: String { rawValue }
   
-  func startDate(relativeTo endDate: Date = Date(), calendar: Calendar = .current) -> Date {
+  func startDate(endDate: Date, calendar: Calendar = .current) -> Date {
     switch self {
     case .threeMonths:
       return calendar.date(byAdding: .month, value: -3, to: endDate)!
@@ -103,6 +116,8 @@ enum TimeRange: String, CaseIterable, Identifiable {
       return calendar.date(byAdding: .month, value: -6, to: endDate)!
     case .oneYear:
       return calendar.date(byAdding: .year, value: -1, to: endDate)!
+    case .custom:
+      return Date()
     }
   }
 }
@@ -250,16 +265,22 @@ extension Inbody {
 }
 
 struct InbodyInfoPreview: View {
-  var inbody: [Inbody] = Inbody.sampleData
+  var inbody: [Inbody]
   @State private var selectedRange: TimeRange = .threeMonths
+  @State private var startDate: Date = Date()
+  @State private var endDate: Date = Date()
   
   var body: some View {
     ScrollView {
-      VStack(spacing: 0) {
+      VStack(spacing: 16) {
         HStack {
           ForEach(TimeRange.allCases) { range in
             Button(action: {
-              selectedRange = range
+              withAnimation {
+                selectedRange = range
+                endDate = Date()
+                startDate = range.startDate(endDate: endDate)
+              }
             }, label: {
               Text(range.rawValue)
                 .foregroundStyle(selectedRange == range ? Color("background") : Color("textColor"))
@@ -272,7 +293,11 @@ struct InbodyInfoPreview: View {
             })
           }
         }
-        .padding(16)
+        
+        if selectedRange == .custom {
+          DatePicker("Start Date", selection: $startDate, displayedComponents: [.date])
+          DatePicker("End Date", selection: $endDate, displayedComponents: [.date])
+        }
         
         BodyCompositionOverview(data: weightSeries)
           .padding(16)
@@ -280,55 +305,57 @@ struct InbodyInfoPreview: View {
             RoundedRectangle(cornerRadius: 8)
               .fill(Color.white)
           )
-          .padding(16)
+
         BodyCompositionOverview(data: bodyFatMassSeries)
           .padding(16)
           .background(
             RoundedRectangle(cornerRadius: 8)
               .fill(Color.white)
           )
-          .padding(16)
+
         BodyCompositionOverview(data: skeletalMuscleMassSeries)
           .padding(16)
           .background(
             RoundedRectangle(cornerRadius: 8)
               .fill(Color.white)
           )
-          .padding(16)
         
         Text("기록 보기")
           .frame(maxWidth: .infinity, alignment: .leading)
-          .padding(16)
+
         Rectangle()
           .frame(height: 300)
-          .padding(16)
       }
+      .padding(16)
       .background(Color("subBackground"))
+    }
+    .onAppear {
+      startDate = selectedRange.startDate(endDate: endDate)
     }
   }
   
   var weightSeries: Data.Series {
     let measurements = inbody
-      .filter { $0.date >= selectedRange.startDate() }
+      .filter { $0.date >= startDate && $0.date <= endDate }
       .map { ($0.date, $0.weight) }
-    return Data.Series(name: "체중 (kg)", measurements: measurements)
+    return Data.Series(name: "체중", measurements: measurements)
   }
   
   var bodyFatMassSeries: Data.Series {
     let measurements = inbody
-      .filter { $0.date >= selectedRange.startDate() }
+      .filter { $0.date >= startDate && $0.date <= endDate }
       .map { ($0.date, $0.bodyFatMass) }
-    return Data.Series(name: "체지방량 (kg)", measurements: measurements)
+    return Data.Series(name: "체지방량", measurements: measurements)
   }
   
   var skeletalMuscleMassSeries: Data.Series {
     let measurements = inbody
-      .filter { $0.date >= selectedRange.startDate() }
+      .filter { $0.date >= startDate && $0.date <= endDate }
       .map { ($0.date, $0.skeletalMuscleMass) }
-    return Data.Series(name: "골격근량 (kg)", measurements: measurements)
+    return Data.Series(name: "골격근량", measurements: measurements)
   }
 }
 
 #Preview {
-  InbodyInfoPreview()
+  InbodyInfoPreview(inbody: Inbody.sampleData)
 }
