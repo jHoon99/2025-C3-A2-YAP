@@ -12,6 +12,7 @@ struct FoodSearchView: View {
   @StateObject private var nutritionService = NutritionService.shared
   @State private var searchText: String = ""
   @State private var isSearching: Bool = false
+  @State private var selectedFoodItem: FoodItem? = nil
   
   var body: some View {
     NavigationStack {
@@ -34,10 +35,16 @@ struct FoodSearchView: View {
           List {
             ForEach(nutritionService.foodItem) { item in
               FoodItemRow(food: item)
+                .onTapGesture {
+                  selectedFoodItem = item
+                }
             }
           }
           .listStyle(PlainListStyle())
         }
+      }
+      .sheet(item: $selectedFoodItem) { _ in
+        FoodModalView()
       }
       .searchable(text: $searchText, prompt: "음식 이름을 입력하세요.")
       .onSubmit(of: .search) {
@@ -58,6 +65,7 @@ struct FoodSearchView: View {
     
     Task {
       await nutritionService.searchFood(query: searchText)
+      isSearching = false
     }
   }
 }
