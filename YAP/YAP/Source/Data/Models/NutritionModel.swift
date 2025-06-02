@@ -55,3 +55,27 @@ struct FoodItem: Identifiable, Codable {
     case saturatedFat = "AMT_NUM24"
   }
 }
+
+extension FoodItem {
+  // api에서 제공하는 칼로리는 100g 당 칼로리이고, 리스트에서 보여주는건 1인분(총 중량)에 대한 칼로리
+  // 그에 맞는 계산식
+  var totalCaloires: Int {
+    let numericCalories = calories.filter("0123456789.".contains)
+    let numericTotalSize = totalSize.filter("0123456789.".contains)
+    
+    guard let per100g = Double(numericCalories),
+          let total = Double(numericTotalSize)
+    else {
+      return 0
+    }
+    return Int((per100g / 100) * total)
+  }
+  
+  var totalSizeIntFormatted: String {
+    let numericTotalSize = totalSize.filter("0123456789.".contains)
+    if let total = Double(numericTotalSize) {
+      return "\(Int(total))g"
+    }
+    return totalSize
+  }
+}
