@@ -95,7 +95,7 @@ struct BodyCompositionOverview: View {
   var body: some View {
     VStack(alignment: .leading) {
       Text(data.name)
-        .font(.headline.bold())
+        .font(.pretendard(type: .semibold, size: 16))
       BodyCompositionOverviewChart(
         data: data,
         rawSelectedDate: $rawSelectedDate

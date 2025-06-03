@@ -38,8 +38,9 @@ struct InbodyInfoView: View {
         BodyRecordCards(bodyRecords: bodyRecords.sorted { $0.date > $1.date })
       }
       .padding(16)
-      .background(Color("subBackground"))
+      .background(.subBackground)
     }
+    .scrollIndicators(.hidden)
     .sheet(isPresented: $showRangeSelectionSheet ) {
       RangeSelectionSheet(
         startDate: $startDate,
@@ -119,12 +120,13 @@ private struct TimeRangeSelectionButtons: View {
           }
         }, label: {
           Text(range.rawValue)
-            .foregroundStyle(selectedRange == range ? Color("background") : Color("textColor"))
+            .font(.pretendard(type: .medium, size: 14))
+            .foregroundStyle(selectedRange == range ? .background : .text)
             .padding(8)
             .frame(maxWidth: .infinity)
             .background(
               Capsule()
-                .fill(selectedRange == range ? Color("main") : Color.white)
+                .fill(selectedRange == range ? .main : .white)
             )
         })
       }
@@ -161,9 +163,9 @@ private struct BodyCompositionCharts: View {
   }
   
   private enum BodyComposition: String, CaseIterable, Identifiable {
-    case weight = "체중"
-    case bodyFatMass = "체지방량"
-    case skeletalMuscleMass = "골격근량"
+    case weight = "체중 (kg)"
+    case bodyFatMass = "체지방량 (kg)"
+    case skeletalMuscleMass = "골격근량 (kg)"
     
     var id: Self { self }
     
@@ -187,6 +189,7 @@ private struct BodyRecordCards: View {
   var body: some View {
     VStack(spacing: 20) {
       Text("기록 보기")
+        .font(.pretendard(type: .bold, size: 16))
         .frame(maxWidth: .infinity, alignment: .leading)
       
       ForEach(bodyRecords) { bodyRecord in
@@ -212,13 +215,14 @@ private struct RangeSelectionSheet: View {
     VStack {
       HStack {
         Text("기간 설정")
-          .font(.system(size: 20, weight: .bold))
+          .font(.pretendard(type: .bold, size: 20))
           .frame(maxWidth: .infinity, alignment: .leading)
         
         Button(action: {
           showRangeSelectionSheet = false
         }, label: {
           Image(systemName: "xmark")
+            .foregroundStyle(.text)
         })
       }
       .padding(.bottom, 8)
@@ -230,6 +234,7 @@ private struct RangeSelectionSheet: View {
           editingEndDate = endDate
         }, label: {
           Text("초기화")
+            .font(.pretendard(type: .regular, size: 16))
             .padding(.vertical, 8)
             .padding(.horizontal, 48)
         })
@@ -246,6 +251,7 @@ private struct RangeSelectionSheet: View {
           }
         }, label: {
           Text("적용하기")
+            .font(.pretendard(type: .regular, size: 16))
             .padding(.vertical, 8)
             .padding(.horizontal, 48)
         })
