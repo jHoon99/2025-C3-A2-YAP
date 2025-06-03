@@ -43,8 +43,10 @@ struct FoodSearchView: View {
           .listStyle(PlainListStyle())
         }
       }
-      .sheet(item: $selectedFoodItem) { _ in
-        FoodModalView()
+      .sheet(item: $selectedFoodItem) { item in
+        FoodModalView(food: item)
+          .presentationDragIndicator(.visible)
+          .presentationDetents([.medium])
       }
       .searchable(text: $searchText, prompt: "음식 이름을 입력하세요.")
       .onSubmit(of: .search) {
