@@ -9,15 +9,15 @@ import SwiftData
 import SwiftUI
 
 struct InbodyInfoView: View {
-  var inbody: [Inbody]
-  private static let initialStartDate = Date()
-  private static let initialEndDate = Date()
-  
   @State private var selectedRange: TimeRange = .threeMonths
   @State private var startDate: Date = initialStartDate
   @State private var endDate: Date = initialEndDate
   @State private var showRangeSelectionSheet = false
   @State private var isFirstCustomRangeSelection = true
+  
+  private static let initialStartDate = Date()
+  private static let initialEndDate = Date()
+  var bodyRecords: [Inbody]
   
   var body: some View {
     ScrollView {
@@ -29,17 +29,13 @@ struct InbodyInfoView: View {
         )
         
         BodyCompositionCharts(
-          inbody: inbody,
+          bodyRecords: bodyRecords,
           selectedRange: selectedRange,
           startDate: startDate,
           endDate: endDate
         )
         
-        Text("기록 보기")
-          .frame(maxWidth: .infinity, alignment: .leading)
-        
-        Rectangle()
-          .frame(height: 300)
+        BodyRecordCards(bodyRecords: bodyRecords.sorted { $0.date > $1.date })
       }
       .padding(16)
       .background(Color("subBackground"))
@@ -141,7 +137,7 @@ private struct TimeRangeSelectionButtons: View {
 }
 
 private struct BodyCompositionCharts: View {
-  var inbody: [Inbody]
+  var bodyRecords: [Inbody]
   var selectedRange: TimeRange
   var startDate: Date
   var endDate: Date
@@ -158,7 +154,7 @@ private struct BodyCompositionCharts: View {
   }
   
   private func makeSeries(from component: BodyComposition) -> Data.Series {
-    let measurements = inbody
+    let measurements = bodyRecords
       .filter { selectedRange.isWithinRange(from: startDate, to: endDate)($0.date) }
       .map { ($0.date, component.value(from: $0)) }
     return Data.Series(name: component.name, measurements: measurements)
@@ -182,6 +178,24 @@ private struct BodyCompositionCharts: View {
       case .skeletalMuscleMass: return inbody.skeletalMuscleMass
       }
     }
+  }
+}
+
+private struct BodyRecordCards: View {
+  var bodyRecords: [Inbody]
+  
+  var body: some View {
+    VStack(spacing: 20) {
+      Text("기록 보기")
+        .frame(maxWidth: .infinity, alignment: .leading)
+      
+      ForEach(bodyRecords) { bodyRecord in
+        InbodyCardView(inbody: bodyRecord)
+          .background(.white)
+          .cornerRadius(20)
+      }
+    }
+    .padding(.top, 24)
   }
 }
 
@@ -246,5 +260,5 @@ private struct RangeSelectionSheet: View {
 }
 
 #Preview {
-  InbodyInfoView(inbody: Inbody.sampleData)
+  InbodyInfoView(bodyRecords: Inbody.sampleData)
 }
