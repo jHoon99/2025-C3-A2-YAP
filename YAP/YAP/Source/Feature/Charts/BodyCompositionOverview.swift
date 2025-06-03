@@ -9,12 +9,12 @@ import Charts
 import SwiftUI
 
 struct BodyCompositionOverviewChart: View {
+  @Binding var rawSelectedDate: Date?
+  @Environment(\.calendar) var calendar
+  
   let symbolSize: CGFloat = 100
   let lineWidth: CGFloat = 3
   var data: Data.Series
-  
-  @Binding var rawSelectedDate: Date?
-  @Environment(\.calendar) var calendar
   
   var body: some View {
     let values = data.measurements
@@ -97,8 +97,7 @@ struct BodyCompositionOverview: View {
       Text(data.name)
         .font(.pretendard(type: .semibold, size: 16))
       BodyCompositionOverviewChart(
-        data: data,
-        rawSelectedDate: $rawSelectedDate
+        rawSelectedDate: $rawSelectedDate, data: data
       )
       .frame(height: 100)
     }
