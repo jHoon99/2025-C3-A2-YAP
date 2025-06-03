@@ -65,24 +65,43 @@ enum TimeRange: String, CaseIterable, Identifiable {
   
   var id: String { rawValue }
   
-  func isWithinRange(from startDate: Date, to endDate: Date, calendar: Calendar = .current) -> ((Date) -> Bool) {
+  func isWithinRange(from startDate: Date, to endDate: Date) -> ((Date) -> Bool) {
     switch self {
     case .threeMonths:
-      return { day in
-        day >= calendar.date(byAdding: .month, value: -3, to: endDate)!
+      guard let threeMonthsAgo = Calendar.current.date(
+        byAdding: .month,
+        value: -3,
+        to: endDate
+      ) else {
+        return { _ in false }
       }
+      
+      return { day in day >= threeMonthsAgo}
+      
     case .sixMonths:
-      return { day in
-        day >= calendar.date(byAdding: .month, value: -6, to: endDate)!
+      guard let sixMonthsAgo = Calendar.current.date(
+        byAdding: .month,
+        value: -6,
+        to: endDate
+      ) else {
+        return { _ in false }
       }
+      
+      return { day in day >= sixMonthsAgo }
+      
     case .oneYear:
-      return { day in
-        day >= calendar.date(byAdding: .year, value: -1, to: endDate)!
+      guard let oneYearAgo = Calendar.current.date(
+        byAdding: .year,
+        value: -1,
+        to: endDate
+      ) else {
+        return { _ in false }
       }
+      
+      return { day in day >= oneYearAgo }
+      
     case .custom:
-      return { day in
-        day >= startDate && day <= endDate
-      }
+      return { day in day >= startDate && day <= endDate }
     }
   }
 }

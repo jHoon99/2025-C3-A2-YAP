@@ -57,6 +57,7 @@ extension Inbody {
     
     return [
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2024-06-05")!,
         weight: 78.0,
         height: 175.0,
@@ -68,6 +69,7 @@ extension Inbody {
         bodyFatPercentage: 22.0
       ),
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2024-07-12")!,
         weight: 77.6,
         height: 175.0,
@@ -79,6 +81,7 @@ extension Inbody {
         bodyFatPercentage: 21.5
       ),
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2024-08-08")!,
         weight: 77.3,
         height: 175.0,
@@ -90,6 +93,7 @@ extension Inbody {
         bodyFatPercentage: 21.0
       ),
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2024-09-04")!,
         weight: 77.0,
         height: 175.0,
@@ -101,6 +105,7 @@ extension Inbody {
         bodyFatPercentage: 20.5
       ),
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2024-10-10")!,
         weight: 76.6,
         height: 175.0,
@@ -112,6 +117,7 @@ extension Inbody {
         bodyFatPercentage: 20.0
       ),
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2024-11-15")!,
         weight: 76.3,
         height: 175.0,
@@ -123,6 +129,7 @@ extension Inbody {
         bodyFatPercentage: 19.6
       ),
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2024-12-22")!,
         weight: 75.9,
         height: 175.0,
@@ -134,6 +141,7 @@ extension Inbody {
         bodyFatPercentage: 19.1
       ),
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2025-01-19")!,
         weight: 75.6,
         height: 175.0,
@@ -145,6 +153,7 @@ extension Inbody {
         bodyFatPercentage: 18.7
       ),
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2025-02-22")!,
         weight: 75.2,
         height: 175.0,
@@ -156,6 +165,7 @@ extension Inbody {
         bodyFatPercentage: 18.2
       ),
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2025-03-18")!,
         weight: 74.9,
         height: 175.0,
@@ -167,6 +177,7 @@ extension Inbody {
         bodyFatPercentage: 17.8
       ),
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2025-04-24")!,
         weight: 74.6,
         height: 175.0,
@@ -178,6 +189,7 @@ extension Inbody {
         bodyFatPercentage: 17.3
       ),
       Inbody(
+        // swiftlint:disable:next force_unwrapping
         date: formatter.date(from: "2025-05-30")!,
         weight: 74.3,
         height: 175.0,
