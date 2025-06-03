@@ -35,18 +35,18 @@ struct BodyCompositionOverviewChart: View {
       
       if let selectedDate {
         RuleMark(x: .value("Selected", selectedDate, unit: .day))
-        .foregroundStyle(Color.gray.opacity(0.3))
-        .offset(yStart: -50)
-        .zIndex(-1)
-        .annotation(
-          position: .top, spacing: 0,
-          overflowResolution: .init(
-            x: .fit(to: .chart),
-            y: .disabled
-          )
-        ) {
-          valueSelectionPopover
-        }
+          .foregroundStyle(Color.gray.opacity(0.3))
+          .offset(yStart: -50)
+          .zIndex(-1)
+          .annotation(
+            position: .top, spacing: 0,
+            overflowResolution: .init(
+              x: .fit(to: .chart),
+              y: .disabled
+            )
+          ) {
+            valueSelectionPopover
+          }
       }
     }
     .chartXAxis(.hidden)
@@ -100,7 +100,7 @@ struct BodyCompositionOverview: View {
         data: data,
         rawSelectedDate: $rawSelectedDate
       )
-        .frame(height: 100)
+      .frame(height: 100)
     }
   }
 }
