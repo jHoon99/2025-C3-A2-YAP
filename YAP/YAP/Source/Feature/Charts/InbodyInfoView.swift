@@ -8,7 +8,123 @@
 import SwiftData
 import SwiftUI
 
-enum TimeRange: String, CaseIterable, Identifiable {
+struct InbodyInfoView: View {
+  @Query var inbody: [Inbody]
+  private static let initialStartDate = Date()
+  private static let initialendDate = Date()
+  
+  @State private var selectedRange: TimeRange = .threeMonths
+  @State private var startDate: Date = initialStartDate
+  @State private var endDate: Date = initialendDate
+  @State private var showRangeSelectionSheet = false
+  @State private var isFirstCustomRangeSelection = true
+  
+  var body: some View {
+    ScrollView {
+      VStack(spacing: 24) {
+        TimeRangeSelectionButtons(
+          selectedRange: $selectedRange,
+          showRangeSelectionSheet: $showRangeSelectionSheet,
+          isFirstCustomRangeSelection: $isFirstCustomRangeSelection
+        )
+        
+        ForEach(BodyComposition.allCases) { component in
+          BodyCompositionOverview(data: makeSeries(from: component))
+            .padding(16)
+            .background(
+              RoundedRectangle(cornerRadius: 8)
+                .fill(Color.white)
+            )
+        }
+        
+        Text("기록 보기")
+          .frame(maxWidth: .infinity, alignment: .leading)
+        
+        Rectangle()
+          .frame(height: 300)
+      }
+      .padding(16)
+      .background(Color("subBackground"))
+    }
+    .sheet(isPresented: $showRangeSelectionSheet ) {
+      RangeSelectionSheet(
+        startDate: $startDate,
+        endDate: $endDate,
+        showRangeSelectionSheet: $showRangeSelectionSheet,
+        isFirstCustomRangeSelection: $isFirstCustomRangeSelection,
+        editingStartDate: startDate,
+        editingEndDate: endDate
+      )
+    }
+  }
+  
+  private func makeSeries(from component: BodyComposition) -> Data.Series {
+    let measurements = inbody
+      .filter { selectedRange.isWithinRange(from: startDate, to: endDate)($0.date) }
+      .map { ($0.date, component.value(from: $0)) }
+    return Data.Series(name: component.name, measurements: measurements)
+  }
+}
+
+struct InbodyInfoPreview: View {
+  var inbody: [Inbody]
+  private static let initialStartDate = Date()
+  private static let initialendDate = Date()
+  
+  @State private var selectedRange: TimeRange = .threeMonths
+  @State private var startDate: Date = initialStartDate
+  @State private var endDate: Date = initialendDate
+  @State private var showRangeSelectionSheet = false
+  @State private var isFirstCustomRangeSelection = true
+  
+  var body: some View {
+    ScrollView {
+      VStack(spacing: 24) {
+        TimeRangeSelectionButtons(
+          selectedRange: $selectedRange,
+          showRangeSelectionSheet: $showRangeSelectionSheet,
+          isFirstCustomRangeSelection: $isFirstCustomRangeSelection
+        )
+        
+        ForEach(BodyComposition.allCases) { component in
+          BodyCompositionOverview(data: makeSeries(from: component))
+            .padding(16)
+            .background(
+              RoundedRectangle(cornerRadius: 8)
+                .fill(Color.white)
+            )
+        }
+        
+        Text("기록 보기")
+          .frame(maxWidth: .infinity, alignment: .leading)
+        
+        Rectangle()
+          .frame(height: 300)
+      }
+      .padding(16)
+      .background(Color("subBackground"))
+    }
+    .sheet(isPresented: $showRangeSelectionSheet ) {
+      RangeSelectionSheet(
+        startDate: $startDate,
+        endDate: $endDate,
+        showRangeSelectionSheet: $showRangeSelectionSheet,
+        isFirstCustomRangeSelection: $isFirstCustomRangeSelection,
+        editingStartDate: startDate,
+        editingEndDate: endDate
+      )
+    }
+  }
+  
+  private func makeSeries(from component: BodyComposition) -> Data.Series {
+    let measurements = inbody
+      .filter { selectedRange.isWithinRange(from: startDate, to: endDate)($0.date) }
+      .map { ($0.date, component.value(from: $0)) }
+    return Data.Series(name: component.name, measurements: measurements)
+  }
+}
+
+private enum TimeRange: String, CaseIterable, Identifiable {
   case threeMonths = "3개월"
   case sixMonths = "6개월"
   case oneYear = "1년"
@@ -51,226 +167,117 @@ enum TimeRange: String, CaseIterable, Identifiable {
   }
 }
 
-struct InbodyInfoView: View {
-  @Query var inbody: [Inbody]
-  @State private var selectedRange: TimeRange = .threeMonths
-  @State private var startDate: Date = Date()
-  @State private var endDate: Date = Date()
-  
-  var body: some View {
-    ScrollView {
-      VStack(spacing: 16) {
-        HStack {
-          ForEach(TimeRange.allCases) { range in
-            Button(action: {
-              withAnimation {
-                selectedRange = range
-                endDate = Date()
-                startDate = range.startDate(endDate: endDate)
-              }
-            }, label: {
-              Text(range.rawValue)
-                .foregroundStyle(selectedRange == range ? Color("background") : Color("textColor"))
-                .padding(8)
-                .frame(maxWidth: .infinity)
-                .background(
-                  Capsule()
-                    .fill(selectedRange == range ? Color("main") : Color.white)
-                )
-            })
-          }
-        }
-        
-        if selectedRange == .custom {
-          DatePicker("Start Date", selection: $startDate, displayedComponents: [.date])
-          DatePicker("End Date", selection: $endDate, displayedComponents: [.date])
-        }
-        
-        BodyCompositionOverview(data: weightSeries)
-          .padding(16)
-          .background(
-            RoundedRectangle(cornerRadius: 8)
-              .fill(Color.white)
-          )
-        
-        BodyCompositionOverview(data: bodyFatMassSeries)
-          .padding(16)
-          .background(
-            RoundedRectangle(cornerRadius: 8)
-              .fill(Color.white)
-          )
-        
-        BodyCompositionOverview(data: skeletalMuscleMassSeries)
-          .padding(16)
-          .background(
-            RoundedRectangle(cornerRadius: 8)
-              .fill(Color.white)
-          )
-        
-        Text("기록 보기")
-          .frame(maxWidth: .infinity, alignment: .leading)
-        
-        Rectangle()
-          .frame(height: 300)
-      }
-      .padding(16)
-      .background(Color("subBackground"))
-    }
-    .onAppear {
-      startDate = selectedRange.startDate(endDate: endDate)
-    }
-  }
-  
-  var weightSeries: Data.Series {
-    let measurements = inbody
-      .filter { $0.date >= startDate && $0.date <= endDate }
-      .map { ($0.date, $0.weight) }
-    return Data.Series(name: "체중", measurements: measurements)
-  }
-  
-  var bodyFatMassSeries: Data.Series {
-    let measurements = inbody
-      .filter { $0.date >= startDate && $0.date <= endDate }
-      .map { ($0.date, $0.bodyFatMass) }
-    return Data.Series(name: "체지방량", measurements: measurements)
-  }
-  
-  var skeletalMuscleMassSeries: Data.Series {
-    let measurements = inbody
-      .filter { $0.date >= startDate && $0.date <= endDate }
-      .map { ($0.date, $0.skeletalMuscleMass) }
-    return Data.Series(name: "골격근량", measurements: measurements)
-  }
-}
-
-struct InbodyInfoPreview: View {
-  var inbody: [Inbody]
-  private static let initialStartDate = Date()
-  private static let initialendDate = Date()
-  @State private var selectedRange: TimeRange = .threeMonths
-  @State private var startDate: Date = initialStartDate
-  @State private var endDate: Date = initialendDate
-  @State private var editingStartDate: Date = initialStartDate
-  @State private var editingEndDate: Date = initialendDate
-  @State private var isShowingSheet = false
-  
-  var body: some View {
-    ScrollView {
-      VStack(spacing: 24) {
-        HStack {
-          ForEach(TimeRange.allCases) { range in
-            Button(action: {
-              selectedRange = range
-              let isInitialDate = Calendar.current.isDate(editingStartDate, equalTo: Self.initialStartDate, toGranularity: .day) &&
-                                  Calendar.current.isDate(editingEndDate, equalTo: Self.initialendDate, toGranularity: .day)
-
-              if range == .custom && isInitialDate {
-                isShowingSheet = true
-              }
-            }, label: {
-              Text(range.rawValue)
-                .foregroundStyle(selectedRange == range ? Color("background") : Color("textColor"))
-                .padding(8)
-                .frame(maxWidth: .infinity)
-                .background(
-                  Capsule()
-                    .fill(selectedRange == range ? Color("main") : Color.white)
-                )
-            })
-          }
-        }
-        
-        ForEach(BodyMetric.allCases) { metric in
-          BodyCompositionOverview(data: makeSeries(for: metric))
-            .padding(16)
-            .background(
-              RoundedRectangle(cornerRadius: 8)
-                .fill(Color.white)
-            )
-        }
-        
-        Text("기록 보기")
-          .frame(maxWidth: .infinity, alignment: .leading)
-        
-        Rectangle()
-          .frame(height: 300)
-      }
-      .padding(16)
-      .background(Color("subBackground"))
-    }
-    .sheet(isPresented: $isShowingSheet) {
-      VStack {
-        HStack {
-          Text("기간 설정")
-            .font(.system(size: 20, weight: .bold))
-            .frame(maxWidth: .infinity, alignment: .leading)
-          
-          Button(action: {
-            isShowingSheet = false
-          }, label: {
-            Image(systemName: "xmark")
-          })
-        }
-        .padding(.bottom, 8)
-        DatePicker("시작일", selection: $editingStartDate, displayedComponents: [.date])
-        DatePicker("종료일", selection: $editingEndDate, displayedComponents: [.date])
-        HStack {
-          Button(action: {
-            editingStartDate = startDate
-            editingEndDate = endDate
-          }, label: {
-            Text("초기화")
-              .padding(.vertical, 8)
-              .padding(.horizontal, 48)
-          })
-          .buttonStyle(.bordered)
-          
-          Spacer()
-          
-          Button(action: {
-            startDate = editingStartDate
-            endDate = editingEndDate
-            isShowingSheet = false
-          }, label: {
-            Text("적용하기")
-              .padding(.vertical, 8)
-              .padding(.horizontal, 48)
-          })
-          .buttonStyle(.borderedProminent)
-        }
-        .padding(.top, 20)
-      }
-      .padding(18)
-      .presentationDetents([.height(260)])
-      .presentationCornerRadius(24)
-    }
-  }
-  
-  private func makeSeries(for metric: BodyMetric) -> Data.Series {
-    let measurements = inbody
-      .filter { selectedRange.isWithinRange(from: startDate, to: endDate)($0.date) }
-      .map { ($0.date, metric.value(from: $0)) }
-    return Data.Series(name: metric.name, measurements: measurements)
-  }
-}
-
-enum BodyMetric: String, CaseIterable, Identifiable {
+private enum BodyComposition: String, CaseIterable, Identifiable {
   case weight = "체중"
   case bodyFatMass = "체지방량"
   case skeletalMuscleMass = "골격근량"
-
+  
   var id: Self { self }
-
+  
   var name: String {
     self.rawValue
   }
-
+  
   func value(from inbody: Inbody) -> Double {
     switch self {
     case .weight: return inbody.weight
     case .bodyFatMass: return inbody.bodyFatMass
     case .skeletalMuscleMass: return inbody.skeletalMuscleMass
     }
+  }
+}
+
+private struct TimeRangeSelectionButtons: View {
+  @Binding var selectedRange: TimeRange
+  @Binding var showRangeSelectionSheet: Bool
+  @Binding var isFirstCustomRangeSelection: Bool
+  
+  var body: some View {
+    HStack {
+      ForEach(TimeRange.allCases) { range in
+        Button(action: {
+          if range == .custom && needsToShowSheet {
+            selectedRange = range
+            showRangeSelectionSheet = true
+          } else {
+            selectedRange = range
+          }
+        }, label: {
+          Text(range.rawValue)
+            .foregroundStyle(selectedRange == range ? Color("background") : Color("textColor"))
+            .padding(8)
+            .frame(maxWidth: .infinity)
+            .background(
+              Capsule()
+                .fill(selectedRange == range ? Color("main") : Color.white)
+            )
+        })
+      }
+    }
+  }
+  
+  private var needsToShowSheet: Bool {
+    return selectedRange != .custom && isFirstCustomRangeSelection || selectedRange == .custom
+  }
+}
+
+private struct RangeSelectionSheet: View {
+  @Binding var startDate: Date
+  @Binding var endDate: Date
+  @Binding var showRangeSelectionSheet: Bool
+  @Binding var isFirstCustomRangeSelection: Bool
+  
+  @State var editingStartDate: Date
+  @State var editingEndDate: Date
+  
+  var body: some View {
+    VStack {
+      HStack {
+        Text("기간 설정")
+          .font(.system(size: 20, weight: .bold))
+          .frame(maxWidth: .infinity, alignment: .leading)
+        
+        Button(action: {
+          showRangeSelectionSheet = false
+        }, label: {
+          Image(systemName: "xmark")
+        })
+      }
+      .padding(.bottom, 8)
+      DatePicker("시작일", selection: $editingStartDate, displayedComponents: [.date])
+      DatePicker("종료일", selection: $editingEndDate, displayedComponents: [.date])
+      HStack {
+        Button(action: {
+          editingStartDate = startDate
+          editingEndDate = endDate
+        }, label: {
+          Text("초기화")
+            .padding(.vertical, 8)
+            .padding(.horizontal, 48)
+        })
+        .buttonStyle(.bordered)
+        
+        Spacer()
+        
+        Button(action: {
+          startDate = editingStartDate
+          endDate = editingEndDate
+          showRangeSelectionSheet = false
+          if isFirstCustomRangeSelection {
+            isFirstCustomRangeSelection = false
+          }
+        }, label: {
+          Text("적용하기")
+            .padding(.vertical, 8)
+            .padding(.horizontal, 48)
+        })
+        .buttonStyle(.borderedProminent)
+      }
+      .padding(.top, 20)
+    }
+    .padding(18)
+    .presentationDetents([.height(260)])
+    .presentationCornerRadius(24)
   }
 }
 
