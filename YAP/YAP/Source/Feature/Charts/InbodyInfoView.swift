@@ -11,11 +11,11 @@ import SwiftUI
 struct InbodyInfoView: View {
   var inbody: [Inbody]
   private static let initialStartDate = Date()
-  private static let initialendDate = Date()
+  private static let initialEndDate = Date()
   
   @State private var selectedRange: TimeRange = .threeMonths
   @State private var startDate: Date = initialStartDate
-  @State private var endDate: Date = initialendDate
+  @State private var endDate: Date = initialEndDate
   @State private var showRangeSelectionSheet = false
   @State private var isFirstCustomRangeSelection = true
   
@@ -28,14 +28,12 @@ struct InbodyInfoView: View {
           isFirstCustomRangeSelection: $isFirstCustomRangeSelection
         )
         
-        ForEach(BodyComposition.allCases) { component in
-          BodyCompositionOverview(data: makeSeries(from: component))
-            .padding(16)
-            .background(
-              RoundedRectangle(cornerRadius: 8)
-                .fill(Color.white)
-            )
-        }
+        BodyCompositionCharts(
+          inbody: inbody,
+          selectedRange: selectedRange,
+          startDate: startDate,
+          endDate: endDate
+        )
         
         Text("기록 보기")
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -57,35 +55,15 @@ struct InbodyInfoView: View {
       )
     }
   }
-  
-  private func makeSeries(from component: BodyComposition) -> Data.Series {
-    let measurements = inbody
-      .filter { selectedRange.isWithinRange(from: startDate, to: endDate)($0.date) }
-      .map { ($0.date, component.value(from: $0)) }
-    return Data.Series(name: component.name, measurements: measurements)
-  }
 }
 
-private enum TimeRange: String, CaseIterable, Identifiable {
+enum TimeRange: String, CaseIterable, Identifiable {
   case threeMonths = "3개월"
   case sixMonths = "6개월"
   case oneYear = "1년"
   case custom = "기간 설정"
   
   var id: String { rawValue }
-  
-  func startDate(endDate: Date, calendar: Calendar = .current) -> Date {
-    switch self {
-    case .threeMonths:
-      return calendar.date(byAdding: .month, value: -3, to: endDate)!
-    case .sixMonths:
-      return calendar.date(byAdding: .month, value: -6, to: endDate)!
-    case .oneYear:
-      return calendar.date(byAdding: .year, value: -1, to: endDate)!
-    case .custom:
-      return Date()
-    }
-  }
   
   func isWithinRange(from startDate: Date, to endDate: Date, calendar: Calendar = .current) -> ((Date) -> Bool) {
     switch self {
@@ -105,26 +83,6 @@ private enum TimeRange: String, CaseIterable, Identifiable {
       return { day in
         day >= startDate && day <= endDate
       }
-    }
-  }
-}
-
-private enum BodyComposition: String, CaseIterable, Identifiable {
-  case weight = "체중"
-  case bodyFatMass = "체지방량"
-  case skeletalMuscleMass = "골격근량"
-  
-  var id: Self { self }
-  
-  var name: String {
-    self.rawValue
-  }
-  
-  func value(from inbody: Inbody) -> Double {
-    switch self {
-    case .weight: return inbody.weight
-    case .bodyFatMass: return inbody.bodyFatMass
-    case .skeletalMuscleMass: return inbody.skeletalMuscleMass
     }
   }
 }
@@ -160,6 +118,51 @@ private struct TimeRangeSelectionButtons: View {
   
   private var needsToShowSheet: Bool {
     return selectedRange != .custom && isFirstCustomRangeSelection || selectedRange == .custom
+  }
+}
+
+private struct BodyCompositionCharts: View {
+  var inbody: [Inbody]
+  var selectedRange: TimeRange
+  var startDate: Date
+  var endDate: Date
+  
+  var body: some View {
+    ForEach(BodyComposition.allCases) { component in
+      BodyCompositionOverview(data: makeSeries(from: component))
+        .padding(16)
+        .background(
+          RoundedRectangle(cornerRadius: 8)
+            .fill(Color.white)
+        )
+    }
+  }
+  
+  private func makeSeries(from component: BodyComposition) -> Data.Series {
+    let measurements = inbody
+      .filter { selectedRange.isWithinRange(from: startDate, to: endDate)($0.date) }
+      .map { ($0.date, component.value(from: $0)) }
+    return Data.Series(name: component.name, measurements: measurements)
+  }
+  
+  private enum BodyComposition: String, CaseIterable, Identifiable {
+    case weight = "체중"
+    case bodyFatMass = "체지방량"
+    case skeletalMuscleMass = "골격근량"
+    
+    var id: Self { self }
+    
+    var name: String {
+      self.rawValue
+    }
+    
+    func value(from inbody: Inbody) -> Double {
+      switch self {
+      case .weight: return inbody.weight
+      case .bodyFatMass: return inbody.bodyFatMass
+      case .skeletalMuscleMass: return inbody.skeletalMuscleMass
+      }
+    }
   }
 }
 
