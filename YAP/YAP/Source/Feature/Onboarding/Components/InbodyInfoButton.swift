@@ -32,10 +32,10 @@ public struct InbodyInfoButton: View {
   public var body: some View {
     Button(action: action) {
       HStack(alignment: .center, spacing: 4) {
-        Text("27")
+        Text(value)
           .font(.pretendard(type: .semibold, size: 16))
           .foregroundStyle(.darker)
-        Text("세")
+        Text(unit)
           .font(.pretendard(type: .semibold, size: 12))
           .foregroundStyle(.darker)
       }
