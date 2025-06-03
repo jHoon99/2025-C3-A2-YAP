@@ -156,7 +156,7 @@ struct InbodyInfoPreview: View {
   
   var body: some View {
     ScrollView {
-      VStack(spacing: 16) {
+      VStack(spacing: 24) {
         HStack {
           ForEach(TimeRange.allCases) { range in
             Button(action: {
