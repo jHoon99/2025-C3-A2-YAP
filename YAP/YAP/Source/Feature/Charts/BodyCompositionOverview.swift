@@ -60,9 +60,9 @@ struct BodyCompositionOverviewChart: View {
   /// rawSelectedDate이 그래프상에서 점에 해당하는지 확인
   private var selectedDate: Date? {
     if let rawSelectedDate {
-      return data.measurements.first(where: {
-        return ($0.day ... nextDay(for: $0.day)).contains(rawSelectedDate)
-      })?.day
+      return data.measurements.first {
+        calendar.isDate($0.day, inSameDayAs: rawSelectedDate)
+      }?.day
     }
     
     return nil
@@ -75,7 +75,7 @@ struct BodyCompositionOverviewChart: View {
   @ViewBuilder
   var valueSelectionPopover: some View {
     if let selectedDate {
-      Text(selectedDate.description)
+      Text(selectedDate.formattedYMD)
         .padding(6)
         .background {
           RoundedRectangle(cornerRadius: 4)
