@@ -102,6 +102,7 @@ struct BodyCompositionOverview: View {
       )
       .frame(height: 100)
     }
+    .padding(16)
   }
 }
 

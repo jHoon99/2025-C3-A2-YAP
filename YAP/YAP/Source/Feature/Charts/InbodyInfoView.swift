@@ -41,7 +41,7 @@ struct InbodyInfoView: View {
       .background(.subBackground)
     }
     .scrollIndicators(.hidden)
-    .sheet(isPresented: $showRangeSelectionSheet ) {
+    .sheet(isPresented: $showRangeSelectionSheet) {
       RangeSelectionSheet(
         startDate: $startDate,
         endDate: $endDate,
@@ -147,7 +147,6 @@ private struct BodyCompositionCharts: View {
   var body: some View {
     ForEach(BodyComposition.allCases) { component in
       BodyCompositionOverview(data: makeSeries(from: component))
-        .padding(16)
         .background(
           RoundedRectangle(cornerRadius: 8)
             .fill(Color.white)
