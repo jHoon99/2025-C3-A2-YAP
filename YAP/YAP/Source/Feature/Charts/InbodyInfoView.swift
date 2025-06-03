@@ -9,64 +9,6 @@ import SwiftData
 import SwiftUI
 
 struct InbodyInfoView: View {
-  @Query var inbody: [Inbody]
-  private static let initialStartDate = Date()
-  private static let initialendDate = Date()
-  
-  @State private var selectedRange: TimeRange = .threeMonths
-  @State private var startDate: Date = initialStartDate
-  @State private var endDate: Date = initialendDate
-  @State private var showRangeSelectionSheet = false
-  @State private var isFirstCustomRangeSelection = true
-  
-  var body: some View {
-    ScrollView {
-      VStack(spacing: 24) {
-        TimeRangeSelectionButtons(
-          selectedRange: $selectedRange,
-          showRangeSelectionSheet: $showRangeSelectionSheet,
-          isFirstCustomRangeSelection: $isFirstCustomRangeSelection
-        )
-        
-        ForEach(BodyComposition.allCases) { component in
-          BodyCompositionOverview(data: makeSeries(from: component))
-            .padding(16)
-            .background(
-              RoundedRectangle(cornerRadius: 8)
-                .fill(Color.white)
-            )
-        }
-        
-        Text("기록 보기")
-          .frame(maxWidth: .infinity, alignment: .leading)
-        
-        Rectangle()
-          .frame(height: 300)
-      }
-      .padding(16)
-      .background(Color("subBackground"))
-    }
-    .sheet(isPresented: $showRangeSelectionSheet ) {
-      RangeSelectionSheet(
-        startDate: $startDate,
-        endDate: $endDate,
-        showRangeSelectionSheet: $showRangeSelectionSheet,
-        isFirstCustomRangeSelection: $isFirstCustomRangeSelection,
-        editingStartDate: startDate,
-        editingEndDate: endDate
-      )
-    }
-  }
-  
-  private func makeSeries(from component: BodyComposition) -> Data.Series {
-    let measurements = inbody
-      .filter { selectedRange.isWithinRange(from: startDate, to: endDate)($0.date) }
-      .map { ($0.date, component.value(from: $0)) }
-    return Data.Series(name: component.name, measurements: measurements)
-  }
-}
-
-struct InbodyInfoPreview: View {
   var inbody: [Inbody]
   private static let initialStartDate = Date()
   private static let initialendDate = Date()
@@ -282,5 +224,5 @@ private struct RangeSelectionSheet: View {
 }
 
 #Preview {
-  InbodyInfoPreview(inbody: Inbody.sampleData)
+  InbodyInfoView(inbody: Inbody.sampleData)
 }
