@@ -56,7 +56,8 @@ final class NutritionService: ObservableObject {
     components.queryItems = [
       URLQueryItem(name: "type", value: "json"),
       URLQueryItem(name: "serviceKey", value: serviceKey),
-      URLQueryItem(name: "FOOD_NM_KR", value: query)
+      URLQueryItem(name: "FOOD_NM_KR", value: query),
+      URLQueryItem(name: "numOfRows", value: "20")
     ]
     
     guard let url = components.url else {
@@ -83,6 +84,10 @@ final class NutritionService: ObservableObject {
     let decoder = JSONDecoder()
     let foodData = try decoder.decode(NutritionResponse.self, from: data)
     
-    return foodData.body.items
+//    return foodData.body.items
+    // 이름은 같은데 서빙g 다른 중복항목 필터
+    let uniqueItems = Dictionary(grouping: foodData.body.items, by: { $0.foodName })
+        .compactMap { $0.value.first }
+    return uniqueItems
   }
 }
