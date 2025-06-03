@@ -49,14 +49,14 @@ struct InbodyInfoView: View {
             RoundedRectangle(cornerRadius: 8)
               .fill(Color.white)
           )
-
+        
         BodyCompositionOverview(data: bodyFatMassSeries)
           .padding(16)
           .background(
             RoundedRectangle(cornerRadius: 8)
               .fill(Color.white)
           )
-
+        
         BodyCompositionOverview(data: skeletalMuscleMassSeries)
           .padding(16)
           .background(
@@ -66,7 +66,7 @@ struct InbodyInfoView: View {
         
         Text("기록 보기")
           .frame(maxWidth: .infinity, alignment: .leading)
-
+        
         Rectangle()
           .frame(height: 300)
       }
@@ -269,6 +269,7 @@ struct InbodyInfoPreview: View {
   @State private var selectedRange: TimeRange = .threeMonths
   @State private var startDate: Date = Date()
   @State private var endDate: Date = Date()
+  @State private var isShowingSheet = false
   
   var body: some View {
     ScrollView {
@@ -276,10 +277,11 @@ struct InbodyInfoPreview: View {
         HStack {
           ForEach(TimeRange.allCases) { range in
             Button(action: {
-              withAnimation {
-                selectedRange = range
-                endDate = Date()
-                startDate = range.startDate(endDate: endDate)
+              selectedRange = range
+              endDate = Date()
+              startDate = range.startDate(endDate: endDate)
+              if selectedRange == .custom {
+                isShowingSheet = true
               }
             }, label: {
               Text(range.rawValue)
@@ -294,25 +296,20 @@ struct InbodyInfoPreview: View {
           }
         }
         
-        if selectedRange == .custom {
-          DatePicker("Start Date", selection: $startDate, displayedComponents: [.date])
-          DatePicker("End Date", selection: $endDate, displayedComponents: [.date])
-        }
-        
         BodyCompositionOverview(data: weightSeries)
           .padding(16)
           .background(
             RoundedRectangle(cornerRadius: 8)
               .fill(Color.white)
           )
-
+        
         BodyCompositionOverview(data: bodyFatMassSeries)
           .padding(16)
           .background(
             RoundedRectangle(cornerRadius: 8)
               .fill(Color.white)
           )
-
+        
         BodyCompositionOverview(data: skeletalMuscleMassSeries)
           .padding(16)
           .background(
@@ -322,12 +319,48 @@ struct InbodyInfoPreview: View {
         
         Text("기록 보기")
           .frame(maxWidth: .infinity, alignment: .leading)
-
+        
         Rectangle()
           .frame(height: 300)
       }
       .padding(16)
       .background(Color("subBackground"))
+    }
+    .sheet(isPresented: $isShowingSheet) {
+      VStack {
+        HStack {
+          Text("기간 설정")
+            .font(.system(size: 20, weight: .bold))
+            .frame(maxWidth: .infinity, alignment: .leading)
+          Image(systemName: "xmark")
+        }
+        .padding(.bottom, 8)
+        DatePicker("시작일", selection: $startDate, displayedComponents: [.date])
+        DatePicker("종료일", selection: $endDate, displayedComponents: [.date])
+        HStack {
+          Button(action: {
+          }, label: {
+            Text("초기화")
+              .padding(.vertical, 8)
+              .padding(.horizontal, 48)
+          })
+          .buttonStyle(.bordered)
+          
+          Spacer()
+          
+          Button(action: {
+          }, label: {
+            Text("적용하기")
+              .padding(.vertical, 8)
+              .padding(.horizontal, 48)
+          })
+          .buttonStyle(.borderedProminent)
+        }
+        .padding(.top, 20)
+      }
+      .padding(18)
+      .presentationDetents([.height(260)])
+      .presentationCornerRadius(24)
     }
     .onAppear {
       startDate = selectedRange.startDate(endDate: endDate)
