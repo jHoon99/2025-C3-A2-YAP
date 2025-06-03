@@ -29,7 +29,7 @@ enum TimeRange: String, CaseIterable, Identifiable {
     }
   }
   
-  func predicate(startDate: Date, endDate: Date, calendar: Calendar = .current) -> ((Date) -> Bool) {
+  func isWithinRange(from startDate: Date, to endDate: Date, calendar: Calendar = .current) -> ((Date) -> Bool) {
     switch self {
     case .threeMonths:
       return { day in
@@ -180,26 +180,14 @@ struct InbodyInfoPreview: View {
           }
         }
         
-        BodyCompositionOverview(data: weightSeries)
-          .padding(16)
-          .background(
-            RoundedRectangle(cornerRadius: 8)
-              .fill(Color.white)
-          )
-        
-        BodyCompositionOverview(data: bodyFatMassSeries)
-          .padding(16)
-          .background(
-            RoundedRectangle(cornerRadius: 8)
-              .fill(Color.white)
-          )
-        
-        BodyCompositionOverview(data: skeletalMuscleMassSeries)
-          .padding(16)
-          .background(
-            RoundedRectangle(cornerRadius: 8)
-              .fill(Color.white)
-          )
+        ForEach(BodyMetric.allCases) { metric in
+          BodyCompositionOverview(data: makeSeries(for: metric))
+            .padding(16)
+            .background(
+              RoundedRectangle(cornerRadius: 8)
+                .fill(Color.white)
+            )
+        }
         
         Text("기록 보기")
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -258,25 +246,31 @@ struct InbodyInfoPreview: View {
     }
   }
   
-  var weightSeries: Data.Series {
+  private func makeSeries(for metric: BodyMetric) -> Data.Series {
     let measurements = inbody
-      .filter { selectedRange.predicate(startDate: startDate, endDate: endDate)($0.date) }
-      .map { ($0.date, $0.weight) }
-    return Data.Series(name: "체중", measurements: measurements)
+      .filter { selectedRange.isWithinRange(from: startDate, to: endDate)($0.date) }
+      .map { ($0.date, metric.value(from: $0)) }
+    return Data.Series(name: metric.name, measurements: measurements)
   }
-  
-  var bodyFatMassSeries: Data.Series {
-    let measurements = inbody
-      .filter { selectedRange.predicate(startDate: startDate, endDate: endDate)($0.date) }
-      .map { ($0.date, $0.bodyFatMass) }
-    return Data.Series(name: "체지방량", measurements: measurements)
+}
+
+enum BodyMetric: String, CaseIterable, Identifiable {
+  case weight = "체중"
+  case bodyFatMass = "체지방량"
+  case skeletalMuscleMass = "골격근량"
+
+  var id: Self { self }
+
+  var name: String {
+    self.rawValue
   }
-  
-  var skeletalMuscleMassSeries: Data.Series {
-    let measurements = inbody
-      .filter { selectedRange.predicate(startDate: startDate, endDate: endDate)($0.date) }
-      .map { ($0.date, $0.skeletalMuscleMass) }
-    return Data.Series(name: "골격근량", measurements: measurements)
+
+  func value(from inbody: Inbody) -> Double {
+    switch self {
+    case .weight: return inbody.weight
+    case .bodyFatMass: return inbody.bodyFatMass
+    case .skeletalMuscleMass: return inbody.skeletalMuscleMass
+    }
   }
 }
 
