@@ -14,12 +14,12 @@ import SwiftUI
 ///    print("버튼 눌림 액션")
 /// }
 
-public struct InbodyInfoButton: View {
+struct InbodyInfoButton: View {
   let value: String
   let unit: String
   let action: () -> Void
   
-  public init(
+  init(
     value: String,
     unit: UnitType,
     action: @escaping () -> Void
@@ -29,7 +29,7 @@ public struct InbodyInfoButton: View {
     self.action = action
   }
   
-  public var body: some View {
+  var body: some View {
     Button(action: action) {
       HStack(alignment: .center, spacing: 4) {
         Text(value)
