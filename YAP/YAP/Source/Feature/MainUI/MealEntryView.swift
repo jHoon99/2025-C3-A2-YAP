@@ -10,12 +10,19 @@ import SwiftUI
 struct MealEntryView: View {
   var mealCount: Int
   let mealTitle: [String] = ["첫 식사", "두 번째 식사", "세 번째 식사", "네 번째 식사", "다섯 번째 식사", "여섯 번째 식사"]
-  let currentCalories: [Int] = [400, 400, 400, 400]
-  let targetCaloires: Int = 700
+  let calories: [(current: Int, goal: Int)] = [(400, 700), (400, 700), (200, 700), (0, 700), (0, 700), (0, 700)]
   
   var body: some View {
     VStack(spacing: 16) {
-      
+      ForEach(0..<mealCount, id: \.self) { index in
+        MealInfo(
+          title: mealTitle[index],
+          currentCalories: calories[index].current,
+          targetCalories: calories[index].goal)
+        if index < mealCount - 1 {
+          Divider()
+        }
+      }
     }
     .padding(20)
     .background(.white)
@@ -29,7 +36,34 @@ struct MealInfo: View {
   let targetCalories: Int
   
   var body: some View {
-    Text("Meal Info")
+    HStack {
+      Text(title)
+        .font(.subheadline)
+      
+      Spacer()
+      
+      Text("\(currentCalories) / \(targetCalories) kcal")
+        .foregroundColor(.gray)
+        .font(.footnote)
+      
+      let iconName: String = currentCalories > 0 ? "checkmark" : "plus"
+      let fgColor: Color = currentCalories > 0 ? .white : .main
+      let bgColor: Color = currentCalories > 0 ? .main: .lightHover
+      
+      Button(action: {
+        // 음식 추가 화면 나옴
+      }, label: {
+        Image(systemName: iconName)
+          .font(.system(size: 16, weight: .bold))
+          .foregroundColor(fgColor)
+          .frame(width: 36, height: 36)
+          .background(
+            Circle()
+              .fill(bgColor)
+          )
+      })
+    }
+    .padding(.horizontal)
   }
 }
 

@@ -13,7 +13,7 @@ struct NutrientSectionView: View {
   let lipidColor: Color = .dark
   
   var body: some View {
-    VStack(spacing: 24) {
+    VStack(alignment: .leading, spacing: 24) {
       HStack {
         Text("아래 그래프에서 담을 수 있는 ") +
         Text("탄").foregroundColor(.blue) +
@@ -25,6 +25,7 @@ struct NutrientSectionView: View {
       }
       .font(.pretendard(type: .medium, size: 14))
       .multilineTextAlignment(.center)
+      
       HStack(spacing: 24) {
         NutrientRing(nutrient: "탄수화물", value: 30, total: 120, mainColor: carbonColor)
         NutrientRing(nutrient: "단백질", value: 30, total: 120, mainColor: proteinColor)
@@ -60,7 +61,7 @@ struct NutrientRing: View {
         Text("\(trimmedNumberString(from: value))g")
           .font(.title)
       }
-      .frame(width: 100, height: 100)
+      .frame(width: 80, height: 80)
       
       Text(nutrient)
         .font(.caption)

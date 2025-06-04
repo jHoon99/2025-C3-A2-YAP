@@ -12,16 +12,18 @@ struct MainUIView: View {
   @State private var showDatePicker = false
   
   var body: some View {
-    VStack(spacing: 16) {
-      DateSelectionView()
-      CalorieSummaryView()
-      NutrientSectionView()
-      MealEntryView()
-    }
-    .padding([.horizontal, .bottom], 16)
-    .background(Color(.systemGray6))
-    .sheet(isPresented: $showDatePicker) {
-      CustomCalendarView()
+    ScrollView {
+      VStack(spacing: 16) {
+        DateSelectionView()
+        CalorieSummaryView()
+        NutrientSectionView()
+        MealEntryView(mealCount: 6)
+      }
+      .padding([.horizontal, .bottom], 16)
+      .background(Color(.systemGray6))
+      .sheet(isPresented: $showDatePicker) {
+        CustomCalendarView()
+      }
     }
   }
 }
