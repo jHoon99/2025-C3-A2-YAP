@@ -120,18 +120,10 @@ struct FoodModalView: View {
         .background(Color.white)
         .cornerRadius(32)
         VStack {
-          Button {
+          CtaButton(buttonName: .add, titleColor: .white, bgColor: .main, action: {
             cartManager.addFood(food, quantity: quantity, unit: selectedUnit)
             dismiss()
-          } label: {
-            Text("음식 추가")
-              .font(.pretendard(type: .medium, size: 14))
-              .foregroundColor(.mainWhite)
-              .frame(maxWidth: .infinity)
-              .padding(.vertical, 16)
-              .background(Color.main)
-          }
-          .cornerRadius(12)
+          })
         }
       }
       .padding(.horizontal, Spacing.large)

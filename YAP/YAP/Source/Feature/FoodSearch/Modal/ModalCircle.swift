@@ -30,7 +30,6 @@ struct ModalCircle: View {
             .frame(width: 50, alignment: .center)
         }
       }
-//      .frame(width: 68)
     }
 }
 
