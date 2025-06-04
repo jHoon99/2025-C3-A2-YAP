@@ -5,7 +5,7 @@
 //  Created by 여성일 on 6/3/25.
 //
 
-enum CtaButtonColor: String {
+public enum CtaButtonColor: String {
   case main
   case primaryActive
   case primaryHover
