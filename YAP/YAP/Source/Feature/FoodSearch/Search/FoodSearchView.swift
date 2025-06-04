@@ -18,31 +18,39 @@ struct FoodSearchView: View {
   
   var body: some View {
     NavigationStack {
-      VStack {
-        if nutritionService.foodItem.isEmpty && !isSearching {
-          ContentUnavailableView(
-            "음식을 검색해보세요",
-            systemImage: "magnifyingglass",
-            description: Text("검색창에 음식 이름을 입력하세요")
-          )
-        } else if isSearching {
-          ProgressView("검색 중...")
-        } else if nutritionService.foodItem.isEmpty && !searchText.isEmpty {
-          ContentUnavailableView(
-            "검색 결과가 없습니다.",
-            systemImage: "exclamationmark.magnifyingglass",
-            description: Text("다른 검색어로 시도해보세요.")
-          )
-        } else {
-          List {
-            ForEach(nutritionService.foodItem) { item in
-              FoodItemRow(food: item)
-                .onTapGesture {
-                  selectedFoodItem = item
-                }
+      ZStack(alignment: .bottomTrailing) {
+        VStack {
+          if nutritionService.foodItem.isEmpty && !isSearching {
+            ContentUnavailableView(
+              "음식을 검색해보세요",
+              systemImage: "magnifyingglass",
+              description: Text("검색창에 음식 이름을 입력하세요")
+            )
+          } else if isSearching {
+            ProgressView("검색 중...")
+          } else if nutritionService.foodItem.isEmpty && !searchText.isEmpty {
+            ContentUnavailableView(
+              "검색 결과가 없습니다.",
+              systemImage: "exclamationmark.magnifyingglass",
+              description: Text("다른 검색어로 시도해보세요.")
+            )
+          } else {
+            List {
+              ForEach(nutritionService.foodItem) { item in
+                FoodItemRow(food: item)
+                  .onTapGesture {
+                    selectedFoodItem = item
+                  }
+              }
             }
+            .listStyle(PlainListStyle())
           }
-          .listStyle(PlainListStyle())
+        }
+        if !isSearching {
+          FoodCameraView(searchedFoodName: $searchText, selectedFoodItem: $selectedFoodItem)
+            .padding()
+            .padding(.bottom)
+            .shadow(radius: 4, x: 0, y: 4)
         }
       }
       .toolbar {
@@ -82,6 +90,8 @@ struct FoodSearchView: View {
       .onChange(of: searchText) { newValue in
         if newValue.isEmpty {
           nutritionService.foodItem = []
+        } else {
+          performSearch()
         }
       }
     }
@@ -100,5 +110,5 @@ struct FoodSearchView: View {
 }
 
 #Preview {
-    FoodSearchView()
+  FoodSearchView()
 }
