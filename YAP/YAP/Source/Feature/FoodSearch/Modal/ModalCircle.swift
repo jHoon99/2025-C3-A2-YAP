@@ -26,8 +26,11 @@ struct ModalCircle: View {
         VStack {
           Text("\(value)\(unit)")
             .font(.pretendard(type: .bold, size: 14))
+            .monospacedDigit()
+            .frame(width: 50, alignment: .center)
         }
       }
+//      .frame(width: 68)
     }
 }
 

@@ -14,29 +14,47 @@ struct FoodModalView: View {
   @State private var quantity: Int = 1
   @Environment(\.dismiss) private var dismiss
   
-  enum NutritionUnit: String, CaseIterable {
-    case totalGram = "인분"
-    case gram = "g"
-  }
-  
   var body: some View {
     ZStack {
       Color.subBackground
         .ignoresSafeArea()
       VStack(alignment: .leading, spacing: Spacing.large) {
-        HStack {
+        VStack {
           Text(food.foodName)
             .font(.pretendard(type: .semibold, size: 24))
-          Spacer()
         }
         VStack(spacing: Spacing.medium) {
           HStack(spacing: Spacing.medium) {
-            ModalCircle(title: "탄", value: food.totalCarbohydrate, unit: "g")
-            ModalCircle(title: "단", value: food.totalprotein, unit: "g")
-            ModalCircle(title: "지", value: food.totalFat, unit: "g")
+            ModalCircle(
+              title: "탄",
+              value: food.nutrientValue(
+                for: .carbohydrate,
+                quantity: quantity,
+                unit: selectedUnit
+              ),
+              unit: "g")
+            ModalCircle(
+              title: "단",
+              value: food.nutrientValue(
+                for: .protein,
+                quantity: quantity,
+                unit: selectedUnit
+              ),
+              unit: "g"
+            )
+            ModalCircle(
+              title: "지",
+              value: food.nutrientValue(
+                for: .fat,
+                quantity: quantity,
+                unit: selectedUnit
+              ),
+              unit: "g")
           }
-          Text("\(food.totalCaloires)kcal")
+          Text("\(food.nutrientValue(for: .calorie, quantity: quantity, unit: selectedUnit))kcal")
             .font(.pretendard(type: .bold, size: 20))
+            .monospacedDigit()
+            .frame(width: 100, alignment: .center)
         }
         .frame(width: 346, height: 106)
         .background(Color.white)
@@ -111,13 +129,13 @@ struct FoodModalView: View {
               .background(Color.main)
           }
           .cornerRadius(12)
-//          .padding(.bottom, 20)
         }
       }
       .padding(.horizontal, Spacing.large)
+      .padding(.top, 40)
     }
   }
-  
+  // MARK: - 인분,g Text표시
   private func getDisplayText(for unit: NutritionUnit) -> String {
     switch unit {
     case .totalGram:
@@ -126,7 +144,7 @@ struct FoodModalView: View {
       return "g"
     }
   }
-  
+  // MARK: - 인분,g (quantity) 증감
   private func increaseQuantity() {
     switch selectedUnit {
     case .totalGram:
