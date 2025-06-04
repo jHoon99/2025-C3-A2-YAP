@@ -12,7 +12,9 @@ struct FoodModalView: View {
   let food: FoodItem
   @State private var selectedUnit: NutritionUnit = .totalGram
   @State private var quantity: Int = 1
+  @State private var showCartView: Bool = false
   @Environment(\.dismiss) private var dismiss
+  @EnvironmentObject var cartManager: CartManager
   
   var body: some View {
     ZStack {
@@ -119,6 +121,7 @@ struct FoodModalView: View {
         .cornerRadius(32)
         VStack {
           Button {
+            cartManager.addFood(food, quantity: quantity, unit: selectedUnit)
             dismiss()
           } label: {
             Text("음식 추가")

@@ -10,9 +10,11 @@ import SwiftUI
 struct FoodSearchView: View {
   
   @StateObject private var nutritionService = NutritionService.shared
+  @StateObject private var cartManager = CartManager()
   @State private var searchText: String = ""
   @State private var isSearching: Bool = false
   @State private var selectedFoodItem: FoodItem? = nil
+  @State private var showcartView: Bool = false
   
   var body: some View {
     NavigationStack {
@@ -43,10 +45,35 @@ struct FoodSearchView: View {
           .listStyle(PlainListStyle())
         }
       }
+      .toolbar {
+        ToolbarItem(placement: .navigationBarTrailing) {
+          NavigationLink(destination: CartView().environmentObject(cartManager)) {
+            Button {
+              showcartView = true
+            } label: {
+              ZStack {
+                Image(systemName: "cart")
+                  .foregroundColor(.text)
+                
+                if !cartManager.cartItems.isEmpty {
+                  Text("\(cartManager.cartItems.count)")
+                    .font(.pretendard(type: .light, size: 12))
+                    .frame(width: 16, height: 16)
+                    .foregroundColor(.mainWhite)
+                    .background(.main)
+                    .clipShape(Circle())
+                    .offset(x: 8, y: -8)
+                }
+              }
+            }
+          }
+        }
+      }
       .sheet(item: $selectedFoodItem) { item in
         FoodModalView(food: item)
+          .environmentObject(cartManager)
           .presentationDragIndicator(.visible)
-          .presentationDetents([.medium])
+          .presentationDetents([.fraction(0.6), .large])
       }
       .searchable(text: $searchText, prompt: "음식 이름을 입력하세요.")
       .onSubmit(of: .search) {
