@@ -9,6 +9,7 @@
 ///
 /// - Cases:
 ///   - next: "다음"
+///   - before: "이전"
 ///   - calculate: "계산하기"
 ///   - start: "시작하기"
 ///   - add: "음식 추가"
@@ -17,6 +18,7 @@
 ///   - controlMeal: "식단조절"
 public enum CtaButtonLabel: String {
   case next = "다음"
+  case before = "이전"
   case calculate = "계산하기"
   case start = "시작하기"
   case add = "음식 추가"
