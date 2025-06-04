@@ -14,17 +14,22 @@ struct MainUIView: View {
   var body: some View {
     ScrollView {
       VStack(spacing: 16) {
-        DateSelectionView()
+        DateSelectionView(selectedDate: $selectedDate, showDatePicker: $showDatePicker)
         CalorieSummaryView()
         NutrientSectionView()
         MealEntryView(mealCount: 6)
       }
       .padding([.horizontal, .bottom], 16)
+      .padding(.top, 64)
       .background(Color(.systemGray6))
       .sheet(isPresented: $showDatePicker) {
-        CustomCalendarView()
+        CustomCalendarView(selectedDate: $selectedDate, onDismiss: {
+          showDatePicker = false
+        })
+          .presentationDetents([.medium])
       }
     }
+    .ignoresSafeArea()
   }
 }
 

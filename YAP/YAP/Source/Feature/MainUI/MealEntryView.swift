@@ -10,7 +10,9 @@ import SwiftUI
 struct MealEntryView: View {
   var mealCount: Int
   let mealTitle: [String] = ["첫 식사", "두 번째 식사", "세 번째 식사", "네 번째 식사", "다섯 번째 식사", "여섯 번째 식사"]
-  let calories: [(current: Int, goal: Int)] = [(400, 700), (400, 700), (200, 700), (0, 700), (0, 700), (0, 700)]
+  let calories: [(current: Int, goal: Int)] = [
+    (400, 700), (400, 700), (200, 700), (0, 700), (0, 700), (0, 700)
+  ]
   
   var body: some View {
     VStack(spacing: 16) {
@@ -44,7 +46,7 @@ struct MealInfo: View {
       
       Text("\(currentCalories) / \(targetCalories) kcal")
         .foregroundColor(.gray)
-        .font(.footnote)
+        .font(.inter(type: .regular, size: 14))
       
       let iconName: String = currentCalories > 0 ? "checkmark" : "plus"
       let fgColor: Color = currentCalories > 0 ? .white : .main
@@ -54,7 +56,7 @@ struct MealInfo: View {
         // 음식 추가 화면 나옴
       }, label: {
         Image(systemName: iconName)
-          .font(.system(size: 16, weight: .bold))
+          .font(.system(size: 16, weight: .black))
           .foregroundColor(fgColor)
           .frame(width: 36, height: 36)
           .background(

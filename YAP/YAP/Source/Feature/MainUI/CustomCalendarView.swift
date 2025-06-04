@@ -8,11 +8,101 @@
 import SwiftUI
 
 struct CustomCalendarView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+  @Binding var selectedDate: Date
+  var onDismiss: () -> Void
+  
+  @State private var currentMonthOffset = 0
+  
+  var body: some View {
+    VStack {
+      HStack {
+        Button(action: {
+          currentMonthOffset -= 1
+        }, label: {
+          Image(systemName: "chevron.left")
+        })
+        Spacer()
+        Text(currentMonth)
+          .font(.headline)
+        Spacer()
+        Button(action: {
+          currentMonthOffset += 1
+        }, label: {
+          Image(systemName: "chevron.right")
+        })
+      }
+      .padding()
+      
+      let days = generateDays()
+      
+      LazyVGrid(columns : Array(
+        repeating: GridItem(.flexible()), count: 7
+      ), spacing: 16) {
+        ForEach(["일", "월", "화", "수", "목", "금", "토"], id:\.self) { day in
+          Text(day)
+            .font(.caption)
+            .foregroundColor(.gray)
+        }
+        
+        ForEach(days, id: \.self) { date in
+          Button(action: {
+            selectedDate = date
+            onDismiss()
+          }, label: {
+            Text("\(Calendar.current.component(.day, from: date))")
+              .font(.subheadline)
+              .frame(width: 36, height: 36)
+              .background(
+                Calendar.current.isDate(date, inSameDayAs: selectedDate) ? Color.main : Color.clear
+              )
+              .foregroundColor(Calendar.current.isDate(date, inSameDayAs: selectedDate) ? .white : .primary)
+              .clipShape(Circle())
+          })
+        }
+      }
     }
+  }
+  
+  var currentMonth: String {
+    let calendar = Calendar.current
+    let date = calendar.date(byAdding: .month, value: currentMonthOffset, to: Date()) ?? Date()
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.dateFormat = "yyyy년 M월"
+    return formatter.string(from: date)
+  }
+  
+  func generateDays() -> [Date] {
+    var dates: [Date] = []
+    let calendar = Calendar.current
+    let today = Date()
+    let displayMonth = calendar.date(
+      byAdding: .month,
+      value: currentMonthOffset,
+      to: today)
+    ?? today
+    
+    let range = calendar.range(of: .day, in: .month, for: displayMonth) ?? 1..<32
+    let components = calendar.dateComponents([.year, .month], from: displayMonth)
+    let firstOfMonth = calendar.date(from: components) ?? Date()
+    let weekdayOffset = calendar.component(.weekday, from: firstOfMonth) - 1
+    
+    for _ in 0..<weekdayOffset {
+      dates.append(Date.distantPast) // placeholder
+    }
+    
+    for day in range {
+      if let date = calendar.date(byAdding: .day, value: day - 1, to: firstOfMonth) {
+        dates.append(date)
+      }
+    }
+    
+    return dates
+  }
 }
 
 #Preview {
-    CustomCalendarView()
+  CustomCalendarView(selectedDate: .constant(Date())) {
+    // 닫기
+  }
 }
