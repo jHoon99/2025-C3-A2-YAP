@@ -17,7 +17,6 @@ struct OnboardingGoalView: View {
       
       VStack(alignment: .leading, spacing: Spacing.extrLarge) {
         titleView
-        
         goalButtonView
       }
     }

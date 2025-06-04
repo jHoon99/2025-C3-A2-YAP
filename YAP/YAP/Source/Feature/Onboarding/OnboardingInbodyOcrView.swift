@@ -17,7 +17,6 @@ struct OnboardingInbodyOcrView: View {
       
       VStack(spacing: Spacing.large) {
         ocrPreviewView
-        
         ocrBottomButtonView
       }
     }

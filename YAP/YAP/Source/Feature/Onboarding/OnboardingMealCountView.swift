@@ -22,7 +22,6 @@ struct OnboardingMealCountView: View {
       
       VStack(alignment: .leading, spacing: Spacing.extrLarge) {
         titleView
-        
         mealCountButtonView
       }
     }

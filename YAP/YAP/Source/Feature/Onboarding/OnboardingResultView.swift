@@ -18,7 +18,6 @@ struct OnboardingResultView: View {
         Spacer()
         
         celebrateImageView
-        
         calorieInfoView
         
         Spacer()

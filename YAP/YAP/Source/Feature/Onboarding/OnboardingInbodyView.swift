@@ -30,7 +30,6 @@ struct OnboardingInbodyView: View {
     ZStack(alignment: .topLeading) {
       VStack(alignment: .leading, spacing: Spacing.extrLarge) {
         titleView
-        
         infoView
       }
     }

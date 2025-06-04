@@ -17,7 +17,6 @@ struct OnboardingActivityLevelView: View {
       
       VStack(alignment: .leading, spacing: Spacing.extrLarge) {
         titleView
-        
         activityLevelButtonView
       }
     }
