@@ -19,11 +19,19 @@ struct OnboardingMainView: View {
   private let totalPage = 4
   
   var isCurrentStepValid: Bool {
-    switch currentIndex {
-    case 1: return selectedGoal != nil
-    case 2: return selectedActivityLevel != nil
-    case 3: return selectedMealCount != nil
-    default: return true
+    guard let step = OnboardingStep(rawValue: currentIndex) else {
+      return true
+    }
+    
+    switch step {
+    case .goal:
+      return selectedGoal != nil
+      
+    case .activity:
+      return selectedActivityLevel != nil
+    
+    case .meal:
+      return selectedMealCount != nil
     }
   }
   
