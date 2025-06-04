@@ -7,9 +7,8 @@
 
 import SwiftUI
 
-@Observable
-final class ImagePredictionHandler {
- var predictions: [ImagePredictor.Prediction] = []
+final class ImagePredictionHandler: ObservableObject {
+ @Published var predictions: [ImagePredictor.Prediction] = []
  var errorMessage: String?
   
   private let predictor = ImagePredictor()
