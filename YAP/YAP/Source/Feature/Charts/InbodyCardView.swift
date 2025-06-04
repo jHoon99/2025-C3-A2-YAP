@@ -11,7 +11,7 @@ struct InbodyCardView: View {
   var inbody: Inbody
   
   var body: some View {
-    VStack(alignment: .leading, spacing: 24) {
+    VStack(alignment: .leading, spacing: Spacing.large) {
       Text(inbody.date.formattedYMD)
         .font(.pretendard(type: .medium, size: 14))
         .foregroundStyle(.darkHover)

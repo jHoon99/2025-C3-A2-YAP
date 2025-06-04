@@ -21,7 +21,7 @@ struct InbodyInfoView: View {
   
   var body: some View {
     ScrollView {
-      VStack(spacing: 24) {
+      VStack(spacing: Spacing.large) {
         TimeRangeSelectionButtons(
           selectedRange: $selectedRange,
           showRangeSelectionSheet: $showRangeSelectionSheet,
