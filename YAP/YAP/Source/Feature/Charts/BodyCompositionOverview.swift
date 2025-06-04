@@ -9,12 +9,23 @@ import Charts
 import SwiftUI
 
 private struct BodyCompositionOverviewChart: View {
-  @Binding var rawSelectedDate: Date?
   @Environment(\.calendar) var calendar
+  @Binding var rawSelectedDate: Date?
   
-  let symbolSize: CGFloat = 100
-  let lineWidth: CGFloat = 3
   var data: ChartData.Series
+  private let symbolSize: CGFloat = 100
+  private let lineWidth: CGFloat = 3
+  
+  /// rawSelectedDate이 그래프상에서 점에 해당하는지 확인
+  private var selectedDate: Date? {
+    if let rawSelectedDate {
+      return data.measurements.first {
+        calendar.isDate($0.day, inSameDayAs: rawSelectedDate)
+      }?.day
+    }
+    
+    return nil
+  }
   
   var body: some View {
     let values = data.measurements
@@ -55,17 +66,6 @@ private struct BodyCompositionOverviewChart: View {
       range: .plotDimension(startPadding: 8, endPadding: 8)
     )
     .chartXSelection(value: $rawSelectedDate)
-  }
-  
-  /// rawSelectedDate이 그래프상에서 점에 해당하는지 확인
-  private var selectedDate: Date? {
-    if let rawSelectedDate {
-      return data.measurements.first {
-        calendar.isDate($0.day, inSameDayAs: rawSelectedDate)
-      }?.day
-    }
-    
-    return nil
   }
   
   @ViewBuilder
