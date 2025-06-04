@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum UnitType: String, CaseIterable {
+enum UnitType: String, CaseIterable {
   case kg
   case cm
   case age = "세"

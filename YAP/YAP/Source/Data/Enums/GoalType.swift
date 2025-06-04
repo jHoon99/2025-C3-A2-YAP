@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum GoalType: String, CaseIterable, Codable {
+enum GoalType: String, CaseIterable, Codable {
   case diet = "체중 감량"
   case weightMaintain = "유지"
   case bulkUp = "벌크업"

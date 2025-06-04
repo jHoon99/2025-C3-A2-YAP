@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum MealCountType: String, CaseIterable {
+enum MealCountType: String, CaseIterable {
   case one = "한 끼"
   case two = "두 끼"
   case three = "세 끼"
