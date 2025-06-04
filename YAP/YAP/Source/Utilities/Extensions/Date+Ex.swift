@@ -15,4 +15,8 @@ extension Date {
     formatter.timeZone = TimeZone.current
     return formatter.string(from: self)
   }
+  
+  static func of(year: Int, month: Int, day: Int) -> Date {
+    Calendar.current.date(from: DateComponents(year: year, month: month, day: day)) ?? Date()
+  }
 }
