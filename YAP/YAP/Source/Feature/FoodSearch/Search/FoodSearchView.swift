@@ -47,7 +47,7 @@ struct FoodSearchView: View {
           }
         }
         if !isSearching {
-          FoodCameraView(searchedFoodName: $searchText, selectedFoodItem: $selectedFoodItem)
+          FoodCameraView(searchedFoodName: $searchText)
             .padding()
             .padding(.bottom)
             .shadow(radius: 4, x: 0, y: 4)
