@@ -68,10 +68,6 @@ private struct BodyCompositionOverviewChart: View {
     return nil
   }
   
-  private func nextDay(for date: Date) -> Date {
-    calendar.date(byAdding: .day, value: 1, to: date) ?? date
-  }
-  
   @ViewBuilder
   var valueSelectionPopover: some View {
     if let selectedDate {
