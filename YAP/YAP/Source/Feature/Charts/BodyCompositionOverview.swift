@@ -8,7 +8,7 @@
 import Charts
 import SwiftUI
 
-struct BodyCompositionOverviewChart: View {
+private struct BodyCompositionOverviewChart: View {
   @Binding var rawSelectedDate: Date?
   @Environment(\.calendar) var calendar
   
