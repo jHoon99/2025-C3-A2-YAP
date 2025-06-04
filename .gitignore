@@ -10,6 +10,8 @@
 # Icon must end with two \r
 Icon
 
+# Ignore custom config files
+Develop.xcconfig
 
 # Thumbnails
 ._*
