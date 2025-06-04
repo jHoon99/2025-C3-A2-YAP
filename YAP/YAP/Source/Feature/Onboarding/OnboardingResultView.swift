@@ -50,7 +50,7 @@ struct OnboardingResultView: View {
     HStack {
       Spacer()
       
-      Image("celebrate")
+      Image(.celebrate)
       
       Spacer()
     }
