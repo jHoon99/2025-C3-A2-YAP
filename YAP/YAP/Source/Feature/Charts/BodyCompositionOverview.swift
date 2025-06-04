@@ -35,8 +35,8 @@ private struct BodyCompositionOverviewChart: View {
       
       if let selectedDate {
         RuleMark(x: .value("Selected", selectedDate, unit: .day))
-          .foregroundStyle(Color.gray.opacity(0.3))
-          .offset(yStart: -50)
+          .foregroundStyle(Color.background)
+          .offset(yStart: 0)
           .zIndex(-1)
           .annotation(
             position: .top, spacing: 0,
@@ -75,7 +75,7 @@ private struct BodyCompositionOverviewChart: View {
         .padding(6)
         .background {
           RoundedRectangle(cornerRadius: 4)
-            .foregroundStyle(Color.gray.opacity(0.12))
+            .foregroundStyle(Color.background)
         }
     } else {
       EmptyView()
