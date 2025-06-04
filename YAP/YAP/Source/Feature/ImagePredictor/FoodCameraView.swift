@@ -9,9 +9,10 @@ import SwiftUI
 import UIKit
 
 struct FoodCameraView {
-  private var handler = ImagePredictionHandler()
+  @StateObject private var handler = ImagePredictionHandler()
   @State private var selectedImage: UIImage?
   @State private var showCamera = false
+  @Binding var searchedFoodName: String
 }
 
 extension FoodCameraView: View {
@@ -37,9 +38,9 @@ extension FoodCameraView: View {
       }
       .ignoresSafeArea(edges: .bottom)
     }
+    .onChange(of: handler.predictions) { _, predictions in
+      searchedFoodName = (predictions.first?.classification ?? "")
+        .precomposedStringWithCanonicalMapping
+    }
   }
-}
-
-#Preview {
-  FoodCameraView()
 }
