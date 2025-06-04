@@ -154,11 +154,11 @@ private struct BodyCompositionCharts: View {
     }
   }
   
-  private func makeSeries(from component: BodyComposition) -> Data.Series {
+  private func makeSeries(from component: BodyComposition) -> ChartData.Series {
     let measurements = bodyRecords
       .filter { selectedRange.isWithinRange(from: startDate, to: endDate)($0.date) }
       .map { ($0.date, component.value(from: $0)) }
-    return Data.Series(name: component.name, measurements: measurements)
+    return ChartData.Series(name: component.name, measurements: measurements)
   }
   
   private enum BodyComposition: String, CaseIterable, Identifiable {

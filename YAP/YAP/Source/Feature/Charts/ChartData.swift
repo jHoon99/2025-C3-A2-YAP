@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Data {
+struct ChartData {
   struct Series: Identifiable {
     let name: String
     let measurements: [(day: Date, amount: Double)]

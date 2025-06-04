@@ -14,7 +14,7 @@ private struct BodyCompositionOverviewChart: View {
   
   let symbolSize: CGFloat = 100
   let lineWidth: CGFloat = 3
-  var data: Data.Series
+  var data: ChartData.Series
   
   var body: some View {
     let values = data.measurements
@@ -86,7 +86,7 @@ private struct BodyCompositionOverviewChart: View {
 struct BodyCompositionOverview: View {
   // swiftlint:disable:next redundant_optional_initialization
   @State var rawSelectedDate: Date? = nil
-  var data: Data.Series
+  var data: ChartData.Series
   
   var body: some View {
     VStack(alignment: .leading) {
@@ -102,5 +102,5 @@ struct BodyCompositionOverview: View {
 }
 
 #Preview {
-  BodyCompositionOverview(data: Data.bodyCompositionData[0])
+  BodyCompositionOverview(data: ChartData.bodyCompositionData[0])
 }
