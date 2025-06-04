@@ -27,6 +27,16 @@ private struct BodyCompositionOverviewChart: View {
     return nil
   }
   
+  private var measurementOfSelectedDate: (Date, Double)? {
+    if let rawSelectedDate {
+      return data.measurements.first {
+        calendar.isDate($0.day, inSameDayAs: rawSelectedDate)
+      }
+    }
+    
+    return nil
+  }
+  
   var body: some View {
     let values = data.measurements
       .map { $0.amount }
@@ -47,7 +57,7 @@ private struct BodyCompositionOverviewChart: View {
       if let selectedDate {
         RuleMark(x: .value("Selected", selectedDate, unit: .day))
           .foregroundStyle(Color.background)
-          .offset(yStart: 0)
+          .offset(yStart: 10)
           .zIndex(-1)
           .annotation(
             position: .top, spacing: 0,
@@ -70,8 +80,14 @@ private struct BodyCompositionOverviewChart: View {
   
   @ViewBuilder
   var valueSelectionPopover: some View {
-    if let selectedDate {
-      Text(selectedDate.formattedYMD)
+    if let measurement = measurementOfSelectedDate {
+      let day = measurement.0
+      let amount = measurement.1
+      
+      VStack {
+        Text(day.formattedYMD)
+        Text(String(format: "%.0f kg", amount))
+      }
         .padding(6)
         .background {
           RoundedRectangle(cornerRadius: 4)
