@@ -33,7 +33,7 @@ final class ImagePredictor {
   
   static let imageClassifier = createImageClassifier()
   
-  struct Prediction {
+  struct Prediction: Equatable {
     let classification: String
     let confidencePercentage: String
   }
