@@ -29,6 +29,7 @@ struct FoodItem: Identifiable, Codable {
   let id = UUID()
   let foodName: String
   let servingSize: String  // 영양성분 기준량
+  let totalSize: String    // 총 중량
   let calories: String     // 칼로리
   let protein: String      // 단백질
   let fat: String          // 지방
@@ -42,6 +43,7 @@ struct FoodItem: Identifiable, Codable {
   enum CodingKeys: String, CodingKey {
     case foodName = "FOOD_NM_KR"
     case servingSize = "SERVING_SIZE"
+    case totalSize = "Z10500"
     case calories = "AMT_NUM1"
     case protein = "AMT_NUM3"
     case fat = "AMT_NUM4"
