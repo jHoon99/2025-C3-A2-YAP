@@ -19,10 +19,6 @@ class Inbody {
   var skeletalMuscleMass: Double // 골격근량
   var leanBodyMass: Double // 제지방량,
   var bodyFatPercentage: Double // 체지방률
-
-  // 1:1관계
-  @Relationship(deleteRule: .cascade)
-  var meal: Meal
   
   init(date: Date,
        weight: Double,
@@ -32,8 +28,7 @@ class Inbody {
        basalMetabolicRate: Int,
        skeletalMuscleMass: Double,
        leanBodyMass: Double,
-       bodyFatPercentage: Double,
-       meal: Meal
+       bodyFatPercentage: Double
   ) {
     self.date = date
     self.weight = weight
@@ -44,6 +39,5 @@ class Inbody {
     self.skeletalMuscleMass = skeletalMuscleMass
     self.leanBodyMass = leanBodyMass
     self.bodyFatPercentage = bodyFatPercentage
-    self.meal = meal
   }
 }
