@@ -28,7 +28,7 @@ class Inbody {
        basalMetabolicRate: Int,
        skeletalMuscleMass: Double,
        leanBodyMass: Double,
-       bodyFatPercentage: Double
+       bodyFatPercentage: Double,
   ) {
     self.date = date
     self.weight = weight
