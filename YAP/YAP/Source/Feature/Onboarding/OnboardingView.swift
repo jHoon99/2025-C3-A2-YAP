@@ -18,7 +18,7 @@ struct OnboardingView: View {
           titleView
           
           Spacer()
-
+          
           healthManImageView
           
           Spacer()

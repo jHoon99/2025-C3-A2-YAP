@@ -14,4 +14,15 @@ enum MealCountType: String, CaseIterable {
   case four = "네 끼"
   case five = "다섯 끼"
   case six = "여섯 끼"
+  
+  var intValue: Int {
+    switch self {
+    case .one: return 1
+    case .two: return 2
+    case .three: return 3
+    case .four: return 4
+    case .five: return 5
+    case .six: return 6
+    }
+  }
 }

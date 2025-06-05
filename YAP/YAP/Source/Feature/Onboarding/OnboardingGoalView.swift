@@ -10,6 +10,7 @@ import SwiftUI
 struct OnboardingGoalView: View {
   @Binding var currentIndex: Int
   @Binding var selectedGoal: GoalType?
+  @Binding var onboardingItem: OnboardingItem
   
   var body: some View {
     ZStack(alignment: .topLeading) {
@@ -43,6 +44,7 @@ struct OnboardingGoalView: View {
           isSelected: selectedGoal == type
         ) {
           goalButtonTapped(type)
+          onboardingItem.activityInfo.goalType = type
         }
       }
     }
@@ -56,5 +58,9 @@ private extension OnboardingGoalView {
 }
 
 #Preview {
-  OnboardingGoalView(currentIndex: .constant(1), selectedGoal: .constant(.diet))
+  OnboardingGoalView(
+    currentIndex: .constant(1),
+    selectedGoal: .constant(.diet),
+    onboardingItem: .constant(.initItem)
+  )
 }

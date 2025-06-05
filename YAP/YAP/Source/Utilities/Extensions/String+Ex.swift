@@ -8,8 +8,8 @@
 import Foundation
 
 extension String {
-  var asPercentage: Double {
-    guard let doubleValue = Double(self) else { return 0.0 }
+  var asPercentage: Double? {
+    guard let doubleValue = Double(self) else { return nil }
     return round(doubleValue * 1000) / 10
   }
 }
