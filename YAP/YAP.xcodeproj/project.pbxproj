@@ -19,6 +19,7 @@
 		9EA2DE352DE6EF2E00A7D717 /* Exceptions for "YAP" folder in "YAP" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Develop.xcconfig,
 				Info.plist,
 			);
 			target = 9EA2DDF82DE6EB8900A7D717 /* YAP */;
@@ -98,7 +99,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1630;
-				LastUpgradeCheck = 1630;
+				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					9EA2DDF82DE6EB8900A7D717 = {
 						CreatedOnToolsVersion = 16.3;
