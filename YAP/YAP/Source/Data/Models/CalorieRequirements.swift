@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class CalorieCalorieRequirements {
+class CalorieRequirements {
   var carbohydrates: Double // 탄수화물
   var protein: Double // 단백질
   var lipid: Double // 지방
