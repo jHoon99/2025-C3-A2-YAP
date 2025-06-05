@@ -12,4 +12,5 @@ enum UnitType: String, CaseIterable {
   case cm
   case age = "세"
   case kcal
+  case percent = "%"
 }

@@ -32,4 +32,14 @@ enum ActivityType: String, CaseIterable, Codable {
       return "지속적인 신체 활동과 고강도 운동이 포함된 매우 높은 활동 생활"
     }
   }
+  
+  var activityMultiplier: Double {
+    switch self {
+    case .littleActivity: return 1.2
+    case .verylittleActivity: return 1.375
+    case .middleActivity: return 1.55
+    case .vigorousActivity: return 1.725
+    case .veryVigorousActivity: return 1.9
+    }
+  }
 }
