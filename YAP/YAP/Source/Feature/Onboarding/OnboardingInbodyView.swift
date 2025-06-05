@@ -7,24 +7,13 @@
 
 import SwiftUI
 
-struct InfoItem: Identifiable {
-  let id = UUID()
-  let title: String
-  let value: String
-  let unit: UnitType
-}
-
 struct OnboardingInbodyView: View {
   @Environment(\.dismiss) private var dismiss
   @Binding var currentIndex: Int
   
-  let infoItems: [InfoItem] = [
-    InfoItem(title: "나이", value: "27", unit: .age),
-    InfoItem(title: "키", value: "177", unit: .cm),
-    InfoItem(title: "체중", value: "70", unit: .kg),
-    InfoItem(title: "근육량", value: "30", unit: .kg),
-    InfoItem(title: "체지방률", value: "15", unit: .kg)
-  ]
+  @State var selectedInfoType: InbodyInfoType? = nil
+  
+  @Binding var infoItems: [InbodyInfoItem]
   
   var body: some View {
     ZStack(alignment: .topLeading) {
@@ -34,6 +23,25 @@ struct OnboardingInbodyView: View {
       }
     }
     .navigationBarBackButtonHidden()
+    .sheet(item: $selectedInfoType) { infoType in
+      if let index = infoItems.firstIndex(where: { $0.type == infoType }) {
+        if infoType == .age {
+          InputAgeSheet(infoItem: $infoItems[index])
+            .presentationDetents([.height(200)])
+        } else {
+          InbodyInputSheet(
+            infoItem: $infoItems[index],
+            minimumValue: infoType.minValue,
+            maximumValue: infoType.maxValue,
+            text: infoType
+              .text(
+                value: infoItems[index].value
+              )
+          )
+          .presentationDetents([.height(200)])
+        }
+      }
+    }
   }
   
   private var titleView: some View {
@@ -49,15 +57,22 @@ struct OnboardingInbodyView: View {
   }
   
   private var infoView: some View {
-    VStack(alignment: .leading, spacing: Spacing.extrLarge) {
-      ForEach(infoItems) { item in
+    VStack(alignment: .leading, spacing: Spacing.large) {
+      ForEach($infoItems) { $item in
         HStack {
-          Text(item.title)
+          Text(item.type.rawValue)
             .font(.pretendard(type: .semibold, size: 16))
           
           Spacer()
           
-          InbodyInfoButton(value: item.value, unit: item.unit) { }
+          InbodyInfoButton(
+            value: formattedValue(for: item),
+            unit: item.unit
+          ) {
+            if item.type != .leanBodyMass {
+              selectedInfoType = item.type
+            }
+          }
         }
       }
     }
@@ -72,7 +87,32 @@ private extension OnboardingInbodyView {
   func beforeButtonTapped() {
     dismiss()
   }
+  
+  func formattedValue(for item: InbodyInfoItem) -> String {
+    switch item.type {
+    case .age, .basalMetabolicRate:
+      return "\(Int(item.value))"
+    case .leanBodyMass:
+      if let weightItem = infoItems.first(where: { $0.type == .weight }),
+         let fatPctItem = infoItems.first(where: { $0.type == .bodyFatPercentage }) {
+        let lbm = calculateLeanBodyMass(
+          weight: weightItem.value,
+          bodyFatPercentage: fatPctItem.value
+        )
+        return String(format: "%.1f", lbm)
+      } else {
+        return "-"
+      }
+    default:
+      return String(format: "%.1f", item.value)
+    }
+  }
+  
+  func calculateLeanBodyMass(weight: Double, bodyFatPercentage: Double) -> Double {
+    return weight * (1 - (bodyFatPercentage / 100))
+  }
 }
+
 #Preview {
-  OnboardingInbodyView(currentIndex: .constant(0))
+  OnboardingInbodyView(currentIndex: .constant(0), infoItems: .constant([]))
 }

@@ -31,7 +31,34 @@ extension Font {
     }
   }
   
+  enum Inter {
+    case bold
+    case semibold
+    case medium
+    case regular
+    case light
+    
+    var value: String {
+      switch self {
+      case .bold:
+        return "Inter-Bold"
+      case .semibold:
+        return "Inter-SemiBold"
+      case .medium:
+        return "Inter-Medium"
+      case .regular:
+        return "Inter-Medium"
+      case .light:
+        return "Inter-Medium"
+      }
+    }
+  }
+  
   static func pretendard(type: Pretendard, size: CGFloat) -> Font {
+    return .custom(type.value, size: size)
+  }
+  
+  static func inter(type: Inter, size: CGFloat) -> Font {
     return .custom(type.value, size: size)
   }
 }

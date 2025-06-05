@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 
 struct FoodCameraView {
-  @StateObject private var handler = ImagePredictionHandler()
+  @State private var handler = ImagePredictionHandler()
   @State private var selectedImage: UIImage?
   @State private var showCamera = false
   @Binding var searchedFoodName: String

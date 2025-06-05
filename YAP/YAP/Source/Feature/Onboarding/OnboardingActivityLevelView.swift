@@ -10,6 +10,7 @@ import SwiftUI
 struct OnboardingActivityLevelView: View {
   @Binding var currentIndex: Int
   @Binding var selectedActivityLevel: ActivityType?
+  @Binding var onboardingItem: OnboardingItem
   
   var body: some View {
     ZStack(alignment: .topLeading) {
@@ -44,6 +45,7 @@ struct OnboardingActivityLevelView: View {
           isSelected: selectedActivityLevel == type
         ) {
           activityButtonTapped(type)
+          onboardingItem.activityInfo.activityLevel = type
         }
       }
     }
@@ -59,6 +61,7 @@ private extension OnboardingActivityLevelView {
 #Preview {
   OnboardingActivityLevelView(
     currentIndex: .constant(2),
-    selectedActivityLevel: .constant(.middleActivity)
+    selectedActivityLevel: .constant(.middleActivity),
+    onboardingItem: .constant(.initItem)
   )
 }

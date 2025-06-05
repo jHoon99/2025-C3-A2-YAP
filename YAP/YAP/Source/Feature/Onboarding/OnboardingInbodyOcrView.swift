@@ -9,7 +9,6 @@ import SwiftUI
 
 struct OnboardingInbodyOcrView: View {
   @State private var isNext = false
-  @State private var value = 0.5
   
   var body: some View {
     ZStack {

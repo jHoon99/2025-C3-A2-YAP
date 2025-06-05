@@ -16,6 +16,8 @@ struct OnboardingMainView: View {
   @State private var selectedActivityLevel: ActivityType? = nil
   @State private var selectedMealCount: MealCountType? = nil
   
+  @State private var onboardingItems: OnboardingItem = .initItem
+  
   private let totalPage = 4
   
   var isCurrentStepValid: Bool {
@@ -29,7 +31,7 @@ struct OnboardingMainView: View {
       
     case .activity:
       return selectedActivityLevel != nil
-    
+      
     case .meal:
       return selectedMealCount != nil
     }
@@ -46,21 +48,24 @@ struct OnboardingMainView: View {
         
         ZStack {
           if currentIndex == 0 {
-            OnboardingInbodyView(currentIndex: $currentIndex)
+            OnboardingInbodyView(currentIndex: $currentIndex, infoItems: $onboardingItems.inbody)
           } else if currentIndex == 1 {
             OnboardingGoalView(
               currentIndex: $currentIndex,
-              selectedGoal: $selectedGoal
+              selectedGoal: $selectedGoal,
+              onboardingItem: $onboardingItems
             )
           } else if currentIndex == 2 {
             OnboardingActivityLevelView(
               currentIndex: $currentIndex,
-              selectedActivityLevel: $selectedActivityLevel
+              selectedActivityLevel: $selectedActivityLevel,
+              onboardingItem: $onboardingItems
             )
           } else {
             OnboardingMealCountView(
               currentIndex: $currentIndex,
-              selectedMealCount: $selectedMealCount
+              selectedMealCount: $selectedMealCount,
+              onboardingItem: $onboardingItems
             )
           }
         }
@@ -73,7 +78,7 @@ struct OnboardingMainView: View {
     .padding(.horizontal, Spacing.medium)
     .padding(.vertical, Spacing.extrLarge)
     .navigationDestination(isPresented: $isNext) {
-      OnboardingResultView()
+      OnboardingResultView(onboardingItem: $onboardingItems)
     }
   }
   
@@ -115,6 +120,16 @@ private extension OnboardingMainView {
   }
   
   func nextButtonTapped() {
+    if currentIndex == 0 {
+      if let weightItem = onboardingItems.inbody.first(where: { $0.type == .weight }),
+         let fatPctItem = onboardingItems.inbody.first(where: { $0.type == .bodyFatPercentage }),
+         let index = onboardingItems.inbody.firstIndex(where: { $0.type == .leanBodyMass }) {
+        
+        let leanBodyMass = weightItem.value * (1 - (fatPctItem.value / 100))
+        onboardingItems.inbody[index].value = leanBodyMass
+      }
+    }
+    
     currentIndex += 1
   }
   
