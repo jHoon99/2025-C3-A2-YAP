@@ -11,28 +11,26 @@ struct OnboardingView: View {
   @State private var isNext = false
   
   var body: some View {
-    NavigationStack {
-      ZStack(alignment: .topLeading) {
-        Color.clear.ignoresSafeArea()
-        VStack(alignment: .leading) {
-          titleView
-          
-          Spacer()
-          
-          healthManImageView
-          
-          Spacer()
-          
-          CtaButton(buttonName: .next, titleColor: .white, bgColor: .main) {
-            nextButtonTapped()
-          }
+    ZStack(alignment: .topLeading) {
+      Color.clear.ignoresSafeArea()
+      VStack(alignment: .leading) {
+        titleView
+        
+        Spacer()
+        
+        healthManImageView
+        
+        Spacer()
+        
+        CtaButton(buttonName: .next, titleColor: .white, bgColor: .main) {
+          nextButtonTapped()
         }
       }
-      .padding(.horizontal, Spacing.medium)
-      .padding(.vertical, Spacing.extrLarge)
-      .navigationDestination(isPresented: $isNext) {
-        OnboardingInbodyOcrView()
-      }
+    }
+    .padding(.horizontal, Spacing.medium)
+    .padding(.vertical, Spacing.extrLarge)
+    .navigationDestination(isPresented: $isNext) {
+      OnboardingInbodyOcrView()
     }
   }
   
