@@ -54,22 +54,12 @@ extension OnboardingItem {
   private var basalMetabolicRate: Double {
     inbody.first(where: { $0.type == .basalMetabolicRate })?.value ?? 0.0
   }
-
-  private var activityMultiplier: Double {
-    switch activityInfo.activityLevel {
-    case .littleActivity: return 1.2
-    case .verylittleActivity: return 1.375
-    case .middleActivity: return 1.55
-    case .vigorousActivity: return 1.725
-    case .veryVigorousActivity: return 1.9
-    case .none: return 1.2
-    }
-  }
-
+  
   private var maintenanceCalories: Double {
-    basalMetabolicRate * activityMultiplier
+    let multiplier = activityInfo.activityLevel?.activityMultiplier ?? 1.2
+    return basalMetabolicRate * multiplier
   }
-
+  
   var goalCalories: Int {
     switch activityInfo.goalType {
     case .diet:
