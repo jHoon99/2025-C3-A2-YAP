@@ -61,7 +61,7 @@ struct OnboardingResultView: View {
           titleColor: .white,
           bgColor: .main
         ) {
-          saveToDatabase()
+          save()
         }
       }
     }
@@ -154,7 +154,7 @@ private struct MacroView: View {
   }
 }
 private extension OnboardingResultView {
-  func saveToDatabase() {
+  func save() {
     if let age = onboardingItem.inbody.first(where: { $0.type == .age })?.intValue,
        let height = onboardingItem.inbody.first(where: { $0.type == .height })?.value,
        let weight = onboardingItem.inbody.first(where: { $0.type == .weight })?.value,
