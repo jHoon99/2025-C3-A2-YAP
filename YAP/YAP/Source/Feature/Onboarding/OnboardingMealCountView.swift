@@ -10,6 +10,7 @@ import SwiftUI
 struct OnboardingMealCountView: View {
   @Binding var currentIndex: Int
   @Binding var selectedMealCount: MealCountType?
+  @Binding var onboardingItem: OnboardingItem
   
   private let columns = [
     GridItem(.flexible()),
@@ -48,6 +49,7 @@ struct OnboardingMealCountView: View {
           isSelected: selectedMealCount == type
         ) {
           mealCountButtonTapped(type)
+          onboardingItem.activityInfo.mealCount = type.intValue
         }
       }
     }
@@ -69,5 +71,9 @@ private extension OnboardingMealCountView {
 }
 
 #Preview {
-  OnboardingMealCountView(currentIndex: .constant(3), selectedMealCount: .constant(.five))
+  OnboardingMealCountView(
+    currentIndex: .constant(3),
+    selectedMealCount: .constant(.five),
+    onboardingItem: .constant(.initItem )
+  )
 }
