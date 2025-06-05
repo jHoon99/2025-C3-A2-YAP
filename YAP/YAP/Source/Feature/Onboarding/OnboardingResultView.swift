@@ -77,9 +77,6 @@ struct OnboardingResultView: View {
     .padding(.horizontal, Spacing.medium)
     .padding(.vertical, Spacing.extrLarge)
     .navigationBarBackButtonHidden()
-    .onAppear {
-      print(onboardingItem)
-    }
   }
   
   private var titleView: some View {

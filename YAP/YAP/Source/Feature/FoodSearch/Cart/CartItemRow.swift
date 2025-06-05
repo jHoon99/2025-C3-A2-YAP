@@ -21,7 +21,7 @@ struct CartItemRow: View {
         .font(.pretendard(type: .semibold, size: 16))
         .foregroundColor(Color.placeholder)
     }
-    .padding(Spacing.large)
+    .padding(.vertical, Spacing.small)
   }
 }
 

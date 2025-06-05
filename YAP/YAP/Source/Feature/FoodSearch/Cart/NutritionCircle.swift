@@ -20,21 +20,21 @@ struct NutritionCircle: View {
           .fill(Color.lightHover)
           .frame(width: 64, height: 64)
         Circle()
-          .trim(from: 0, to: min(progress, 1.0))
+          .trim(from: 0, to: min(CGFloat(progress), 1.0))
           .stroke(LinearGradient.ctaGradient, style: StrokeStyle(lineWidth: 5, lineCap: .round))
           .frame(width: 64, height: 64)
           .rotationEffect(.degrees(-90))
           .animation(.easeInOut(duration: 0.5), value: progress)
-        Text("\(Int(progress))%")
+        Text("\(Int(progress * 100))%")
           .font(.pretendard(type: .medium, size: 14))
-          .foregroundColor(progress >= 0.9 ? .main : .black)
+          .foregroundColor(progress >= 90 ? .main : .black)
       }
       .padding(.bottom, 10)
       HStack {
         Text(title)
           .font(.pretendard(type: .medium, size: 15))
           .foregroundColor(.text)
-        if progress >= 90 && progress <= 110 {
+        if Int(progress * 100) >= 90 && Int(progress * 100) <= 110 {
           Image(systemName: "checkmark.circle.fill")
             .frame(width: 16, height: 16)
             .font(.pretendard(type: .bold, size: 15))
@@ -42,7 +42,7 @@ struct NutritionCircle: View {
         }
       }
       .frame(height: 16)
-      .scaleEffect(progress >= 0.9 ? 1.0 : 0.8)
+      .scaleEffect(progress >= 90 ? 1.0 : 0.8)
       .animation(.spring(response: 0.2, dampingFraction: 0.6), value: progress)
       Text("\(current)/\(goal)g")
         .font(.pretendard(type: .medium, size: 16))

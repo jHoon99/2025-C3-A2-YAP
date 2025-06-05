@@ -27,7 +27,7 @@ struct YAPApp: App {
   
   var body: some Scene {
     WindowGroup {
-      ContentView()
+      OnboardingView()
     }
     .modelContainer(yapModelContainer)
   }

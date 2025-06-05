@@ -13,7 +13,7 @@ struct FoodSearchView: View {
   @StateObject private var cartManager = CartManager()
   @State private var searchText: String = ""
   @State private var isSearching: Bool = false
-  @State private var selectedFoodItem: FoodItem? = nil
+  @State private var selectedFoodItem: FoodItem?
   @State private var showcartView: Bool = false
   
   var body: some View {
@@ -56,22 +56,18 @@ struct FoodSearchView: View {
       .toolbar {
         ToolbarItem(placement: .navigationBarTrailing) {
           NavigationLink(destination: CartView().environmentObject(cartManager)) {
-            Button {
-              showcartView = true
-            } label: {
-              ZStack {
-                Image(systemName: "cart")
-                  .foregroundColor(.text)
-                
-                if !cartManager.cartItems.isEmpty {
-                  Text("\(cartManager.cartItems.count)")
-                    .font(.pretendard(type: .light, size: 12))
-                    .frame(width: 16, height: 16)
-                    .foregroundColor(.mainWhite)
-                    .background(.main)
-                    .clipShape(Circle())
-                    .offset(x: 8, y: -8)
-                }
+            ZStack {
+              Image(systemName: "cart")
+                .foregroundColor(.text)
+              
+              if !cartManager.cartItems.isEmpty {
+                Text("\(cartManager.cartItems.count)")
+                  .font(.pretendard(type: .light, size: 12))
+                  .frame(width: 16, height: 16)
+                  .foregroundColor(.mainWhite)
+                  .background(.main)
+                  .clipShape(Circle())
+                  .offset(x: 8, y: -8)
               }
             }
           }
@@ -87,12 +83,10 @@ struct FoodSearchView: View {
       .onSubmit(of: .search) {
         performSearch()
       }
-      .onChange(of: searchText) { newValue in
+      .onChange(of: searchText) { newValue, _ in
         if newValue.isEmpty {
           nutritionService.foodItem = []
-        } else {
-          performSearch()
-        }
+        } 
       }
     }
   }
