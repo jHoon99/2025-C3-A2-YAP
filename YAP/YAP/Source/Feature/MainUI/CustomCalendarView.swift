@@ -13,6 +13,11 @@ struct CustomCalendarView: View {
   
   @State private var currentMonthOffset = 0
   
+  var calorieData: [Date: Int] = [
+    Date(): 900,
+    Date() - 86400: 800
+  ]
+  
   var body: some View {
     VStack {
       HStack {
@@ -35,10 +40,10 @@ struct CustomCalendarView: View {
       
       let days = generateDays()
       
-      LazyVGrid(columns : Array(
+      LazyVGrid(columns: Array(
         repeating: GridItem(.flexible()), count: 7
       ), spacing: 16) {
-        ForEach(["일", "월", "화", "수", "목", "금", "토"], id:\.self) { day in
+        ForEach(["일", "월", "화", "수", "목", "금", "토"], id: \.self) { day in
           Text(day)
             .font(.caption)
             .foregroundColor(.gray)
@@ -49,14 +54,29 @@ struct CustomCalendarView: View {
             selectedDate = date
             onDismiss()
           }, label: {
-            Text("\(Calendar.current.component(.day, from: date))")
-              .font(.subheadline)
-              .frame(width: 36, height: 36)
-              .background(
-                Calendar.current.isDate(date, inSameDayAs: selectedDate) ? Color.main : Color.clear
-              )
-              .foregroundColor(Calendar.current.isDate(date, inSameDayAs: selectedDate) ? .white : .primary)
-              .clipShape(Circle())
+            VStack(spacing: 4) {
+              Text("\(Calendar.current.component(.day, from: date))")
+                .font(.subheadline)
+                .frame(width: 36, height: 36)
+                .background(
+                  Calendar.current.isDate(date, inSameDayAs: selectedDate) ? Color.main : Color.clear
+                )
+                .foregroundColor(Calendar.current.isDate(date, inSameDayAs: selectedDate) ?
+                  .white : .primary
+                )
+                .clipShape(Circle())
+              
+              if let kcal = calorieData.first(where: { Calendar.current.isDate($0.key, inSameDayAs: date) })?.value {
+                Text("\(kcal)kcal")
+                  .font(.pretendard(type: .regular, size: 11))
+                  .foregroundColor(.white)
+                  .padding(4)
+                  .background(Color.main)
+                  .cornerRadius(12)
+              } else {
+                Spacer()
+              }
+            }
           })
         }
       }
