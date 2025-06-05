@@ -11,6 +11,7 @@ import SwiftUI
 struct OnboardingResultView: View {
   @Binding var onboardingItem: OnboardingItem
   
+  @State private var isNext: Bool = false
   @Environment(\.modelContext) private var modelContext: ModelContext
   @Query private var inbodyData: [Inbody]
   @Query private var calorieData: [CalorieRequirements]
@@ -62,6 +63,7 @@ struct OnboardingResultView: View {
           bgColor: .main
         ) {
           save()
+          isNext = true
         }
       }
     }
@@ -77,6 +79,9 @@ struct OnboardingResultView: View {
     .padding(.horizontal, Spacing.medium)
     .padding(.vertical, Spacing.extrLarge)
     .navigationBarBackButtonHidden()
+    .navigationDestination(isPresented: $isNext) {
+      MainUIView()
+    }
   }
   
   private var titleView: some View {

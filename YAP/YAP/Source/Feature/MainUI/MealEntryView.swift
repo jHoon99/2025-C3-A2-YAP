@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MealEntryView: View {
+  @State private var isNext: Bool = false
+  
   var mealCount: Int
   let mealTitle: [String] = ["첫 식사", "두 번째 식사", "세 번째 식사", "네 번째 식사", "다섯 번째 식사", "여섯 번째 식사"]
   let calories: [(current: Int, goal: Int)] = [
@@ -18,6 +20,7 @@ struct MealEntryView: View {
     VStack(spacing: 16) {
       ForEach(0..<mealCount, id: \.self) { index in
         MealInfo(
+          isNext: $isNext,
           title: mealTitle[index],
           currentCalories: calories[index].current,
           targetCalories: calories[index].goal)
@@ -26,6 +29,9 @@ struct MealEntryView: View {
         }
       }
     }
+    .navigationDestination(isPresented: $isNext, destination: {
+      FoodSearchView()
+    })
     .padding(20)
     .background(.white)
     .cornerRadius(12)
@@ -33,6 +39,8 @@ struct MealEntryView: View {
 }
 
 struct MealInfo: View {
+  @Binding var isNext: Bool
+  
   let title: String
   let currentCalories: Int
   let targetCalories: Int
@@ -54,6 +62,7 @@ struct MealInfo: View {
       
       Button(action: {
         // 음식 추가 화면 나옴
+        isNext = true
       }, label: {
         Image(systemName: iconName)
           .font(.system(size: 16, weight: .black))

@@ -9,8 +9,16 @@ import SwiftData
 import SwiftUI
 
 struct ContentView: View {
+  @Query var data: [Inbody]
+  
   var body: some View {
-    OnboardingView()
+    NavigationStack {
+      if data.isEmpty {
+        OnboardingView()
+      } else {
+        MainUIView()
+      }
+    }
   }
 }
 
