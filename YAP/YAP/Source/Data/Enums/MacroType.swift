@@ -7,18 +7,14 @@
 
 import Foundation
 
-enum MacroType: CaseIterable, Identifiable {
-  case carbohydrate
-  case protein
-  case fat
+enum MacroType: String, CaseIterable, Identifiable {
+  case carbohydrate = "탄수화물"
+  case protein = "단백질"
+  case fat = "지방"
   
   var id: Self { self }
   
   var title: String {
-    switch self {
-    case .carbohydrate: return "탄수화물"
-    case .protein: return "단백질"
-    case .fat: return "지방"
-    }
+    rawValue
   }
 }
