@@ -6,10 +6,22 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct CartView: View {
   
+  @StateObject private var dataManager = CartDataManager()
   @EnvironmentObject var cartManager: CartManager
+  @Environment(\.modelContext) private var modelContext
+  @Environment(\.dismiss) private var dismiss
+  
+  @State private var isSaving = false
+  @State private var showSaveAlert = false
+  @State private var saveMessage = ""
+  
+  @State private var showCalorieSheet = false
+  @State private var calorieAdjustmentType: AdjustmentType?
+  @State private var calorieAdjustmentAmount: Int = 0
   
   var body: some View {
     List {
@@ -24,7 +36,7 @@ struct CartView: View {
             
             Text("\(cartManager.totalNutrition.calories) kcal")
           }
-//          .padding(Spacing.large)
+          //          .padding(Spacing.large)
           
           HStack(spacing: 48) {
             NutritionCircle(
@@ -47,7 +59,7 @@ struct CartView: View {
             )
           }
           .padding(.top, Spacing.large)
-//          .padding(.bottom, Spacing.large)
+          //          .padding(.bottom, Spacing.large)
         }
       }
       .listRowSeparator(.hidden)
@@ -65,7 +77,7 @@ struct CartView: View {
             .foregroundColor(.main)
           Spacer()
         }
-//        .padding(Spacing.large)
+        //        .padding(Spacing.large)
       }
       .listRowSeparator(.hidden)
       .listRowInsets(EdgeInsets())
@@ -123,6 +135,9 @@ struct CartView: View {
         
         CtaButton(buttonName: .eat, titleColor: .white, bgColor: .main) {
           print("dd")
+          if !cartManager.cartItems.isEmpty {
+            trigger()
+          }
         }
         .padding()
       }
@@ -130,9 +145,64 @@ struct CartView: View {
       .listRowInsets(EdgeInsets())
       .listRowBackground(Color.clear)
     }
+    .onAppear {
+      dataManager.setModelContext(modelContext)
+    }
+    .sheet(isPresented: $showCalorieSheet) {
+      if let type = calorieAdjustmentType {
+        CalorieAdjustmentView(
+          isPresented: $showCalorieSheet,
+          type: type,
+          adjustmentAmount: calorieAdjustmentAmount
+        )
+      }
+    }
+    .alert("식단 저장 성공!", isPresented: $showSaveAlert) {
+      Button("확인") {
+        if saveMessage.contains("성공") {
+          cartManager.cartItems.removeAll()
+          dismiss()
+        }
+      }
+    } message: {
+      Text(saveMessage)
+    }
+  }
+  // MARK: - 저장하기전에 AdjustmnetSheet 띄울지 말지
+  private func trigger() {
+    // CartManager에서 일일 목표 칼로리 가져오기 (더미상태)
+    let dailGoalCalories = cartManager.dailyGoals.calories
+    let currentCalories = cartManager.totalNutrition.calories
+    let difference = dailGoalCalories - currentCalories
+    
+    if difference > 200 {
+      calorieAdjustmentType = .underLimit
+      calorieAdjustmentAmount = difference
+      showCalorieSheet = true
+    } else if difference < -200 {
+      calorieAdjustmentType = .overLimit
+      calorieAdjustmentAmount = abs(difference)
+      showCalorieSheet = true
+    } else {
+      saveCart()
+    }
+  }
+  
+  // MARK: - 저장함수 여러가지 상태변경
+  private func saveCart() {
+    isSaving = true
+    
+    Task {
+      let result = await dataManager.saveMeal(from: cartManager.cartItems)
+      
+      await MainActor.run {
+        saveMessage = result.message
+        showSaveAlert = true
+        isSaving = false
+      }
+    }
   }
 }
-
 #Preview {
   CartView()
     .environmentObject(CartManager())

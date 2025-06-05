@@ -86,9 +86,7 @@ struct FoodSearchView: View {
       .onChange(of: searchText) { newValue, _ in
         if newValue.isEmpty {
           nutritionService.foodItem = []
-        } else {
-          performSearch()
-        }
+        } 
       }
     }
   }
