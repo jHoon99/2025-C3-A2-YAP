@@ -61,7 +61,7 @@ struct NutrientRing: View {
         Text("\(trimmedNumberString(from: value))g")
           .font(.title)
       }
-      .frame(width: .infinity, height: 80)
+      .frame(width: .infinity, height: 80) // FIXME: 수정해주세요 ~
       
       Text(nutrient)
         .font(.caption)

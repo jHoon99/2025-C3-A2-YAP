@@ -17,7 +17,7 @@ struct InbodyInfoView: View {
   
   private static let initialStartDate = Date()
   private static let initialEndDate = Date()
-  var bodyRecords: [Inbody]
+  @Query var bodyRecords: [Inbody]
   
   var body: some View {
     ScrollView {
@@ -214,7 +214,7 @@ private struct RangeSelectionSheet: View {
     .presentationCornerRadius(24)
   }
 }
-
-#Preview {
-  InbodyInfoView(bodyRecords: Inbody.sampleData)
-}
+//
+//#Preview {
+//  InbodyInfoView(bodyRecords: Inbody.sampleData)
+//}

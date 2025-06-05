@@ -26,13 +26,16 @@ struct MainUIView: View {
         CustomCalendarView(selectedDate: $selectedDate, onDismiss: {
           showDatePicker = false
         })
-          .presentationDetents([.medium])
+        .presentationDetents([.medium])
       }
     }
+    .navigationBarBackButtonHidden()
     .ignoresSafeArea()
   }
 }
 
 #Preview {
-  MainUIView()
+  NavigationStack {
+    MainUIView()
+  }
 }

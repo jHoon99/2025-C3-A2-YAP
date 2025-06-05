@@ -38,6 +38,13 @@ struct DateSelectionView: View {
             .foregroundColor(.gray)
         })
         Spacer()
+        
+        NavigationLink {
+          InbodyInfoView()
+        } label: {
+          Image(systemName: "chart.xyaxis.line")
+            .foregroundStyle(.text)
+        }
       }
       
       CalendarScrollView(
