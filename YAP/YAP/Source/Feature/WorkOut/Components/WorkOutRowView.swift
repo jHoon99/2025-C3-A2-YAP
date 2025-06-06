@@ -29,12 +29,6 @@ extension WorkOutRowView {
             .foregroundStyle(.main)
         }
       }
-      
-//      if !isLast {
-//        Rectangle()
-//          .frame(height: 1)
-//          .foregroundStyle(.darker)
-//      }
     }
   }
 }
