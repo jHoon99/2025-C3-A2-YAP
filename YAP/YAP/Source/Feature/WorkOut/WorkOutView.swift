@@ -64,7 +64,7 @@ private extension WorkOutView {
 private struct WorkoutSectionView: View {
   let title: String
   let workouts: [WorkOutType]
-
+  
   var body: some View {
     VStack(alignment: .leading, spacing: Spacing.small) {
       VStack(spacing: 4) {
@@ -74,15 +74,15 @@ private struct WorkoutSectionView: View {
           .frame(width: 50, height: 3)
           .foregroundStyle(.main)
       }
-
+      
       VStack(alignment: .leading) {
         ForEach(workouts, id: \.self) { type in
           WorkOutRowView(image: type.imageAsset, title: type.rawValue)
-
+          
           if type != workouts.last {
-            Rectangle()
+            Divider()
               .frame(height: 1)
-              .foregroundStyle(.darker)
+              .background(.darker)
           }
         }
       }
