@@ -26,7 +26,7 @@ struct MainUIView: View {
         CustomCalendarView(selectedDate: $selectedDate, onDismiss: {
           showDatePicker = false
         })
-        .presentationDetents([.medium])
+        .presentationDetents([.height(500)])
       }
     }
     .navigationBarBackButtonHidden()

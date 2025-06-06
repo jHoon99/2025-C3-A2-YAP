@@ -14,7 +14,7 @@ struct NutrientSectionView: View {
   
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
-      HStack {
+      Group {
         Text("아래 그래프에서 담을 수 있는 ") +
         Text("탄").foregroundColor(.blue) +
         Text(".") +
@@ -25,12 +25,16 @@ struct NutrientSectionView: View {
       }
       .font(.pretendard(type: .medium, size: 14))
       .multilineTextAlignment(.center)
+      .lineLimit(1)
+      .minimumScaleFactor(0.5)
+      .frame(maxWidth: .infinity, alignment: .center)
       
       HStack(spacing: 24) {
         NutrientRing(nutrient: "탄수화물", value: 30, total: 120, mainColor: carbonColor)
         NutrientRing(nutrient: "단백질", value: 30, total: 120, mainColor: proteinColor)
         NutrientRing(nutrient: "지방", value: 30, total: 120, mainColor: lipidColor)
       }
+      .frame(maxWidth: .infinity, alignment: .center)
     }
     .padding(.horizontal, 32)
     .padding(.vertical, 30)
@@ -59,9 +63,9 @@ struct NutrientRing: View {
           )
         
         Text("\(trimmedNumberString(from: value))g")
-          .font(.title)
+          .font(.pretendard(type: .regular, size: 20))
       }
-      .frame(width: .infinity, height: 80) // FIXME: 수정해주세요 ~
+      .frame(width: 80, height: 80)
       
       Text(nutrient)
         .font(.caption)
