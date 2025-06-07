@@ -5,12 +5,14 @@
 //  Created by 조운경 on 6/3/25.
 //
 
+import SwiftData
 import SwiftUI
 
 struct MealEntryView: View {
+  @Query private var activityData: [ActivityInfo]
+  
   @State private var isNext: Bool = false
   
-  var mealCount: Int
   let mealTitle: [String] = ["첫 식사", "두 번째 식사", "세 번째 식사", "네 번째 식사", "다섯 번째 식사", "여섯 번째 식사"]
   let calories: [(current: Int, goal: Int)] = [
     (400, 700), (400, 700), (200, 700), (0, 700), (0, 700), (0, 700)
@@ -18,6 +20,8 @@ struct MealEntryView: View {
   
   var body: some View {
     VStack(spacing: 16) {
+      let mealCount = activityData.first?.mealCount ?? 0
+      
       ForEach(0..<mealCount, id: \.self) { index in
         MealInfo(
           isNext: $isNext,
@@ -79,5 +83,5 @@ struct MealInfo: View {
 }
 
 #Preview {
-    MealEntryView(mealCount: 4)
+    MealEntryView()
 }

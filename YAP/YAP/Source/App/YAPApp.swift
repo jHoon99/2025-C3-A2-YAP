@@ -13,7 +13,8 @@ struct YAPApp: App {
   var yapModelContainer: ModelContainer = {
     let schema = Schema([
       Inbody.self,
-      CalorieRequirements.self
+      CalorieRequirements.self,
+      ActivityInfo.self
     ])
     
     let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)

@@ -5,11 +5,14 @@
 //  Created by 조운경 on 6/2/25.
 //
 
+import SwiftData
 import SwiftUI
 
 struct CalorieSummaryView: View {
-  let mainColor: LinearGradient = LinearGradient.ctaGradient
+  @Query var calorieData: [CalorieRequirements]
   @State var progress: Double = 900 / 2000
+  
+  let mainColor: LinearGradient = LinearGradient.ctaGradient
   
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
@@ -39,7 +42,7 @@ struct CalorieSummaryView: View {
             .foregroundStyle(.main)
             HStack(spacing: 4) {
               Text("/")
-              Text("2000")
+              Text("\(calorieData.first?.calorie ?? 0)")
               Text("kcal")
             }
             .font(.inter(type: .regular, size: 15.3))

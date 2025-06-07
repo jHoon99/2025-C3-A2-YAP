@@ -17,7 +17,7 @@ struct MainUIView: View {
         DateSelectionView(selectedDate: $selectedDate, showDatePicker: $showDatePicker)
         CalorieSummaryView()
         NutrientSectionView()
-        MealEntryView(mealCount: 6)
+        MealEntryView()
       }
       .padding([.horizontal, .bottom], 16)
       .padding(.top, 64)

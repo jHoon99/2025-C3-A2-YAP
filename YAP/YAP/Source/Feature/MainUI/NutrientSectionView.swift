@@ -5,9 +5,12 @@
 //  Created by 조운경 on 6/3/25.
 //
 
+import SwiftData
 import SwiftUI
 
 struct NutrientSectionView: View {
+  @Query private var calorieData: [CalorieRequirements]
+  
   let carbonColor: Color = .main
   let proteinColor: Color = .green
   let lipidColor: Color = .dark
@@ -30,9 +33,9 @@ struct NutrientSectionView: View {
       .frame(maxWidth: .infinity, alignment: .center)
       
       HStack(spacing: 24) {
-        NutrientRing(nutrient: "탄수화물", value: 30, total: 120, mainColor: carbonColor)
-        NutrientRing(nutrient: "단백질", value: 30, total: 120, mainColor: proteinColor)
-        NutrientRing(nutrient: "지방", value: 30, total: 120, mainColor: lipidColor)
+        NutrientRing(nutrient: "탄수화물", value: 30, total: calorieData.first?.carbohydrates ?? 120, mainColor: carbonColor)
+        NutrientRing(nutrient: "단백질", value: 30, total: calorieData.first?.protein ?? 120, mainColor: proteinColor)
+        NutrientRing(nutrient: "지방", value: 30, total: calorieData.first?.lipid ?? 120, mainColor: lipidColor)
       }
       .frame(maxWidth: .infinity, alignment: .center)
     }

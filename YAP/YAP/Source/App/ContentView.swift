@@ -9,11 +9,13 @@ import SwiftData
 import SwiftUI
 
 struct ContentView: View {
-  @Query var data: [Inbody]
+  @Query var inbodyData: [Inbody]
+  @Query var calorieData: [CalorieRequirements]
+  @Query var activityData: [ActivityInfo]
   
   var body: some View {
     NavigationStack {
-      if data.isEmpty {
+      if inbodyData.isEmpty || calorieData.isEmpty || activityData.isEmpty {
         OnboardingView()
       } else {
         MainUIView()
