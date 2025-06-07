@@ -9,11 +9,43 @@ import SwiftData
 import SwiftUI
 
 struct NutrientSectionView: View {
+  @Binding var selectedDate: Date
+  
   @Query private var calorieData: [CalorieRequirements]
+  @Query private var mealData: [Meal]
   
   let carbonColor: Color = .main
   let proteinColor: Color = .green
   let lipidColor: Color = .dark
+  
+  var carbon: Double {
+    return calorieData.first?.carbohydrates ?? 120
+  }
+  var protein: Double {
+    return calorieData.first?.protein ?? 120
+  }
+  var lipid: Double {
+    return calorieData.first?.lipid ?? 120
+  }
+  
+  var totalCarbon: Double {
+    mealData
+      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
+      .map { $0.carbohydrates }
+      .reduce(0, +)
+  }
+  var totalProtein: Double {
+    mealData
+      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
+      .map { $0.protein }
+      .reduce(0, +)
+  }
+  var totalLipid: Double {
+    mealData
+      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
+      .map { $0.lipid }
+      .reduce(0, +)
+  }
   
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
@@ -33,9 +65,9 @@ struct NutrientSectionView: View {
       .frame(maxWidth: .infinity, alignment: .center)
       
       HStack(spacing: 24) {
-        NutrientRing(nutrient: "탄수화물", value: 30, total: calorieData.first?.carbohydrates ?? 120, mainColor: carbonColor)
-        NutrientRing(nutrient: "단백질", value: 30, total: calorieData.first?.protein ?? 120, mainColor: proteinColor)
-        NutrientRing(nutrient: "지방", value: 30, total: calorieData.first?.lipid ?? 120, mainColor: lipidColor)
+        NutrientRing(nutrient: "탄수화물", value: totalCarbon, total: calorieData.first?.carbohydrates ?? 120, mainColor: carbonColor)
+        NutrientRing(nutrient: "단백질", value: totalProtein, total: calorieData.first?.protein ?? 120, mainColor: proteinColor)
+        NutrientRing(nutrient: "지방", value: totalLipid, total: calorieData.first?.lipid ?? 120, mainColor: lipidColor)
       }
       .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -115,5 +147,5 @@ struct TrimmedCircle: InsettableShape {
 }
 
 #Preview {
-    NutrientSectionView()
+  NutrientSectionView(selectedDate: .constant(Date()))
 }

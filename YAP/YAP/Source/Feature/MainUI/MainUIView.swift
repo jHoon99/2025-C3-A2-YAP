@@ -15,9 +15,9 @@ struct MainUIView: View {
     ScrollView {
       VStack(spacing: 16) {
         DateSelectionView(selectedDate: $selectedDate, showDatePicker: $showDatePicker)
-        CalorieSummaryView()
-        NutrientSectionView()
-        MealEntryView()
+        CalorieSummaryView(selectedDate: $selectedDate)
+        NutrientSectionView(selectedDate: $selectedDate)
+        MealEntryView(selectedDate: $selectedDate)
       }
       .padding([.horizontal, .bottom], 16)
       .padding(.top, 64)

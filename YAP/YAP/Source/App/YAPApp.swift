@@ -14,7 +14,9 @@ struct YAPApp: App {
     let schema = Schema([
       Inbody.self,
       CalorieRequirements.self,
-      ActivityInfo.self
+      ActivityInfo.self,
+      Meal.self,
+      Menu.self
     ])
     
     let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)

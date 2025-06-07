@@ -9,8 +9,22 @@ import SwiftData
 import SwiftUI
 
 struct CalorieSummaryView: View {
+  @Binding var selectedDate: Date
+  
   @Query var calorieData: [CalorieRequirements]
-  @State var progress: Double = 900 / 2000
+  @Query var mealData: [Meal]
+  
+  var totalCalories: Int {
+    mealData
+      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
+      .map { $0.kcal }
+      .reduce(0, +)
+  }
+  
+  var progress: Double {
+    let target = calorieData.first?.calorie ?? 1
+    return Double(totalCalories) / Double(target)
+  }
   
   let mainColor: LinearGradient = LinearGradient.ctaGradient
   
@@ -19,7 +33,7 @@ struct CalorieSummaryView: View {
       VStack(alignment: .leading, spacing: 8) {
         Text("오늘 남은 칼로리는 ")
             .font(.pretendard(type: .medium, size: 24))
-        Text("1100kcal")
+        Text("\(calorieData.first?.calorie ?? 0 - totalCalories)kcal")
             .font(.pretendard(type: .medium, size: 24))
             .foregroundColor(.main) +
         Text("예요")
@@ -28,7 +42,7 @@ struct CalorieSummaryView: View {
       
       VStack(alignment: .leading, spacing: 8) {
         
-        GradientProgressView(progress: $progress)
+        GradientProgressView(progress: progress)
 //                ProgressView(value: 900, total: 2000)
 //                    .accentColor(.main)
 //                    .frame(height: 20)
@@ -37,7 +51,7 @@ struct CalorieSummaryView: View {
           
         HStack {
             Spacer()
-            Text("900")
+            Text("\(totalCalories)")
             .font(.inter(type: .bold, size: 20.4))
             .foregroundStyle(.main)
             HStack(spacing: 4) {
@@ -58,7 +72,7 @@ struct CalorieSummaryView: View {
 }
 
 struct GradientProgressView: View {
-  @Binding var progress: Double
+  var progress: Double
 
   var body: some View {
     ZStack(alignment: .leading) {
@@ -75,5 +89,5 @@ struct GradientProgressView: View {
 }
 
 #Preview {
-    CalorieSummaryView()
+  CalorieSummaryView(selectedDate: .constant(Date()))
 }

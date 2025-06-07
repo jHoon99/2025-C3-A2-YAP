@@ -9,25 +9,45 @@ import SwiftData
 import SwiftUI
 
 struct MealEntryView: View {
+  @Binding var selectedDate: Date
+  
+  @Query private var calorieData: [CalorieRequirements]
   @Query private var activityData: [ActivityInfo]
+  @Query private var mealData: [Meal]
   
   @State private var isNext: Bool = false
   
   let mealTitle: [String] = ["첫 식사", "두 번째 식사", "세 번째 식사", "네 번째 식사", "다섯 번째 식사", "여섯 번째 식사"]
-  let calories: [(current: Int, goal: Int)] = [
-    (400, 700), (400, 700), (200, 700), (0, 700), (0, 700), (0, 700)
-  ]
   
   var body: some View {
     VStack(spacing: 16) {
-      let mealCount = activityData.first?.mealCount ?? 0
+      let mealCount: Int = activityData.first?.mealCount ?? 0
+      let mealGoalkcal: Int = {
+        if let total = calorieData.first?.calorie {
+          return total / mealCount
+        } else {
+          return 0
+        }
+      }()
+      
+      let todayMeals = mealData.filter {
+        Calendar.current.isDate($0.day, inSameDayAs: selectedDate)
+      }
       
       ForEach(0..<mealCount, id: \.self) { index in
+        let currentCalories: Int = {
+          if index < todayMeals.count {
+            return todayMeals[index].kcal
+          } else {
+            return 0
+          }
+        }()
+        
         MealInfo(
           isNext: $isNext,
           title: mealTitle[index],
-          currentCalories: calories[index].current,
-          targetCalories: calories[index].goal)
+          currentCalories: currentCalories,
+          targetCalories: mealGoalkcal)
         if index < mealCount - 1 {
           Divider()
         }
@@ -83,5 +103,5 @@ struct MealInfo: View {
 }
 
 #Preview {
-    MealEntryView()
+  MealEntryView(selectedDate: .constant(Date()))
 }
