@@ -5,9 +5,12 @@
 //  Created by 조운경 on 6/2/25.
 //
 
+import SwiftData
 import SwiftUI
 
 struct CustomCalendarView: View {
+  @Query var mealData: [Meal]
+  
   @Binding var selectedDate: Date
   var onDismiss: () -> Void
   
@@ -25,10 +28,14 @@ struct CustomCalendarView: View {
     self._currentMonthOffset = State(initialValue: offset)
   }
   
-  var calorieData: [Date: Int] = [
-    Date(): 900,
-    Date() - 86400: 800
-  ]
+  var calorieData: [Date: Int] {
+    var result: [Date: Int] = [:]
+    for meal in mealData {
+      let day = Calendar.current.startOfDay(for: meal.day)
+      result[day, default: 0] += meal.kcal
+    }
+    return result
+  }
   
   var body: some View {
     VStack(spacing: 16) {
