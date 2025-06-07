@@ -47,7 +47,8 @@ struct MealEntryView: View {
           isNext: $isNext,
           title: mealTitle[index],
           currentCalories: currentCalories,
-          targetCalories: mealGoalkcal)
+          targetCalories: mealGoalkcal,
+          mealIndex: index)
         if index < mealCount - 1 {
           Divider()
         }
@@ -68,6 +69,7 @@ struct MealInfo: View {
   let title: String
   let currentCalories: Int
   let targetCalories: Int
+  let mealIndex: Int
   
   var body: some View {
     HStack {
