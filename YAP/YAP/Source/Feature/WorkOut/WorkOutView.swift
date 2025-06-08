@@ -21,8 +21,8 @@ extension WorkOutView {
       
       VStack(alignment: .leading, spacing: Spacing.large) {
         titleView
-        WorkoutSectionView(title: "유산소", workouts: cardioWorkouts)
-        WorkoutSectionView(title: "웨이트", workouts: weightWorkouts)
+        WorkoutSectionView(title: "유산소", workouts: cardioWorkouts, calorieToBurn: calorieToBurn)
+        WorkoutSectionView(title: "웨이트", workouts: weightWorkouts, calorieToBurn: calorieToBurn)
       }
     }
     .padding(.horizontal, Spacing.medium)
@@ -65,6 +65,7 @@ private extension WorkOutView {
 private struct WorkoutSectionView: View {
   let title: String
   let workouts: [WorkOutType]
+  let calorieToBurn: Int
   
   var body: some View {
     VStack(alignment: .leading, spacing: Spacing.small) {
@@ -78,7 +79,11 @@ private struct WorkoutSectionView: View {
       
       VStack(alignment: .leading) {
         ForEach(workouts, id: \.self) { type in
-          WorkOutRowView(image: type.imageAsset, title: type.rawValue, amount: "30분")
+          WorkOutRowView(
+            image: type.imageAsset,
+            title: type.rawValue,
+            amount: type.calculateAmout(ofCalorie: calorieToBurn)
+          )
           
           if type != workouts.last {
             Divider()
@@ -93,6 +98,6 @@ private struct WorkoutSectionView: View {
 
 #Preview {
   NavigationStack {
-    WorkOutView(calorieToBurn: 600)
+    WorkOutView(calorieToBurn: 300)
   }
 }
