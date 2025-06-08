@@ -19,10 +19,18 @@ struct CartView: View {
   @State private var showSaveAlert = false
   @State private var saveMessage = ""
   
-  //  @State private var showCalorieSheet = false
-  //  @State private var calorieAdjustmentType: AdjustmentType?
-  //  @State private var calorieAdjustmentAmount: Int = 0
+  @Query private var meals: [Meal]
+  private var remainingMeal: [Meal] {
+    meals.filter { !$0.isComplete && $0.mealIndex > loggingMealIndex }
+  }
+  private var avgCloriePerMeal: Int {
+    let upComing = remainingMeal
+    return upComing.isEmpty ? 0 : (upComing.reduce(0) { $0 + $1.targetKcal } / upComing.count)
+  }
+  
   @State private var adjustmentItem: AdjustmentItem? = nil
+  
+  let loggingMealIndex: Int
   
   var body: some View {
     List {
@@ -147,9 +155,11 @@ struct CartView: View {
         ),
         type: item.type,
         adjustmentAmount: item.amount,
-        onSave: {
+        onSave: { choice in
           saveCart()
-        }
+        },
+        remainingMealsCount: remainingMeal.count,
+        baseCaloriesPerMeal: avgCloriePerMeal
       )
       .presentationDetents([.fraction(0.9)])
       .presentationDragIndicator(.visible)
@@ -188,8 +198,10 @@ struct CartView: View {
     isSaving = true
     
     Task {
-      let result = await dataManager.saveMeal(from: cartManager.cartItems)
-      
+      let result = await dataManager.saveMeal(
+        from: cartManager.cartItems,
+        mealIndex: loggingMealIndex
+      )
       await MainActor.run {
         saveMessage = result.message
         showSaveAlert = true
@@ -207,7 +219,7 @@ extension View {
   }
 }
 
-#Preview {
-  CartView()
-    .environmentObject(CartManager())
-}
+//#Preview {
+//  CartView()
+//    .environmentObject(CartManager())
+//}

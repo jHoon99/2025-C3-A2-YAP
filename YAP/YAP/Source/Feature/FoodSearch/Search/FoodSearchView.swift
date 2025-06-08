@@ -16,6 +16,8 @@ struct FoodSearchView: View {
   @State private var selectedFoodItem: FoodItem?
   @State private var showcartView: Bool = false
   
+  let loggingMealIndex: Int
+  
   var body: some View {
     NavigationStack {
       ZStack(alignment: .bottomTrailing) {
@@ -55,7 +57,7 @@ struct FoodSearchView: View {
       }
       .toolbar {
         ToolbarItem(placement: .navigationBarTrailing) {
-          NavigationLink(destination: CartView().environmentObject(cartManager)) {
+          NavigationLink(destination: CartView(loggingMealIndex: self.loggingMealIndex).environmentObject(cartManager)) {
             ZStack {
               Image(systemName: "cart")
                 .foregroundColor(.text)
@@ -103,6 +105,6 @@ struct FoodSearchView: View {
   }
 }
 
-#Preview {
-  FoodSearchView()
-}
+//#Preview {
+//  FoodSearchView()
+//}
