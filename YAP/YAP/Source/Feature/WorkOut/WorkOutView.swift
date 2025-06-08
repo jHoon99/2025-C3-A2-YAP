@@ -11,6 +11,7 @@ struct WorkOutView: View {
   @Environment(\.dismiss) private var dismiss
   let cardioWorkouts = WorkOutType.allCases.filter { $0.category == .cardio }
   let weightWorkouts = WorkOutType.allCases.filter { $0.category == .weight }
+  let calorieToBurn: Int
 }
 
 extension WorkOutView {
@@ -47,7 +48,7 @@ private extension WorkOutView {
         .font(.pretendard(type: .bold, size: 28))
       
       Label {
-        Text("600kcal")
+        Text("\(calorieToBurn)kcal")
           .foregroundStyle(.main)
           .font(.pretendard(type: .bold, size: 28))
       } icon: {
@@ -92,6 +93,6 @@ private struct WorkoutSectionView: View {
 
 #Preview {
   NavigationStack {
-    WorkOutView()
+    WorkOutView(calorieToBurn: 600)
   }
 }
