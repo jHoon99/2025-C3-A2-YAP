@@ -77,7 +77,7 @@ private struct WorkoutSectionView: View {
       
       VStack(alignment: .leading) {
         ForEach(workouts, id: \.self) { type in
-          WorkOutRowView(image: type.imageAsset, title: type.rawValue)
+          WorkOutRowView(image: type.imageAsset, title: type.rawValue, amount: "30분")
           
           if type != workouts.last {
             Divider()
