@@ -11,17 +11,17 @@ struct CartItemRow: View {
   let item: CartItem
   
   var body: some View {
-    HStack {
+      HStack {
         Text(item.foodName)
           .font(.pretendard(type: .semibold, size: 16))
-      
+        
         Spacer()
-      
+        
         Text("\(item.calorie) kcal")
-        .font(.pretendard(type: .semibold, size: 16))
-        .foregroundColor(Color.placeholder)
-    }
-    .padding(.vertical, Spacing.small)
+          .font(.pretendard(type: .semibold, size: 16))
+          .foregroundColor(Color.placeholder)
+      }
+      .padding(.vertical, Spacing.small)
   }
 }
 

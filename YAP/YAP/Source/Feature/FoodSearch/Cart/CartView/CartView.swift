@@ -5,8 +5,8 @@
 //  Created by 조재훈 on 6/4/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct CartView: View {
   
@@ -19,9 +19,10 @@ struct CartView: View {
   @State private var showSaveAlert = false
   @State private var saveMessage = ""
   
-  @State private var showCalorieSheet = false
-  @State private var calorieAdjustmentType: AdjustmentType?
-  @State private var calorieAdjustmentAmount: Int = 0
+  //  @State private var showCalorieSheet = false
+  //  @State private var calorieAdjustmentType: AdjustmentType?
+  //  @State private var calorieAdjustmentAmount: Int = 0
+  @State private var adjustmentItem: AdjustmentItem? = nil
   
   var body: some View {
     List {
@@ -36,8 +37,6 @@ struct CartView: View {
             
             Text("\(cartManager.totalNutrition.calories) kcal")
           }
-          //          .padding(Spacing.large)
-          
           HStack(spacing: 48) {
             NutritionCircle(
               title: "탄수화물",
@@ -59,12 +58,9 @@ struct CartView: View {
             )
           }
           .padding(.top, Spacing.large)
-          //          .padding(.bottom, Spacing.large)
         }
       }
-      .listRowSeparator(.hidden)
-      .listRowInsets(EdgeInsets())
-      .listRowBackground(Color.clear)
+      .listRowClearStyle()
       
       // MARK: - 메뉴 헤더 섹션
       Section {
@@ -75,28 +71,21 @@ struct CartView: View {
           Text("\(cartManager.cartItems.count)")
             .font(.pretendard(type: .bold, size: 20))
             .foregroundColor(.main)
-          Spacer()
         }
-        //        .padding(Spacing.large)
       }
-      .listRowSeparator(.hidden)
-      .listRowInsets(EdgeInsets())
-      .listRowBackground(Color.clear)
+      .listRowClearStyle()
       
       // MARK: - 메뉴 아이템들
       if cartManager.cartItems.isEmpty {
         Section {
-          VStack {
-            Text("추가된 음식이 없습니다.")
-              .foregroundColor(.gray)
-              .padding()
-              .frame(maxWidth: .infinity)
-              .padding(.vertical, 40)
-          }
+          
+          Text("추가된 음식이 없습니다.")
+            .foregroundColor(.gray)
+            .frame(maxWidth: .infinity)
         }
-        .listRowSeparator(.hidden)
-        .listRowInsets(EdgeInsets())
-        .listRowBackground(Color.clear)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.vertical, 30)
+        .listRowClearStyle()
       } else {
         ForEach(Array(cartManager.cartItems.enumerated()), id: \.element.id) { index, item in
           Section {
@@ -116,6 +105,9 @@ struct CartView: View {
           }
         }
       }
+      Spacer()
+        .listRowClearStyle()
+      
       // MARK: - 하단 설명 및 버튼 섹션
       Section {
         VStack {
@@ -127,36 +119,43 @@ struct CartView: View {
           .font(.pretendard(type: .medium, size: 14))
           .foregroundColor(.subText)
           .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .background(Color.subBackground)
-        
-        Spacer()
-        
-        CtaButton(buttonName: .eat, titleColor: .white, bgColor: .main) {
-          print("dd")
-          if !cartManager.cartItems.isEmpty {
-            trigger()
+          
+          .frame(maxWidth: .infinity)
+          .background(Color.subBackground)
+          VStack {
+            CtaButton(buttonName: .eat, titleColor: .white, bgColor: .main) {
+              print("dd")
+              if !cartManager.cartItems.isEmpty {
+                trigger()
+              }
+            }
           }
+          .padding(.top, Spacing.extrLarge)
         }
-        .padding()
       }
-      .listRowSeparator(.hidden)
-      .listRowInsets(EdgeInsets())
-      .listRowBackground(Color.clear)
+      .listRowClearStyle()
     }
+    
     .onAppear {
       dataManager.setModelContext(modelContext)
     }
-    .sheet(isPresented: $showCalorieSheet) {
-      if let type = calorieAdjustmentType {
-        CalorieAdjustmentView(
-          isPresented: $showCalorieSheet,
-          type: type,
-          adjustmentAmount: calorieAdjustmentAmount
-        )
-      }
+    .sheet(item: $adjustmentItem, content: { item in
+      CalorieAdjustmentView(
+        isPresented: Binding(
+          get: { adjustmentItem != nil },
+          set: { if !$0 { adjustmentItem = nil } } // 시트가 닫힐 때 nil로 변경
+        ),
+        type: item.type,
+        adjustmentAmount: item.amount,
+        onSave: {
+          saveCart()
+        }
+      )
+      .presentationDetents([.fraction(0.9)])
+      .presentationDragIndicator(.visible)
     }
+    )
+    
     .alert("식단 저장 성공!", isPresented: $showSaveAlert) {
       Button("확인") {
         if saveMessage.contains("성공") {
@@ -176,13 +175,9 @@ struct CartView: View {
     let difference = dailGoalCalories - currentCalories
     
     if difference > 200 {
-      calorieAdjustmentType = .underLimit
-      calorieAdjustmentAmount = difference
-      showCalorieSheet = true
+      adjustmentItem = AdjustmentItem(type: .underLimit, amount: difference)
     } else if difference < -200 {
-      calorieAdjustmentType = .overLimit
-      calorieAdjustmentAmount = abs(difference)
-      showCalorieSheet = true
+      adjustmentItem = AdjustmentItem(type: .overLimit, amount: abs(difference))
     } else {
       saveCart()
     }
@@ -203,6 +198,15 @@ struct CartView: View {
     }
   }
 }
+extension View {
+  func listRowClearStyle() -> some View {
+    self
+      .listRowSeparator(.hidden)
+      .listRowInsets(EdgeInsets())
+      .listRowBackground(Color.clear)
+  }
+}
+
 #Preview {
   CartView()
     .environmentObject(CartManager())
