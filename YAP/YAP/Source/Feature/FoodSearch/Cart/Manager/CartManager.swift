@@ -10,13 +10,6 @@ import Foundation
 final class CartManager: ObservableObject {
   @Published var cartItems: [CartItem] = []
   
-  // MARK: -- 일일 목표량 설정 더미
-  let dailyGoals = DailyGoals(
-    calories: 2000,
-    carbohydrate: 300,
-    protein: 150,
-    fat: 65
-  )
   // MARK: -- 장바구니에 음식 추가
   func addFood(_ food: FoodItem, quantity: Int, unit: NutritionUnit) {
     let calories = food.nutrientValue(for: .calorie, quantity: quantity, unit: unit)
@@ -49,16 +42,6 @@ final class CartManager: ObservableObject {
       fat: cartItems.reduce(0) { $0 + $1.fat }
     )
   }
-  // MARK: -- 목표 달성률 계산
-  var achievementRate: Achievement {
-    let total = totalNutrition
-    return Achievement(
-      calories: Double(total.calories) / Double(dailyGoals.calories),
-      carbs: Double(total.carbs) / Double(dailyGoals.carbohydrate),
-      protein: Double(total.protein) / Double(dailyGoals.protein),
-      fat: Double(total.fat) / Double(dailyGoals.fat)
-    )
-  }
 }
 
 struct CartItem: Identifiable {
@@ -75,20 +58,6 @@ struct CartItem: Identifiable {
 struct Nutrition {
   let calories: Int
   let carbs: Int
-  let protein: Int
-  let fat: Int
-}
-
-struct Achievement {
-  let calories: Double
-  let carbs: Double
-  let protein: Double
-  let fat: Double
-}
-
-struct DailyGoals {
-  let calories: Int
-  let carbohydrate: Int
   let protein: Int
   let fat: Int
 }
