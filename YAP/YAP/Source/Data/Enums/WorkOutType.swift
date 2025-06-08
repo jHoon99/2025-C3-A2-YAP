@@ -46,7 +46,7 @@ extension WorkOutType {
   }
   
   /// 반환하는 클로저의 파라미터는 총 칼로리입니다.
-  /// 반환하는 클로저의 반환값은 유산소 운동의 경우 분 당 소모 칼로리를, 웨이트 트레이닝의 경우 세트 당 소모 칼로리입니다.
+  /// 반환하는 클로저의 반환값은 유산소 운동의 경우 분 당 소모 칼로리, 웨이트 트레이닝의 경우 세트 당 소모 칼로리입니다.
   private var amountCalculator: (Int) -> Int {
     switch self {
     case .running: return { cal in cal / 10 }
