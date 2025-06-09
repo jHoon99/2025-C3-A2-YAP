@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct CalorieAdjustmentView: View {
-  
+  @Query var excessCalories: [ExcessCalorie]
+  @Environment(\.modelContext) private var modelContext
   @Binding var isPresented: Bool
   
   let type: AdjustmentType // 칼로치 초과 또는 미달 타입
@@ -17,6 +19,10 @@ struct CalorieAdjustmentView: View {
   
   let remainingMealsCount: Int // 남은 끼니 수
   let baseCaloriesPerMeal: Int // 끼니당 기본 칼로리
+  
+  private var excessCalorieOfToday: ExcessCalorie? {
+    excessCalories.first { $0.isSameDate(as: Date()) }
+  }
   
   private var adjustmentPerMeal: Int { // 남은 끼니수에 비례해 배분
     guard remainingMealsCount > 0 else { return 0 }
@@ -58,10 +64,19 @@ struct CalorieAdjustmentView: View {
           Spacer()
           HStack {
             CtaButton(buttonName: .burn, titleColor: .main, bgColor: .lightHover) {
-              // 그 뭐냐,, 메인 알림으로 데이터 날라가야하죠?
               print("운동하기 선택")
               onSave(.exerciseControl)
               isPresented = false
+              if let excessCalorieOfToday = excessCalorieOfToday {
+                excessCalorieOfToday.addCalorie(adjustmentAmount)
+                do {
+                  try modelContext.save()
+                } catch {
+                  print("addCalorie error: \(error)")
+                }
+              } else {
+                modelContext.insert(ExcessCalorie(date: Date(), calorie: adjustmentAmount))
+              }
             }
             CtaButton(buttonName: .controlMeal, titleColor: .white, bgColor: .main) {
               // 그 뭐냐,, 메인 알림으로 데이터 날라가야하죠?

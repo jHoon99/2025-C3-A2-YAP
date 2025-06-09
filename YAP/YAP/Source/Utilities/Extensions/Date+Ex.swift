@@ -8,6 +8,10 @@
 import Foundation
 
 extension Date {
+  var startOfDay: Date {
+    Calendar.current.startOfDay(for: self)
+  }
+  
   var formattedYMD: String {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy/MM/dd"
