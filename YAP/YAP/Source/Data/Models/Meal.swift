@@ -18,6 +18,16 @@ class Meal {
   
   @Relationship(deleteRule: .cascade)
   var menus: [Menu]
+  
+  // MARK: - 끼니 구분을 위한 필드 추가
+  var mealIndex: Int
+  var isComplete: Bool = false
+  
+  // MARK: - 목표 칼로리 (동적 업데이트 위함)
+  var targetKcal: Int
+  var targetCarbs: Double
+  var targetProtein: Double
+  var targetFat: Double
 
   init(
     day: Date,
@@ -25,7 +35,12 @@ class Meal {
     protein: Double,
     lipid: Double,
     kcal: Int,
-    menus: [Menu]
+    menus: [Menu],
+    mealIndex: Int,
+    targetKcal: Int,
+    targetCarbs: Double,
+    targetProtein: Double,
+    targetFat: Double
   ) {
     self.day = day
     self.carbohydrates = carbohydrates
@@ -33,5 +48,10 @@ class Meal {
     self.lipid = lipid
     self.kcal = kcal
     self.menus = menus
+    self.mealIndex = mealIndex
+    self.targetKcal = targetKcal
+    self.targetCarbs = targetCarbs
+    self.targetProtein = targetProtein
+    self.targetFat = targetFat
   }
 }

@@ -55,7 +55,7 @@ struct MealEntryView: View {
       }
     }
     .navigationDestination(isPresented: $isNext, destination: {
-      FoodSearchView()
+      FoodSearchView(loggingMealIndex: 1)
     })
     .padding(20)
     .background(.white)

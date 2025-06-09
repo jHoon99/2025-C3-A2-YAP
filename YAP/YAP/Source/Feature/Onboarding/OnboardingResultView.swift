@@ -199,6 +199,31 @@ private extension OnboardingResultView {
     )
     
     modelContext.insert(calorie)
+    
+    let mealCount = onboardingItem.activityInfo.mealCount ?? 3
+    
+    let caloriePerMeal = mealCount > 0 ? (onboardingItem.goalCalories / mealCount) : 0
+    let carbohydratesPerMeal = mealCount > 0 ? (Double(macros.carb) / Double(mealCount)) : 0.0
+    let proteinPerMeal = mealCount > 0 ? (Double(macros.protein) / Double(mealCount)) : 0.0
+    let fatPerMeal = mealCount > 0 ? (Double(macros.fat) / Double(mealCount)) : 0.0
+    
+    // 끼니 수 만큼 빈 Meal 객체 생성 (끼니 당 목표만 설정, 실제 섭취량은 0인 상태)
+    for index in 0..<mealCount {
+      let meal = Meal(
+        day: Date(),
+        carbohydrates: 0,
+        protein: 0,
+        lipid: 0,
+        kcal: 0,
+        menus: [],
+        mealIndex: index,
+        targetKcal: caloriePerMeal,
+        targetCarbs: carbohydratesPerMeal,
+        targetProtein: proteinPerMeal,
+        targetFat: fatPerMeal
+      )
+      modelContext.insert(meal)
+    }
   }
 }
 

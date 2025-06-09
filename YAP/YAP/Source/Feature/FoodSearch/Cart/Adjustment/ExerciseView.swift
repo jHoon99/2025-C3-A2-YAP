@@ -9,53 +9,55 @@ import SwiftUI
 
 struct ExerciseView: View {
   
-  let title: String
-  let exerciseName: String
   let duration: String
   
   var body: some View {
-    VStack(alignment: .leading, spacing: Spacing.large) {
-      Text(title)
-        .overlay(Rectangle()
-          .frame(height: 3)
-          .foregroundColor(.main)
-          .offset(y: 16))
-      HStack {
-        Image(systemName: exerciseName)
-          .frame(width: 48, height: 48)
-        VStack(alignment: .leading, spacing: Spacing.small) {
-          Text(exerciseName)
-            .font(.pretendard(type: .medium, size: 16))
-          Text(duration)
-            .font(.pretendard(type: .semibold, size: 16))
+    VStack {
+      VStack(alignment: .leading, spacing: Spacing.large) {
+        Text("운동하기")
+          .overlay(Rectangle()
+            .frame(height: 3)
+            .foregroundColor(.main)
+            .offset(y: 16))
+          .padding(.bottom, Spacing.medium)
+        HStack(spacing: Spacing.large) {
+          Image("running")
+            .resizable()
+            .frame(width: 48, height: 48)
+          VStack(alignment: .leading, spacing: Spacing.small) {
+            Text("런닝")
+              .font(.pretendard(type: .medium, size: 16))
+            Text(duration)
+              .font(.pretendard(type: .semibold, size: 16))
+          }
+          Spacer()
         }
-        Spacer()
+        .padding(.leading, Spacing.large)
       }
-      .padding(.leading, Spacing.large)
-    }
-    .padding(.leading, Spacing.large)
-    .padding(.top, Spacing.medium)
-    Divider()
-    
-    VStack(alignment: .leading, spacing: Spacing.large) {
-      HStack {
-        Image(systemName: exerciseName)
-          .frame(width: 48, height: 48)
-        VStack(alignment: .leading, spacing: Spacing.small) {
-          Text(exerciseName)
-            .font(.pretendard(type: .medium, size: 16))
-          Text(duration)
-            .font(.pretendard(type: .semibold, size: 16))
+      Divider()
+      
+      VStack(alignment: .leading, spacing: Spacing.large) {
+        HStack(spacing: Spacing.large) {
+          Image("stepmill")
+            .resizable()
+            .frame(width: 48, height: 48)
+          VStack(alignment: .leading, spacing: Spacing.small) {
+            Text("천국의 계단")
+              .font(.pretendard(type: .medium, size: 16))
+            Text(duration)
+              .font(.pretendard(type: .semibold, size: 16))
+          }
+          Spacer()
         }
-        Spacer()
+        .padding(.leading, Spacing.large)
       }
-      .padding(.leading, Spacing.large)
     }
-    .padding(.leading, Spacing.large)
-    .padding(.top, Spacing.small)
+    .padding(.leading, Spacing.small)
+//    .padding(.top, Spacing.small)
+//    .padding(.bottom, Spacing.large)
   }
 }
 
 #Preview {
-  ExerciseView(title: "운동하기", exerciseName: "런닝", duration: "30분")
+  ExerciseView(duration: "30분")
 }

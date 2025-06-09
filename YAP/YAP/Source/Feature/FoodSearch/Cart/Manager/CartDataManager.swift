@@ -15,8 +15,8 @@ class CartDataManager: ObservableObject {
     self.modelContext = context
   }
   
-  // MARK: - 장바구니 아이템 SwiftData 저장
-  func saveMeal(from cartItems: [CartItem]) async -> (success: Bool, message: String) {
+  // MARK: - 장바구니 아이템 SwiftData 저장, mealIndex를 추가해서 끼니별 업데이트
+  func saveMeal(from cartItems: [CartItem], mealIndex: Int? = nil) async -> (success: Bool, message: String) {
     guard let modelContext = modelContext else {
       return (false, "ModelContext is nil")
     }
@@ -40,25 +40,62 @@ class CartDataManager: ObservableObject {
       let totalProteins = cartItems.reduce(0) { $0 + $1.protein }
       let totalFats = cartItems.reduce(0) { $0 + $1.fat }
       
-      let meal = Meal(
-        day: Date(),
-        carbohydrates: Double(totalCarbs),
-        protein: Double(totalProteins),
-        lipid: Double(totalFats),
-        kcal: totalCalories,
-        menus: menus
-      )
-      
-      // SwiftData 저장
-      modelContext.insert(meal)
+      if let mealIndex = mealIndex {
+        let descriptor = FetchDescriptor<Meal>(
+          predicate: #Predicate { $0.mealIndex == mealIndex }
+        )
+        let meals = try modelContext.fetch(descriptor)
+        
+        if let mealToUpdate = meals.first {
+          mealToUpdate.kcal = totalCalories
+          mealToUpdate.carbohydrates = Double(totalCarbs)
+          mealToUpdate.protein = Double(totalProteins)
+          mealToUpdate.lipid = Double(totalFats)
+          mealToUpdate.isComplete = true
+          mealToUpdate.menus = menus
+          
+          print("끼니 \(mealIndex) 업데이트 : \(totalCalories)kcal")
+        } else {
+          return (false, "해당 끼니를 찾을 수 없습니다.")
+        }
+      } else {
+        let meal = Meal(
+          day: Date(),
+          carbohydrates: Double(totalCarbs),
+          protein: Double(totalProteins),
+          lipid: Double(totalFats),
+          kcal: totalCalories,
+          menus: menus,
+          mealIndex: 0,
+          targetKcal: 0,
+          targetCarbs: 0,
+          targetProtein: 0,
+          targetFat: 0
+        )
+        modelContext.insert(meal)
+        print("\(totalCalories)")
+      }
       try modelContext.save()
-      
-      print("식단 저장 성공: \(menus.count)개 메뉴, 총 \(totalCalories)kcal")
       return (true, "식단이 성공적으로 저장되었습니다.")
     } catch {
       print("식단 저장 실패: \(error)")
       return (false, "식단 저장에 실패했습니다. \n\(error.localizedDescription)")
     }
   }
-  // MARK: - 식단 삭제 ?
+  // MARK: - 가장 최근에 저장된 Meal 객체 반환
+  func getLatestMeal() async -> Meal? {
+    guard let modelContext = modelContext else { return nil }
+      
+      let descriptor = FetchDescriptor<Meal>(
+        sortBy: [SortDescriptor(\.day, order: .reverse)]
+      )
+      
+      do {
+        let meals = try modelContext.fetch(descriptor)
+        return meals.first
+      } catch {
+        print("최신 Meal 조회 실패: \(error)")
+        return nil
+      }
+  }
 }
