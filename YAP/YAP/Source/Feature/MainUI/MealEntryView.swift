@@ -42,7 +42,9 @@ struct MealEntryView: View {
           targetCalories: targetCalories,
           mealIndex: index)
         
-        Divider()
+        if index < mealCount - 1 {
+          Divider()
+        }
       }
     }
     .onAppear {

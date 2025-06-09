@@ -64,9 +64,7 @@ struct DateSelectionView: View {
       if let index = dates.firstIndex(where: { Calendar.current.isDate($0, inSameDayAs: newValue)
       }) {
         selectedIndex = index
-        withAnimation(.easeOut) {
-          scrollOffset = -CGFloat(index) * (itemWidth + spacing)
-        }
+        scrollOffset = -CGFloat(index) * (itemWidth + spacing)
       }
     }
   }

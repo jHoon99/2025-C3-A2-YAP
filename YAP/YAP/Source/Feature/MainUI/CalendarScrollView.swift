@@ -54,7 +54,7 @@ struct CalendarScrollView: View {
               dragOffset = value.translation.width
             }
             .onEnded { value in
-              let predictedOffset = scrollOffset + value.predictedEndTranslation.width
+              let predictedOffset = scrollOffset + value.translation.width
               let rawIndex = -predictedOffset / totalItemWidth
               let clampedIndex = (rawIndex).rounded().clamped(to: 0...(CGFloat(dates.count - 1)))
               
