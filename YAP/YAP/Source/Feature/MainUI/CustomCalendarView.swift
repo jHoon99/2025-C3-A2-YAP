@@ -5,81 +5,114 @@
 //  Created by 조운경 on 6/2/25.
 //
 
+import SwiftData
 import SwiftUI
 
 struct CustomCalendarView: View {
+  @Query var mealData: [Meal]
+  
   @Binding var selectedDate: Date
   var onDismiss: () -> Void
   
   @State private var currentMonthOffset = 0
   
-  var calorieData: [Date: Int] = [
-    Date(): 900,
-    Date() - 86400: 800
-  ]
+  init(selectedDate: Binding<Date>, onDismiss: @escaping () -> Void) {
+    self._selectedDate = selectedDate
+    self.onDismiss = onDismiss
+    
+    let calendar = Calendar.current
+    let today = calendar.startOfMonth(for: Date())
+    let selectedMonth = calendar.startOfMonth(for: selectedDate.wrappedValue)
+    
+    let offset = calendar.dateComponents([.month], from: today, to: selectedMonth).month ?? 0
+    self._currentMonthOffset = State(initialValue: offset)
+  }
+  
+  var calorieData: [Date: Int] {
+    var result: [Date: Int] = [:]
+    for meal in mealData {
+      let day = Calendar.current.startOfDay(for: meal.day)
+      result[day, default: 0] += meal.kcal
+    }
+    return result
+  }
   
   var body: some View {
-    VStack {
-      HStack {
-        Button(action: {
-          currentMonthOffset -= 1
-        }, label: {
-          Image(systemName: "chevron.left")
-        })
-        Spacer()
-        Text(currentMonth)
-          .font(.headline)
-        Spacer()
-        Button(action: {
-          currentMonthOffset += 1
-        }, label: {
-          Image(systemName: "chevron.right")
-        })
-      }
-      .padding()
-      
+    VStack(spacing: 16) {
       let days = generateDays()
       
-      LazyVGrid(columns: Array(
-        repeating: GridItem(.flexible()), count: 7
-      ), spacing: 16) {
+      calendarHeader
+        .padding()
+      
+      HStack {
         ForEach(["일", "월", "화", "수", "목", "금", "토"], id: \.self) { day in
           Text(day)
             .font(.caption)
+            .frame(maxWidth: .infinity)
             .foregroundColor(.gray)
         }
-        
-        ForEach(days, id: \.self) { date in
-          Button(action: {
-            selectedDate = date
-            onDismiss()
-          }, label: {
-            VStack(spacing: 4) {
-              Text("\(Calendar.current.component(.day, from: date))")
-                .font(.subheadline)
-                .frame(width: 36, height: 36)
-                .background(
-                  Calendar.current.isDate(date, inSameDayAs: selectedDate) ? Color.main : Color.clear
-                )
-                .foregroundColor(Calendar.current.isDate(date, inSameDayAs: selectedDate) ?
-                  .white : .primary
-                )
-                .clipShape(Circle())
-              
-              if let kcal = calorieData.first(where: { Calendar.current.isDate($0.key, inSameDayAs: date) })?.value {
-                Text("\(kcal)kcal")
-                  .font(.pretendard(type: .regular, size: 11))
-                  .foregroundColor(.white)
-                  .padding(4)
-                  .background(Color.main)
-                  .cornerRadius(12)
-              } else {
-                Spacer()
-              }
+      }
+      
+      ZStack(alignment: .top) {
+        Color.clear.frame(height: 380)
+        LazyVGrid(columns: Array(
+          repeating: GridItem(.flexible()), count: 7
+        ), spacing: 16) {
+          ForEach(days, id: \.self) { date in
+            if Calendar.current.isDate(date, equalTo: Date.distantPast, toGranularity: .day) {
+              Spacer()
+            } else {
+              Button(action: {
+                selectedDate = date
+                onDismiss()
+              }, label: {
+                VStack(spacing: 4) {
+                  Text("\(Calendar.current.component(.day, from: date))")
+                    .font(.subheadline)
+                    .frame(width: 36, height: 36)
+                    .background(
+                      Calendar.current.isDate(date, inSameDayAs: selectedDate) ? Color.main : Color.clear
+                    )
+                    .foregroundColor(Calendar.current.isDate(date, inSameDayAs: selectedDate) ?
+                      .white : .primary
+                    )
+                    .clipShape(Circle())
+                  
+                  if let kcal = calorieData.first(where: { Calendar.current.isDate($0.key, inSameDayAs: date) })?.value {
+                    Text("\(kcal)kcal")
+                      .font(.pretendard(type: .regular, size: 10))
+                      .foregroundColor(.white)
+                      .padding(4)
+                      .background(Color.main)
+                      .cornerRadius(12)
+                  } else {
+                    Spacer()
+                  }
+                }
+              })
             }
-          })
+          }
         }
       }
+    }
+  }
+  
+  private var calendarHeader: some View {
+    HStack {
+      Button(action: {
+        currentMonthOffset -= 1
+      }, label: {
+        Image(systemName: "chevron.left")
+      })
+      Spacer()
+      Text(currentMonth)
+        .font(.headline)
+      Spacer()
+      Button(action: {
+        currentMonthOffset += 1
+      }, label: {
+        Image(systemName: "chevron.right")
+      })
     }
   }
   
@@ -118,6 +151,12 @@ struct CustomCalendarView: View {
     }
     
     return dates
+  }
+}
+
+extension Calendar {
+  func startOfMonth(for date: Date) -> Date {
+    return self.date(from: self.dateComponents([.year, .month], from: date)) ?? date
   }
 }
 

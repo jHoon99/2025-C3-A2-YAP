@@ -11,6 +11,14 @@ enum AssetImageString: String {
   case celebrate
   case alertIcon
   case healthMan
+  case burn
+  case benchPress
+  case deadLift
+  case squat
+  case bike
+  case rowing
+  case running
+  case stepmill
 }
 
 extension Image {

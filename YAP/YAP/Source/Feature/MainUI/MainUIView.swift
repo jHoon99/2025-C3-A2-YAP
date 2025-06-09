@@ -15,9 +15,9 @@ struct MainUIView: View {
     ScrollView {
       VStack(spacing: 16) {
         DateSelectionView(selectedDate: $selectedDate, showDatePicker: $showDatePicker)
-        CalorieSummaryView()
-        NutrientSectionView()
-        MealEntryView(mealCount: 6)
+        CalorieSummaryView(selectedDate: $selectedDate)
+        NutrientSectionView(selectedDate: $selectedDate)
+        MealEntryView(selectedDate: $selectedDate)
       }
       .padding([.horizontal, .bottom], 16)
       .padding(.top, 64)
@@ -26,7 +26,7 @@ struct MainUIView: View {
         CustomCalendarView(selectedDate: $selectedDate, onDismiss: {
           showDatePicker = false
         })
-        .presentationDetents([.medium])
+        .presentationDetents([.height(500)])
       }
     }
     .navigationBarBackButtonHidden()
