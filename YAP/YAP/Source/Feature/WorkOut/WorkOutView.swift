@@ -11,6 +11,7 @@ struct WorkOutView: View {
   @Environment(\.dismiss) private var dismiss
   let cardioWorkouts = WorkOutType.allCases.filter { $0.category == .cardio }
   let weightWorkouts = WorkOutType.allCases.filter { $0.category == .weight }
+  let calorieToBurn: Int
 }
 
 extension WorkOutView {
@@ -20,8 +21,8 @@ extension WorkOutView {
       
       VStack(alignment: .leading, spacing: Spacing.large) {
         titleView
-        WorkoutSectionView(title: "유산소", workouts: cardioWorkouts)
-        WorkoutSectionView(title: "웨이트", workouts: weightWorkouts)
+        WorkoutSectionView(title: "유산소", workouts: cardioWorkouts, calorieToBurn: calorieToBurn)
+        WorkoutSectionView(title: "웨이트", workouts: weightWorkouts, calorieToBurn: calorieToBurn)
       }
     }
     .padding(.horizontal, Spacing.medium)
@@ -47,7 +48,7 @@ private extension WorkOutView {
         .font(.pretendard(type: .bold, size: 28))
       
       Label {
-        Text("600kcal")
+        Text("\(calorieToBurn)kcal")
           .foregroundStyle(.main)
           .font(.pretendard(type: .bold, size: 28))
       } icon: {
@@ -64,6 +65,7 @@ private extension WorkOutView {
 private struct WorkoutSectionView: View {
   let title: String
   let workouts: [WorkOutType]
+  let calorieToBurn: Int
   
   var body: some View {
     VStack(alignment: .leading, spacing: Spacing.small) {
@@ -77,7 +79,11 @@ private struct WorkoutSectionView: View {
       
       VStack(alignment: .leading) {
         ForEach(workouts, id: \.self) { type in
-          WorkOutRowView(image: type.imageAsset, title: type.rawValue)
+          WorkOutRowView(
+            image: type.imageAsset,
+            title: type.rawValue,
+            amount: type.calculateAmout(ofCalorie: calorieToBurn)
+          )
           
           if type != workouts.last {
             Divider()
@@ -92,6 +98,6 @@ private struct WorkoutSectionView: View {
 
 #Preview {
   NavigationStack {
-    WorkOutView()
+    WorkOutView(calorieToBurn: 300)
   }
 }

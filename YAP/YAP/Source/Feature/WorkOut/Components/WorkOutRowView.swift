@@ -10,6 +10,7 @@ import SwiftUI
 struct WorkOutRowView: View {
   let image: AssetImageString
   let title: String
+  let amount: String
 }
 
 extension WorkOutRowView {
@@ -24,7 +25,7 @@ extension WorkOutRowView {
           Text(title)
             .font(.pretendard(type: .semibold, size: 20))
           
-          Text("30분")
+          Text(amount)
             .font(.pretendard(type: .medium, size: 16))
             .foregroundStyle(.main)
         }
@@ -34,5 +35,5 @@ extension WorkOutRowView {
 }
 
 #Preview {
-  WorkOutRowView(image: .benchPress, title: "런닝")
+  WorkOutRowView(image: .benchPress, title: "런닝", amount: "30분")
 }

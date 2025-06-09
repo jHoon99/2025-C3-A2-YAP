@@ -44,4 +44,27 @@ extension WorkOutType {
     case .deadLift: return .deadLift
     }
   }
+  
+  /// 반환하는 클로저의 파라미터는 총 칼로리입니다.
+  /// 반환하는 클로저의 반환값은 유산소 운동의 경우 분 당 소모 칼로리, 웨이트 트레이닝의 경우 세트 당 소모 칼로리입니다.
+  private var amountCalculator: (Int) -> Int {
+    switch self {
+    case .running: return { cal in cal / 10 }
+    case .bike: return { cal in cal / 8 }
+    case .stepmill: return { cal in cal / 9 }
+    case .rowing: return { cal in cal / 11 }
+    case .benchPress: return { cal in cal / 15 }
+    case .squat: return { cal in cal / 20 }
+    case .deadLift: return { cal in cal / 25 }
+    }
+  }
+  
+  func calculateAmout(ofCalorie cal: Int) -> String {
+    switch self.category {
+    case .cardio:
+      return "\(self.amountCalculator(cal))분"
+    case .weight:
+      return "\(self.amountCalculator(cal))세트"
+    }
+  }
 }
