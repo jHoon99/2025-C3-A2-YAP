@@ -38,7 +38,7 @@ struct MainUIView: View {
       }
     }
     .onAppear {
-      setupMidnightTimer(testMode: false) // 테스트 시 true
+      checkTodayMealInitOnLaunch(testMode: false) // 테스트용(testMode가 true일 때)
     }
     .onChange(of: selectedDate) { newDate in
       print("📅 selectedDate 변경됨: \(newDate)")
@@ -54,36 +54,35 @@ struct MainUIView: View {
     .ignoresSafeArea()
   }
   
-  // MARK: 자정 타이머 설정
-  private func setupMidnightTimer(testMode: Bool = false) {
+  private func checkTodayMealInitOnLaunch(testMode: Bool = false) {
     let calendar = Calendar.current
-    let triggerTime: TimeInterval
+    let today = Calendar.current.startOfDay(for: Date())
+    let lastInit = UserDefaults.standard.object(forKey: "lastMealInitDate") as? Date
 
-    if testMode {
-      triggerTime = 5 // 테스트: 5초 후
-    } else if let nextMidnight = calendar.nextDate(after: Date(), matching: DateComponents(hour: 0), matchingPolicy: .strict) {
-      triggerTime = nextMidnight.timeIntervalSinceNow
+    if lastInit == nil || !Calendar.current.isDate(lastInit!, inSameDayAs: today) {
+      print("🍽️ 앱 재실행 - 오늘 식사 데이터 없음 → 생성")
+      checkAndInsertMeal(for: today)
+      UserDefaults.standard.set(today, forKey: "lastMealInitDate")
     } else {
-      return
+      print("✅ 오늘 식사 데이터 이미 생성됨")
     }
+    
+    // ✅ testMode: 30초 후에 selectedDate를 내일로 설정하고 Meal 생성
+    if testMode {
+      Timer.scheduledTimer(withTimeInterval: 30, repeats: false) { _ in
+        let fakeTomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
+        print("🌙 [TEST] 30초 후 자정 도착! → 내일로 이동: \(formattedDate(fakeTomorrow))")
 
-    timer = Timer.scheduledTimer(withTimeInterval: triggerTime, repeats: false) { _ in
-      if testMode {
-        // ✅ 테스트용: 다음 날로 강제 이동
-        let today = Calendar.current.startOfDay(for: Date())
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-        print("🧪 테스트 트리거: 내일로 이동됨")
-        selectedDate = tomorrow
-        checkAndInsertMeal(for: tomorrow)
-      } else {
-        // 실제 자정 처리
-        let today = Calendar.current.startOfDay(for: Date())
-        selectedDate = today
-        checkAndInsertMeal(for: today)
+        selectedDate = fakeTomorrow
+        checkAndInsertMeal(for: fakeTomorrow)
       }
-
-      setupMidnightTimer(testMode: testMode)
     }
+  }
+  
+  private func formattedDate(_ date: Date) -> String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    return formatter.string(from: date)
   }
   
   // MARK: Meal 자동 생성
