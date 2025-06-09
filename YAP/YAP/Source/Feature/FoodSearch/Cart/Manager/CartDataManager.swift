@@ -19,9 +19,9 @@ class CartDataManager: ObservableObject {
   func saveMeal(
     from cartItems: [CartItem],
     mealIndex: Int? = nil,
-    AdjsutmentRemainMeal: Bool = false,
-    adjustmentAmount: Int = 0,
-    adjustmentType: AdjustmentType? = nil
+    adjsutmentRemainMeal: Bool,
+    adjustmentAmount: Int,
+    adjustmentType: AdjustmentType?
   ) async -> (success: Bool, message: String) {
     
     guard let modelContext = modelContext else {
@@ -42,7 +42,7 @@ class CartDataManager: ObservableObject {
           nutrition: nutrition,
           menus: menus
         )
-        if AdjsutmentRemainMeal {
+        if adjsutmentRemainMeal {
           try await adjustRemainMealTarget(
             currentMealIndex: mealIndex,
             adjustmentAmount: adjustmentAmount,
@@ -55,12 +55,13 @@ class CartDataManager: ObservableObject {
       try modelContext.save()
       
       return (true, "식단이 성공적으로 저장되었습니다.")
-      
     } catch {
       print("식단 저장 실패: \(error)")
       return (false, "식단 저장에 실패했습니다.\(error.localizedDescription)")
     }
   }
+  
+  
   // MARK: - 가장 최근에 저장된 Meal 객체 반환
   func getLatestMeal() async -> Meal? {
     guard let modelContext = modelContext else { return nil }
@@ -79,7 +80,7 @@ class CartDataManager: ObservableObject {
   }
 }
 
-private extension CartDataManager {
+extension CartDataManager {
   // MARK: - 장바구니 아이템들을 Menu 객체로 변환
   // cartItem: 변환할 장바구니 아이템들
   func convertCartItemsToMenu(_ cartItems: [CartItem]) -> [Menu] {
@@ -117,7 +118,6 @@ private extension CartDataManager {
     nutrition: TotalNutrition,
     menus: [Menu]
   ) async throws {
-    
     // 해당 끼니 찾기
     let descriptor = FetchDescriptor<Meal>(
       predicate: #Predicate<Meal> { $0.mealIndex == mealIndex }
@@ -141,7 +141,6 @@ private extension CartDataManager {
   // adjustmentAmount: 조정할 총 칼로리량
   // adjustmentType: 조정타입 (.underLimit, .overLimit)
   func adjustRemainMealTarget(currentMealIndex: Int, adjustmentAmount: Int, adjustmentType: AdjustmentType?) async throws {
-    
     guard let adjustmentType = adjustmentType else {
       return
     }
@@ -182,6 +181,7 @@ private extension CartDataManager {
       meal.targetFat *= ratio
     }
   }
+  
   func createNewMeal(nutrition: TotalNutrition, menus: [Menu]) throws {
     let meal = Meal(
       day: Date(),

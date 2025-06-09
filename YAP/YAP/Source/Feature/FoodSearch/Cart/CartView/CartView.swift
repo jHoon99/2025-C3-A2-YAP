@@ -19,7 +19,7 @@ struct CartView: View {
   @State private var showSaveAlert = false
   @State private var saveMessage = ""
   
-  @Query private var meals: [Meal]
+  @Query(sort: \Meal.mealIndex) private var meals: [Meal]
   private var remainingMeal: [Meal] {
     meals.filter { !$0.isComplete && $0.mealIndex > loggingMealIndex }
   }
@@ -28,7 +28,7 @@ struct CartView: View {
     return upComing.isEmpty ? 0 : (upComing.reduce(0) { $0 + $1.targetKcal } / upComing.count)
   }
   
-  @State private var adjustmentItem: AdjustmentItem? = nil
+  @State private var adjustmentItem: AdjustmentItem?
   
   let loggingMealIndex: Int
   
@@ -153,6 +153,24 @@ struct CartView: View {
         type: item.type,
         adjustmentAmount: item.amount,
         onSave: { choice in
+          
+          if choice == .dietControl {
+            Task {
+              await saveCartwithAdjustment(
+                shouldAdjust: true,
+                adjustmentAmount: item.amount,
+                adjustmentType: item.type
+              )
+            }
+          } else {
+            Task {
+              await saveCartwithAdjustment(
+                shouldAdjust: false,
+                adjustmentAmount: 0,
+                adjustmentType: nil
+              )
+            }
+          }
           saveCart()
         },
         remainingMealsCount: remainingMeal.count,
@@ -189,19 +207,45 @@ struct CartView: View {
     }
   }
   
+  private func saveCartwithAdjustment(
+    shouldAdjust: Bool,
+    adjustmentAmount: Int,
+    adjustmentType: AdjustmentType?
+  ) async {
+    isSaving = true
+    
+    let result = await dataManager.saveMeal(
+      from: cartManager.cartItems,
+      mealIndex: loggingMealIndex,
+      adjsutmentRemainMeal: shouldAdjust,
+      adjustmentAmount: adjustmentAmount,
+      adjustmentType: adjustmentType
+    )
+    
+    await MainActor.run {
+      saveMessage = result.message
+      showSaveAlert = true
+      isSaving = false
+    }
+  }
+  
   // MARK: - 저장함수 여러가지 상태변경
   private func saveCart() {
     isSaving = true
     
     Task {
-      let shouldAdjust = adjustmentItem != nil
+      let hasshouldAdjust = adjustmentItem != nil
       let adjustType = adjustmentItem?.type
       let adjustAmount = adjustmentItem?.amount ?? 0
+      
+      let needAdjust = adjustAmount > 200 || adjustAmount < -200
+      
+      let sholdAdjust = hasshouldAdjust && needAdjust
       
       let result = await dataManager.saveMeal(
         from: cartManager.cartItems,
         mealIndex: loggingMealIndex,
-        AdjsutmentRemainMeal: shouldAdjust,
+        adjsutmentRemainMeal: sholdAdjust,
         adjustmentAmount: adjustAmount,
         adjustmentType: adjustType
       )
