@@ -15,6 +15,8 @@ struct MainUIView: View {
     ScrollView {
       VStack(spacing: 16) {
         DateSelectionView(selectedDate: $selectedDate, showDatePicker: $showDatePicker)
+        
+        WorkOutNotification()
         CalorieSummaryView(selectedDate: $selectedDate)
         NutrientSectionView(selectedDate: $selectedDate)
         MealEntryView(selectedDate: $selectedDate)
