@@ -26,10 +26,6 @@ struct MealEntryView: View {
       let mealCount: Int = activityData.first?.mealCount ?? 0
       
       ForEach(todayMeals) { meal in
-        let _ = print("\(meal.targetKcal)")
-      }
-      
-      ForEach(todayMeals) { meal in
         let index = meal.mealIndex
         let targetCalories = meal.targetKcal
         let currentCalories = meal.kcal
@@ -52,6 +48,11 @@ struct MealEntryView: View {
         Calendar.current.isDate($0.day, inSameDayAs: selectedDate)
       }
     }
+    .onChange(of: selectedDate, { _, newValue in
+      todayMeals = mealData.filter {
+        Calendar.current.isDate($0.day, inSameDayAs: newValue)
+      }
+    })
     .navigationDestination(isPresented: $isNext, destination: {
       if let index = selectedIndex {
         FoodSearchView(loggingMealIndex: index)
