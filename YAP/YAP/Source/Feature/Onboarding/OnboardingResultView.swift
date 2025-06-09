@@ -15,6 +15,7 @@ struct OnboardingResultView: View {
   @Environment(\.modelContext) private var modelContext: ModelContext
   @Query private var inbodyData: [Inbody]
   @Query private var calorieData: [CalorieRequirements]
+  @Query private var activityInfo: [ActivityInfo]
   
   private var macros: (carb: Int, protein: Int, fat: Int) {
     let leanMass = onboardingItem.inbody.first(where: { $0.type == .leanBodyMass })?.value ?? 0.0
@@ -179,6 +180,15 @@ private extension OnboardingResultView {
       )
       
       modelContext.insert(inbody)
+    }
+    
+    if let activityLevel = onboardingItem.activityInfo.activityLevel,
+       let goalType = onboardingItem.activityInfo.goalType,
+       let mealCount = onboardingItem.activityInfo.mealCount {
+      
+      let activityInfo = ActivityInfo(activityLevel: activityLevel, goalType: goalType, mealCount: mealCount)
+      
+      modelContext.insert(activityInfo)
     }
   
     let calorie = CalorieRequirements(

@@ -5,16 +5,51 @@
 //  Created by 조운경 on 6/3/25.
 //
 
+import SwiftData
 import SwiftUI
 
 struct NutrientSectionView: View {
+  @Binding var selectedDate: Date
+  
+  @Query private var calorieData: [CalorieRequirements]
+  @Query private var mealData: [Meal]
+  
   let carbonColor: Color = .main
   let proteinColor: Color = .green
   let lipidColor: Color = .dark
   
+  var carbon: Double {
+    return calorieData.first?.carbohydrates ?? 120
+  }
+  var protein: Double {
+    return calorieData.first?.protein ?? 120
+  }
+  var lipid: Double {
+    return calorieData.first?.lipid ?? 120
+  }
+  
+  var totalCarbon: Double {
+    mealData
+      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
+      .map { $0.carbohydrates }
+      .reduce(0, +)
+  }
+  var totalProtein: Double {
+    mealData
+      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
+      .map { $0.protein }
+      .reduce(0, +)
+  }
+  var totalLipid: Double {
+    mealData
+      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
+      .map { $0.lipid }
+      .reduce(0, +)
+  }
+  
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
-      HStack {
+      Group {
         Text("아래 그래프에서 담을 수 있는 ") +
         Text("탄").foregroundColor(.blue) +
         Text(".") +
@@ -25,12 +60,16 @@ struct NutrientSectionView: View {
       }
       .font(.pretendard(type: .medium, size: 14))
       .multilineTextAlignment(.center)
+      .lineLimit(1)
+      .minimumScaleFactor(0.5)
+      .frame(maxWidth: .infinity, alignment: .center)
       
       HStack(spacing: 24) {
-        NutrientRing(nutrient: "탄수화물", value: 30, total: 120, mainColor: carbonColor)
-        NutrientRing(nutrient: "단백질", value: 30, total: 120, mainColor: proteinColor)
-        NutrientRing(nutrient: "지방", value: 30, total: 120, mainColor: lipidColor)
+        NutrientRing(nutrient: "탄수화물", value: totalCarbon, total: calorieData.first?.carbohydrates ?? 120, mainColor: carbonColor)
+        NutrientRing(nutrient: "단백질", value: totalProtein, total: calorieData.first?.protein ?? 120, mainColor: proteinColor)
+        NutrientRing(nutrient: "지방", value: totalLipid, total: calorieData.first?.lipid ?? 120, mainColor: lipidColor)
       }
+      .frame(maxWidth: .infinity, alignment: .center)
     }
     .padding(.horizontal, 32)
     .padding(.vertical, 30)
@@ -59,9 +98,9 @@ struct NutrientRing: View {
           )
         
         Text("\(trimmedNumberString(from: value))g")
-          .font(.title)
+          .font(.pretendard(type: .regular, size: 20))
       }
-      .frame(width: .infinity, height: 80) // FIXME: 수정해주세요 ~
+      .frame(width: 80, height: 80)
       
       Text(nutrient)
         .font(.caption)
@@ -108,5 +147,5 @@ struct TrimmedCircle: InsettableShape {
 }
 
 #Preview {
-    NutrientSectionView()
+  NutrientSectionView(selectedDate: .constant(Date()))
 }
