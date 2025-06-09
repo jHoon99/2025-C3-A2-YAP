@@ -37,8 +37,7 @@ struct MealEntryView: View {
                    onAdd: {
             selectedMealIndex = index
             isNext = true
-          }
-          )
+          })
         }
         if index < mealCount - 1 {
           Divider()
