@@ -19,13 +19,13 @@ struct NutrientSectionView: View {
   let lipidColor: Color = .dark
   
   var carbon: Double {
-    return calorieData.first?.carbohydrates ?? 120
+    return calorieData.first?.carbohydrates ?? 0
   }
   var protein: Double {
-    return calorieData.first?.protein ?? 120
+    return calorieData.first?.protein ?? 0
   }
   var lipid: Double {
-    return calorieData.first?.lipid ?? 120
+    return calorieData.first?.lipid ?? 0
   }
   
   var totalCarbon: Double {
@@ -65,9 +65,9 @@ struct NutrientSectionView: View {
       .frame(maxWidth: .infinity, alignment: .center)
       
       HStack(spacing: 24) {
-        NutrientRing(nutrient: "탄수화물", value: totalCarbon, total: calorieData.first?.carbohydrates ?? 120, mainColor: carbonColor)
-        NutrientRing(nutrient: "단백질", value: totalProtein, total: calorieData.first?.protein ?? 120, mainColor: proteinColor)
-        NutrientRing(nutrient: "지방", value: totalLipid, total: calorieData.first?.lipid ?? 120, mainColor: lipidColor)
+        NutrientRing(nutrient: "탄수화물", value: totalCarbon, total: carbon, mainColor: carbonColor)
+        NutrientRing(nutrient: "단백질", value: totalProtein, total: protein, mainColor: proteinColor)
+        NutrientRing(nutrient: "지방", value: totalLipid, total: lipid, mainColor: lipidColor)
       }
       .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -91,14 +91,15 @@ struct NutrientRing: View {
           .fill(Color.main.opacity(0.12))
           .strokeBorder(Color.main.opacity(0.24), lineWidth: 8)
         
-        TrimmedCircle(progress: (total - value) / total)
+        TrimmedCircle(progress: value / total)
           .strokeBorder(
             mainColor,
             style: StrokeStyle(lineWidth: 8, lineCap: .round)
           )
         
-        Text("\(trimmedNumberString(from: value))g")
+        Text("\(trimmedNumberString(from: (total - value)))g")
           .font(.pretendard(type: .regular, size: 20))
+          .foregroundColor(value > total ? .red : .black)
       }
       .frame(width: 80, height: 80)
       

@@ -13,49 +13,49 @@ struct MealEntryView: View {
   
   @Query private var calorieData: [CalorieRequirements]
   @Query private var activityData: [ActivityInfo]
-  @Query private var mealData: [Meal]
+  @Query(sort: \Meal.mealIndex) private var mealData: [Meal]
   
   @State private var isNext: Bool = false
+  @State private var selectedIndex: Int? = nil
+  @State private var todayMeals: [Meal] = []
   
   let mealTitle: [String] = ["첫 식사", "두 번째 식사", "세 번째 식사", "네 번째 식사", "다섯 번째 식사", "여섯 번째 식사"]
   
   var body: some View {
     VStack(spacing: 16) {
       let mealCount: Int = activityData.first?.mealCount ?? 0
-      let mealGoalkcal: Int = {
-        if let total = calorieData.first?.calorie {
-          return total / mealCount
-        } else {
-          return 0
-        }
-      }()
       
-      let todayMeals = mealData.filter {
-        Calendar.current.isDate($0.day, inSameDayAs: selectedDate)
+      ForEach(todayMeals) { meal in
+        let _ = print("\(meal.targetKcal)")
       }
       
-      ForEach(0..<mealCount, id: \.self) { index in
-        let currentCalories: Int = {
-          if index < todayMeals.count {
-            return todayMeals[index].kcal
-          } else {
-            return 0
-          }
-        }()
+      ForEach(todayMeals) { meal in
+        let index = meal.mealIndex
+        let targetCalories = meal.targetKcal
+        let currentCalories = meal.kcal
         
         MealInfo(
           isNext: $isNext,
+          selectedIndex: $selectedIndex,
           title: mealTitle[index],
           currentCalories: currentCalories,
-          targetCalories: mealGoalkcal,
+          targetCalories: targetCalories,
           mealIndex: index)
-        if index < mealCount - 1 {
-          Divider()
-        }
+        
+        Divider()
+      }
+    }
+    .onAppear {
+      todayMeals = mealData.filter {
+        Calendar.current.isDate($0.day, inSameDayAs: selectedDate)
       }
     }
     .navigationDestination(isPresented: $isNext, destination: {
-      FoodSearchView(loggingMealIndex: 1)
+      if let index = selectedIndex {
+        FoodSearchView(loggingMealIndex: index)
+      } else {
+        EmptyView()
+      }
     })
     .padding(20)
     .background(.white)
@@ -65,6 +65,7 @@ struct MealEntryView: View {
 
 struct MealInfo: View {
   @Binding var isNext: Bool
+  @Binding var selectedIndex: Int?
   
   let title: String
   let currentCalories: Int
@@ -72,24 +73,25 @@ struct MealInfo: View {
   let mealIndex: Int
   
   var body: some View {
-    HStack {
-      Text(title)
-        .font(.subheadline)
-      
-      Spacer()
-      
-      Text("\(currentCalories) / \(targetCalories) kcal")
-        .foregroundColor(.gray)
-        .font(.inter(type: .regular, size: 14))
-      
-      let iconName: String = currentCalories > 0 ? "checkmark" : "plus"
-      let fgColor: Color = currentCalories > 0 ? .white : .main
-      let bgColor: Color = currentCalories > 0 ? .main: .lightHover
-      
-      Button(action: {
-        // 음식 추가 화면 나옴
-        isNext = true
-      }, label: {
+    Button(action: {
+      // 음식 추가 화면 나옴
+      selectedIndex = mealIndex
+      isNext = true
+    }, label: {
+      HStack {
+        Text(title)
+          .font(.subheadline)
+        
+        Spacer()
+        
+        Text("\(currentCalories) / \(targetCalories) kcal")
+          .foregroundColor(.gray)
+          .font(.inter(type: .regular, size: 14))
+        
+        let iconName: String = currentCalories > 0 ? "checkmark" : "plus"
+        let fgColor: Color = currentCalories > 0 ? .white : .main
+        let bgColor: Color = currentCalories > 0 ? .main: .lightHover
+        
         Image(systemName: iconName)
           .font(.system(size: 16, weight: .black))
           .foregroundColor(fgColor)
@@ -98,9 +100,8 @@ struct MealInfo: View {
             Circle()
               .fill(bgColor)
           )
-      })
-    }
-    .padding(.horizontal)
+      }
+    })
   }
 }
 
