@@ -15,12 +15,6 @@ struct CalorieAdjustmentView: View {
   let adjustmentAmount: Int // 칼로리 차이
   let onSave: (AdjustmentChoice) -> Void
   
-//  private let remainMeal = 2
-//  private var adjustMeal: Int { // 남은 끼니수에 비례해 배분
-//    guard remainMeal > 0 else { return 0 }
-//    return adjustmentAmount / remainMeal
-//  }
-  
   let remainingMealsCount: Int // 남은 끼니 수
   let baseCaloriesPerMeal: Int // 끼니당 기본 칼로리
   

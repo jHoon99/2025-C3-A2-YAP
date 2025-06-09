@@ -19,7 +19,7 @@ struct CartView: View {
   @State private var showSaveAlert = false
   @State private var saveMessage = ""
   
-  @Query private var meals: [Meal]
+  @Query(sort: \Meal.mealIndex) private var meals: [Meal]
   private var remainingMeal: [Meal] {
     meals.filter { !$0.isComplete && $0.mealIndex > loggingMealIndex }
   }
@@ -28,7 +28,7 @@ struct CartView: View {
     return upComing.isEmpty ? 0 : (upComing.reduce(0) { $0 + $1.targetKcal } / upComing.count)
   }
   
-  @State private var adjustmentItem: AdjustmentItem? = nil
+  @State private var adjustmentItem: AdjustmentItem?
   
   let loggingMealIndex: Int
   
@@ -49,20 +49,17 @@ struct CartView: View {
             NutritionCircle(
               title: "탄수화물",
               current: cartManager.totalNutrition.carbs,
-              goal: cartManager.dailyGoals.carbohydrate,
-              progress: cartManager.achievementRate.carbs
+              goal: Int(mealTargetCarbs)
             )
             NutritionCircle(
               title: "단백질",
               current: cartManager.totalNutrition.protein,
-              goal: cartManager.dailyGoals.protein,
-              progress: cartManager.achievementRate.protein
+              goal: Int(mealTargetProtein)
             )
             NutritionCircle(
               title: "지방",
               current: cartManager.totalNutrition.fat,
-              goal: cartManager.dailyGoals.fat,
-              progress: cartManager.achievementRate.fat
+              goal: Int(mealTargetFat)
             )
           }
           .padding(.top, Spacing.large)
@@ -156,6 +153,24 @@ struct CartView: View {
         type: item.type,
         adjustmentAmount: item.amount,
         onSave: { choice in
+          
+          if choice == .dietControl {
+            Task {
+              await saveCartwithAdjustment(
+                shouldAdjust: true,
+                adjustmentAmount: item.amount,
+                adjustmentType: item.type
+              )
+            }
+          } else {
+            Task {
+              await saveCartwithAdjustment(
+                shouldAdjust: false,
+                adjustmentAmount: 0,
+                adjustmentType: nil
+              )
+            }
+          }
           saveCart()
         },
         remainingMealsCount: remainingMeal.count,
@@ -179,10 +194,9 @@ struct CartView: View {
   }
   // MARK: - 저장하기전에 AdjustmnetSheet 띄울지 말지
   private func trigger() {
-    // CartManager에서 일일 목표 칼로리 가져오기 (더미상태)
-    let dailGoalCalories = cartManager.dailyGoals.calories
+    let mealTargetCaloires = currentMealTarget?.targetKcal ?? 0
     let currentCalories = cartManager.totalNutrition.calories
-    let difference = dailGoalCalories - currentCalories
+    let difference = mealTargetCaloires - currentCalories
     
     if difference > 200 {
       adjustmentItem = AdjustmentItem(type: .underLimit, amount: difference)
@@ -193,14 +207,47 @@ struct CartView: View {
     }
   }
   
+  private func saveCartwithAdjustment(
+    shouldAdjust: Bool,
+    adjustmentAmount: Int,
+    adjustmentType: AdjustmentType?
+  ) async {
+    isSaving = true
+    
+    let result = await dataManager.saveMeal(
+      from: cartManager.cartItems,
+      mealIndex: loggingMealIndex,
+      adjsutmentRemainMeal: shouldAdjust,
+      adjustmentAmount: adjustmentAmount,
+      adjustmentType: adjustmentType
+    )
+    
+    await MainActor.run {
+      saveMessage = result.message
+      showSaveAlert = true
+      isSaving = false
+    }
+  }
+  
   // MARK: - 저장함수 여러가지 상태변경
   private func saveCart() {
     isSaving = true
     
     Task {
+      let hasshouldAdjust = adjustmentItem != nil
+      let adjustType = adjustmentItem?.type
+      let adjustAmount = adjustmentItem?.amount ?? 0
+      
+      let needAdjust = adjustAmount > 200 || adjustAmount < -200
+      
+      let sholdAdjust = hasshouldAdjust && needAdjust
+      
       let result = await dataManager.saveMeal(
         from: cartManager.cartItems,
-        mealIndex: loggingMealIndex
+        mealIndex: loggingMealIndex,
+        adjsutmentRemainMeal: sholdAdjust,
+        adjustmentAmount: adjustAmount,
+        adjustmentType: adjustType
       )
       await MainActor.run {
         saveMessage = result.message
@@ -208,6 +255,19 @@ struct CartView: View {
         isSaving = false
       }
     }
+  }
+  // MARK: - 현재 끼니 영양성분 계산 프로퍼티
+  private var currentMealTarget: Meal? {
+    meals.first { $0.mealIndex == loggingMealIndex }
+  }
+  private var mealTargetCarbs: Double {
+    currentMealTarget?.targetCarbs ?? 0
+  }
+  private var mealTargetProtein: Double {
+    currentMealTarget?.targetProtein ?? 0
+  }
+  private var mealTargetFat: Double {
+    currentMealTarget?.targetFat ?? 0
   }
 }
 extension View {
