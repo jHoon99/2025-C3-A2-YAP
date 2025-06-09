@@ -33,7 +33,7 @@ struct CalorieSummaryView: View {
       VStack(alignment: .leading, spacing: 8) {
         Text("오늘 남은 칼로리는 ")
             .font(.pretendard(type: .medium, size: 24))
-        Text("\(calorieData.first?.calorie ?? 0 - totalCalories)kcal")
+        Text("\((calorieData.first?.calorie ?? 0) - totalCalories)kcal")
             .font(.pretendard(type: .medium, size: 24))
             .foregroundColor(.main) +
         Text("예요")
@@ -82,7 +82,7 @@ struct GradientProgressView: View {
 
       Capsule()
         .fill(LinearGradient.ctaGradient)
-        .frame(width: CGFloat(progress) * UIScreen.main.bounds.width * 0.8, height: 20)
+        .frame(width: progress <= 1 ? CGFloat(progress) : 1 * UIScreen.main.bounds.width * 0.8, height: 20)
     }
     .frame(maxWidth: .infinity)
   }
