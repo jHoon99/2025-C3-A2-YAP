@@ -5,11 +5,11 @@
 //  Created by 조재훈 on 6/5/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct CalorieAdjustmentView: View {
-  @Query var excessCalories: [ExcessCalorie]
+  @Query var calorieToBurns: [CalorieToBurn]
   @Environment(\.modelContext) private var modelContext
   @Binding var isPresented: Bool
   
@@ -20,8 +20,8 @@ struct CalorieAdjustmentView: View {
   let remainingMealsCount: Int // 남은 끼니 수
   let baseCaloriesPerMeal: Int // 끼니당 기본 칼로리
   
-  private var excessCalorieOfToday: ExcessCalorie? {
-    excessCalories.first { $0.isSameDate(as: Date()) }
+  private var calorieToBurnToday: CalorieToBurn? {
+    calorieToBurns.first { $0.isSameDate(as: Date()) }
   }
   
   private var adjustmentPerMeal: Int { // 남은 끼니수에 비례해 배분
@@ -67,7 +67,7 @@ struct CalorieAdjustmentView: View {
               print("운동하기 선택")
               onSave(.exerciseControl)
               isPresented = false
-              if let excessCalorieOfToday = excessCalorieOfToday {
+              if let excessCalorieOfToday = calorieToBurnToday {
                 excessCalorieOfToday.addCalorie(adjustmentAmount)
                 do {
                   try modelContext.save()
@@ -75,7 +75,7 @@ struct CalorieAdjustmentView: View {
                   print("addCalorie error: \(error)")
                 }
               } else {
-                modelContext.insert(ExcessCalorie(date: Date(), calorie: adjustmentAmount))
+                modelContext.insert(CalorieToBurn(date: Date(), calorie: adjustmentAmount))
               }
             }
             CtaButton(buttonName: .controlMeal, titleColor: .white, bgColor: .main) {

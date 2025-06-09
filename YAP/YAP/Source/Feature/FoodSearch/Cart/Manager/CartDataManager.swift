@@ -61,7 +61,6 @@ class CartDataManager: ObservableObject {
     }
   }
   
-  
   // MARK: - 가장 최근에 저장된 Meal 객체 반환
   func getLatestMeal() async -> Meal? {
     guard let modelContext = modelContext else { return nil }

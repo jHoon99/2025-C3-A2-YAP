@@ -9,7 +9,7 @@ import SwiftData
 import Foundation
 
 @Model
-class ExcessCalorie {
+class CalorieToBurn {
   var date: Date
   var calorie: Int
   
