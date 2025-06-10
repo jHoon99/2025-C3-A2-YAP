@@ -14,6 +14,8 @@ struct NutrientSectionView: View {
   @Query private var calorieData: [CalorieRequirements]
   @Query private var mealData: [Meal]
   
+  @State private var todayMeals: [Meal] = []
+  
   let carbonColor: Color = .main
   let proteinColor: Color = .green
   let lipidColor: Color = .dark
@@ -29,21 +31,15 @@ struct NutrientSectionView: View {
   }
   
   var totalCarbon: Double {
-    mealData
-      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
-      .map { $0.carbohydrates }
+    todayMeals.map { $0.carbohydrates }
       .reduce(0, +)
   }
   var totalProtein: Double {
-    mealData
-      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
-      .map { $0.protein }
+    todayMeals.map { $0.protein }
       .reduce(0, +)
   }
   var totalLipid: Double {
-    mealData
-      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
-      .map { $0.lipid }
+    todayMeals.map { $0.lipid }
       .reduce(0, +)
   }
   
@@ -71,10 +67,18 @@ struct NutrientSectionView: View {
       }
       .frame(maxWidth: .infinity, alignment: .center)
     }
+    .onAppear(perform: updateTodayMeals)
+    .onChange(of: selectedDate, updateTodayMeals)
     .padding(.horizontal, 32)
     .padding(.vertical, 30)
     .background(Color.white)
     .cornerRadius(12)
+  }
+  
+  private func updateTodayMeals() {
+    todayMeals = mealData.filter {
+      Calendar.current.isDate($0.day, inSameDayAs: selectedDate)
+    }
   }
 }
 

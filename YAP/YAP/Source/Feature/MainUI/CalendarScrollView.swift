@@ -31,43 +31,51 @@ struct CalendarScrollView: View {
                 .font(.caption)
                 .foregroundColor(.gray)
               
-              Text(dates[index].day)
-                .font(.headline)
-                .foregroundColor(index == selectedIndex ? .white : .black)
-                .frame(width: itemWidth, height: 36)
-                .background(index == selectedIndex ? Color.blue : Color.clear)
-                .clipShape(Circle())
-            }
-          }
-        }
-        .padding(.horizontal, centerX - itemWidth / 2)
-        .offset(x: scrollOffset + dragOffset)
-        .onAppear {
-          if !didInitialScroll {
-            scrollOffset  = -CGFloat(selectedIndex) * totalItemWidth
-            didInitialScroll = true
-          }
-        }
-        .gesture(
-          DragGesture()
-            .onChanged { value in
-              dragOffset = value.translation.width
-            }
-            .onEnded { value in
-              let predictedOffset = scrollOffset + value.translation.width
-              let rawIndex = -predictedOffset / totalItemWidth
-              let clampedIndex = (rawIndex).rounded().clamped(to: 0...(CGFloat(dates.count - 1)))
-              
-              withAnimation(.easeOut) {
-                selectedIndex = Int(clampedIndex)
-                scrollOffset = -CGFloat(selectedIndex) * totalItemWidth
+              Button {
+                selectedIndex = index
+                selectedDate = dates[index]
+                scrollOffset = -CGFloat(index) * totalItemWidth
                 dragOffset = 0
-                selectedDate = dates[selectedIndex]
+              } label: {
+                Text(dates[index].day)
+                  .font(.headline)
+                  .foregroundColor(index == selectedIndex ? .white : .black)
+                  .frame(width: itemWidth, height: 36)
+                  .background(index == selectedIndex ? Color.blue : Color.clear)
+                  .clipShape(Circle())
               }
             }
-        )
+          }
+          .padding(.horizontal, centerX - itemWidth / 2)
+          .offset(x: scrollOffset + dragOffset)
+          .contentShape(Rectangle())
+          .onAppear {
+            if !didInitialScroll {
+              scrollOffset  = -CGFloat(selectedIndex) * totalItemWidth
+              didInitialScroll = true
+            }
+          }
+          .gesture(
+            DragGesture()
+              .onChanged { value in
+                dragOffset = value.translation.width
+              }
+              .onEnded { value in
+                let predictedOffset = scrollOffset + value.translation.width
+                let rawIndex = -predictedOffset / totalItemWidth
+                let clampedIndex = (rawIndex).rounded().clamped(to: 0...(CGFloat(dates.count - 1)))
+                
+                withAnimation(.easeOut(duration: 0.2)) {
+                  selectedIndex = Int(clampedIndex)
+                  scrollOffset = -CGFloat(selectedIndex) * totalItemWidth
+                  dragOffset = 0
+                  selectedDate = dates[selectedIndex]
+                }
+              }
+          )
+        }
+        .frame(height: 100)
       }
-      .frame(height: 100)
     }
   }
 }

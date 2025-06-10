@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct WorkOutNotification: View {
-  let calroieToBurn: Int = 300
+  let calroieToBurn: Int
   
     var body: some View {
       NavigationLink(destination: WorkOutView(calorieToBurn: calroieToBurn)) {
@@ -34,5 +34,5 @@ struct WorkoutNotificationLabel: View {
 }
 
 #Preview {
-    WorkOutNotification()
+  WorkOutNotification(calroieToBurn: 300)
 }
