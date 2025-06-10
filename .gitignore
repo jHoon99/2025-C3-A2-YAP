@@ -12,6 +12,7 @@ Icon
 
 # Ignore custom config files
 Develop.xcconfig
+GoogleService-Info.plist
 
 # Thumbnails
 ._*

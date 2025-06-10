@@ -31,35 +31,34 @@ struct CalorieSummaryView: View {
     VStack(alignment: .leading, spacing: 16) {
       VStack(alignment: .leading, spacing: 8) {
         Text("오늘 남은 칼로리는 ")
-            .font(.pretendard(type: .medium, size: 24))
+          .font(.pretendard(type: .medium, size: 24))
         Text("\((calorieData.first?.calorie ?? 0) - totalCalories)kcal")
-            .font(.pretendard(type: .medium, size: 24))
-            .foregroundColor(.main) +
+          .font(.pretendard(type: .medium, size: 24))
+          .foregroundColor(.main) +
         Text("예요")
-            .font(.pretendard(type: .medium, size: 24))
+          .font(.pretendard(type: .medium, size: 24))
       }
       
       VStack(alignment: .leading, spacing: 8) {
         
         GradientProgressView(progress: progress)
-//                ProgressView(value: 900, total: 2000)
-//                    .accentColor(.main)
-//                    .frame(height: 20)
-//                    .scaleEffect(x: 1, y: 10, anchor: .center)
-//                    .clipShape(RoundedRectangle(cornerRadius: 10))
-          
+          .accentColor(.main)
+          .frame(height: 20)
+          .scaleEffect(x: 1, y: 10, anchor: .center)
+          .clipShape(RoundedRectangle(cornerRadius: 10))
+        
         HStack {
-            Spacer()
-            Text("\(totalCalories)")
+          Spacer()
+          Text("\(totalCalories)")
             .font(.inter(type: .bold, size: 20.4))
             .foregroundStyle(.main)
-            HStack(spacing: 4) {
-              Text("/")
-              Text("\(calorieData.first?.calorie ?? 0)")
-              Text("kcal")
-            }
-            .font(.inter(type: .regular, size: 15.3))
-            .foregroundColor(Color(.systemGray))
+          HStack(spacing: 4) {
+            Text("/")
+            Text("\(calorieData.first?.calorie ?? 0)")
+            Text("kcal")
+          }
+          .font(.inter(type: .regular, size: 15.3))
+          .foregroundColor(Color(.systemGray))
         }
       }
     }
@@ -80,18 +79,33 @@ struct CalorieSummaryView: View {
 
 struct GradientProgressView: View {
   var progress: Double
-
+  
   var body: some View {
-    ZStack(alignment: .leading) {
-      Capsule()
-        .fill(Color.gray.opacity(0.3))
-        .frame(height: 20)
+    GeometryReader { geometry in
+      ZStack(alignment: .leading) {
+        Capsule()
+          .fill(Color.gray.opacity(0.3))
+          .frame(height: 20)
 
-      Capsule()
-        .fill(LinearGradient.ctaGradient)
-        .frame(width: progress <= 1 ? CGFloat(progress) * UIScreen.main.bounds.width * 0.8 : 1 * UIScreen.main.bounds.width * 0.8, height: 20)
+        Capsule()
+          .fill(LinearGradient.ctaGradient)
+          .frame(width: progress <= 1 ? CGFloat(progress) * UIScreen.main.bounds.width * 0.8 : 1 * UIScreen.main.bounds.width * 0.8, height: 20)
     }
-    .frame(maxWidth: .infinity)
+    .frame(height: 20)
+  }
+}
+
+private extension CalorieSummaryView {
+  var totalCalories: Int {
+    mealData
+      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
+      .map { $0.kcal }
+      .reduce(0, +)
+  }
+  
+  var progress: Double {
+    let target = calorieData.first?.calorie ?? 1
+    return Double(totalCalories) / Double(target)
   }
 }
 

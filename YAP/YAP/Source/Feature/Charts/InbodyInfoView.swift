@@ -38,7 +38,6 @@ struct InbodyInfoView: View {
         BodyRecordCards(bodyRecords: bodyRecords.sorted { $0.date > $1.date })
       }
       .padding(16)
-      .background(.subBackground)
     }
     .scrollIndicators(.hidden)
     .sheet(isPresented: $showRangeSelectionSheet) {
@@ -50,6 +49,19 @@ struct InbodyInfoView: View {
         editingStartDate: startDate,
         editingEndDate: endDate
       )
+    }
+    .background(.subBackground)
+    .navigationTitle("인바디")
+    .navigationBarTitleDisplayMode(.inline)
+    .toolbar {
+      ToolbarItem(placement: .navigationBarTrailing) {
+        NavigationLink {
+          // TODO: OnboardingInbodyOcrView을 온보딩과 decouple해야 합니다.
+          OnboardingInbodyOcrView()
+        } label: {
+          Image(systemName: "plus.square.dashed")
+        }
+      }
     }
   }
 }
@@ -214,7 +226,3 @@ private struct RangeSelectionSheet: View {
     .presentationCornerRadius(24)
   }
 }
-//
-//#Preview {
-//  InbodyInfoView(bodyRecords: Inbody.sampleData)
-//}
