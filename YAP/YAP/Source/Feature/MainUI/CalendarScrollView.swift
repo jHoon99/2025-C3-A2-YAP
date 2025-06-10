@@ -31,12 +31,19 @@ struct CalendarScrollView: View {
                 .font(.caption)
                 .foregroundColor(.gray)
               
-              Text(dates[index].day)
-                .font(.headline)
-                .foregroundColor(index == selectedIndex ? .white : .black)
-                .frame(width: itemWidth, height: 36)
-                .background(index == selectedIndex ? Color.blue : Color.clear)
-                .clipShape(Circle())
+              Button {
+                selectedIndex = index
+                selectedDate = dates[index]
+                scrollOffset = -CGFloat(index) * totalItemWidth
+                dragOffset = 0
+              } label: {
+                Text(dates[index].day)
+                  .font(.headline)
+                  .foregroundColor(index == selectedIndex ? .white : .black)
+                  .frame(width: itemWidth, height: 36)
+                  .background(index == selectedIndex ? Color.blue : Color.clear)
+                  .clipShape(Circle())
+              }
             }
           }
         }
