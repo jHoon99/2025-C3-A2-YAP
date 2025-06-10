@@ -15,11 +15,12 @@ struct FoodSearchView: View {
   @State private var isSearching: Bool = false
   @State private var selectedFoodItem: FoodItem?
   @State private var showcartView: Bool = false
+  @Environment(\.dismiss) private var dismiss
   
   let loggingMealIndex: Int
   
   var body: some View {
-    NavigationStack {
+
       ZStack(alignment: .bottomTrailing) {
         VStack {
           if nutritionService.foodItem.isEmpty && !isSearching {
@@ -40,6 +41,7 @@ struct FoodSearchView: View {
             List {
               ForEach(nutritionService.foodItem) { item in
                 FoodItemRow(food: item)
+                  .contentShape(Rectangle())
                   .onTapGesture {
                     selectedFoodItem = item
                   }
@@ -53,6 +55,14 @@ struct FoodSearchView: View {
             .padding()
             .padding(.bottom)
             .shadow(radius: 4, x: 0, y: 4)
+        }
+      }
+      .onReceive(NotificationCenter.default.publisher(for: .didCompleteSaving)) { _ in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+          dismiss()
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            dismiss()
+          }
         }
       }
       .toolbar {
@@ -90,7 +100,7 @@ struct FoodSearchView: View {
           nutritionService.foodItem = []
         } 
       }
-    }
+    
   }
   
   private func performSearch() {
