@@ -86,26 +86,13 @@ struct GradientProgressView: View {
         Capsule()
           .fill(Color.gray.opacity(0.3))
           .frame(height: 20)
-
+        
         Capsule()
           .fill(LinearGradient.ctaGradient)
           .frame(width: progress <= 1 ? CGFloat(progress) * UIScreen.main.bounds.width * 0.8 : 1 * UIScreen.main.bounds.width * 0.8, height: 20)
+      }
     }
     .frame(height: 20)
-  }
-}
-
-private extension CalorieSummaryView {
-  var totalCalories: Int {
-    mealData
-      .filter { Calendar.current.isDate($0.day, inSameDayAs: selectedDate) }
-      .map { $0.kcal }
-      .reduce(0, +)
-  }
-  
-  var progress: Double {
-    let target = calorieData.first?.calorie ?? 1
-    return Double(totalCalories) / Double(target)
   }
 }
 
