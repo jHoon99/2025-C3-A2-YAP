@@ -23,32 +23,26 @@ struct CalendarScrollView: View {
       let totalItemWidth = itemWidth + spacing
       let centerX = geo.size.width / 2
       
-      ZStack {
-        Circle()
-          .fill(Color.blue)
-          .frame(width: itemWidth, height: 36)
-          .position(x: centerX, y: 60)
-        
-        ScrollView(.horizontal, showsIndicators: false) {
-          HStack(spacing: spacing) {
-            ForEach(Array(dates.enumerated()), id: \.offset) { index, date in
-              VStack(spacing: 4) {
-                Text(dates[index].dayOfTheWeek)
-                  .font(.caption)
-                  .foregroundColor(.gray)
-                
+      ScrollView(.horizontal, showsIndicators: false) {
+        HStack(spacing: spacing) {
+          ForEach(0..<dates.count, id: \.self) { index in
+            VStack(spacing: 4) {
+              Text(dates[index].dayOfTheWeek)
+                .font(.caption)
+                .foregroundColor(.gray)
+              
+              Button {
+                selectedIndex = index
+                selectedDate = dates[index]
+                scrollOffset = -CGFloat(index) * totalItemWidth
+                dragOffset = 0
+              } label: {
                 Text(dates[index].day)
                   .font(.headline)
                   .foregroundColor(index == selectedIndex ? .white : .black)
                   .frame(width: itemWidth, height: 36)
-                  .overlay(
-                    // 선택된 날짜만 흰 글자 오버레이
-                    index == selectedIndex
-                      ? Text(date.day)
-                          .font(.headline)
-                          .foregroundColor(.white)
-                      : nil
-                )
+                  .background(index == selectedIndex ? Color.blue : Color.clear)
+                  .clipShape(Circle())
               }
             }
           }

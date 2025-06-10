@@ -11,6 +11,7 @@ import SwiftUI
 struct MainUIView: View {
   @Environment(\.modelContext) private var modelContext
   
+  @Query var calorieToBurns: [CalorieToBurn]
   @State private var selectedDate = Date()
   @State private var showDatePicker = false
   @State private var timer: Timer?
@@ -19,12 +20,19 @@ struct MainUIView: View {
   @Query private var calorieData: [CalorieRequirements]
   @Query private var activityData: [ActivityInfo]
   
+  private var calorieToBurnToday: CalorieToBurn? {
+    calorieToBurns.first { $0.isSameDate(as: Date()) }
+  }
+  
   var body: some View {
     ScrollView {
       VStack(spacing: 16) {
         DateSelectionView(selectedDate: $selectedDate, showDatePicker: $showDatePicker)
         
-        WorkOutNotification()
+        if let excessCalorieOfToday = calorieToBurnToday {
+          WorkOutNotification(calroieToBurn: excessCalorieOfToday.calorie)
+        }
+        
         CalorieSummaryView(selectedDate: $selectedDate)
         NutrientSectionView(selectedDate: $selectedDate)
         MealEntryView(selectedDate: $selectedDate)
