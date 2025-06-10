@@ -11,11 +11,7 @@ struct DateSelectionView: View {
   @Binding var selectedDate: Date
   @Binding var showDatePicker: Bool
   
-  var dates: [Date] {
-    (0..<201).compactMap {
-      Calendar.current.date(byAdding: .day, value: $0 - 100, to: selectedDate)
-    }
-  }
+  @State private var dates: [Date] = []
 
   let itemWidth: CGFloat = 36
   let spacing: CGFloat = 16
@@ -60,7 +56,11 @@ struct DateSelectionView: View {
       .frame(height: 100)
     }
     .padding(.horizontal, 16)
+    .onAppear {
+      dates = generateDates(centeredAround: selectedDate)
+    }
     .onChange(of: selectedDate) { newValue in
+      dates = generateDates(centeredAround: newValue)
       if let index = dates.firstIndex(where: { Calendar.current.isDate($0, inSameDayAs: newValue)
       }) {
         selectedIndex = index
@@ -86,6 +86,12 @@ struct DateSelectionView: View {
     let formatter = DateFormatter()
     formatter.dateFormat = "MM.dd"
     return formatter.string(from: date)
+  }
+  
+  func generateDates(centeredAround date: Date) -> [Date] {
+    (0..<201).compactMap {
+      Calendar.current.date(byAdding: .day, value: $0 - 100, to: date)
+    }
   }
 }
 
