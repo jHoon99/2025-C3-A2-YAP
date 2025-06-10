@@ -14,8 +14,7 @@ struct NutritionCircle: View {
   
   private var safeProgress: Double {
     guard goal > 0 else { return 0.0 }
-    let progress = Double(current) / Double(goal)
-    return max(0.0, min(progress, 1.0)) // 0 ~ 1 제한
+    return max(0.0, Double(current) / Double(goal))
   }
   
   private var percentage: Int {
@@ -48,6 +47,10 @@ struct NutritionCircle: View {
             .frame(width: 16, height: 16)
             .font(.pretendard(type: .bold, size: 15))
             .foregroundColor(.main)
+        } else if percentage > 110 {
+          Image(systemName: "exclamationmark.triangle.fill")
+            .frame(width: 16, height: 16)
+            .font(.pretendard(type: .bold, size: 15))
         }
       }
       .frame(height: 16)
