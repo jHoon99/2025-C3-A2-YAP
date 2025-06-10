@@ -10,54 +10,26 @@ import SwiftUI
 struct ExerciseView: View {
   
   let duration: String
+  let imageName: String
+  let title: String
   
   var body: some View {
-    VStack {
-      VStack(alignment: .leading, spacing: Spacing.large) {
-        Text("운동하기")
-          .overlay(Rectangle()
-            .frame(height: 3)
-            .foregroundColor(.main)
-            .offset(y: 16))
-          .padding(.bottom, Spacing.medium)
-        HStack(spacing: Spacing.large) {
-          Image("running")
-            .resizable()
-            .frame(width: 48, height: 48)
-          VStack(alignment: .leading, spacing: Spacing.small) {
-            Text("런닝")
-              .font(.pretendard(type: .medium, size: 16))
-            Text(duration)
-              .font(.pretendard(type: .semibold, size: 16))
-          }
-          Spacer()
-        }
-        .padding(.leading, Spacing.large)
+    HStack(spacing: Spacing.large) {
+      Image(imageName)
+        .resizable()
+        .frame(width: 48, height: 48)
+      VStack(alignment: .leading, spacing: Spacing.small) {
+        Text(title)
+          .font(.pretendard(type: .medium, size: 16))
+        Text(duration)
+          .font(.pretendard(type: .semibold, size: 16))
       }
-      Divider()
-      
-      VStack(alignment: .leading, spacing: Spacing.large) {
-        HStack(spacing: Spacing.large) {
-          Image("stepmill")
-            .resizable()
-            .frame(width: 48, height: 48)
-          VStack(alignment: .leading, spacing: Spacing.small) {
-            Text("천국의 계단")
-              .font(.pretendard(type: .medium, size: 16))
-            Text(duration)
-              .font(.pretendard(type: .semibold, size: 16))
-          }
-          Spacer()
-        }
-        .padding(.leading, Spacing.large)
-      }
+      Spacer()
     }
-    .padding(.leading, Spacing.small)
-//    .padding(.top, Spacing.small)
-//    .padding(.bottom, Spacing.large)
+    Divider()
   }
 }
 
 #Preview {
-  ExerciseView(duration: "30분")
+  ExerciseView(duration: "30분", imageName: "running", title: "런닝")
 }
