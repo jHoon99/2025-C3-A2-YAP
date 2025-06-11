@@ -8,24 +8,29 @@
 import SwiftUI
 
 struct InputAgeSheet: View {
-  @Binding var infoItem: InbodyInfoItem
-  private let ageRange = Array(19...100)
-  
+  @Binding var value: Int
+  let minimumValue: Int = 10
+  let maximumValue: Int = 100
+
   var body: some View {
-    VStack {
-      Picker("나이",
-             selection: Binding(
-              get: { Int(infoItem.age) },
-              set: { newAge in infoItem.age = newAge })
-      ) {
-        ForEach(ageRange, id: \.self) { age in
-          Text("\(age) 세")
-            .tag(age)
-        }
-      }
-      .pickerStyle(.wheel)
-      .labelsHidden()
-      .frame(height: 200)
+    VStack(alignment: .leading) {
+      Text("나이를 입력하세요")
+        .font(.pretendard(type: .medium, size: 16))
+
+      Slider(
+        value: Binding<Double>(
+          get: { Double(value) },
+          set: { value = Int($0) }
+        ),
+        in: Double(minimumValue)...Double(maximumValue),
+        step: 1
+      )
+      .tint(.main)
+
+      Text("\(value)세")
+        .font(.pretendard(type: .medium, size: 16))
+        .frame(maxWidth: .infinity, alignment: .center)
     }
+    .padding(.horizontal, Spacing.small)
   }
 }
