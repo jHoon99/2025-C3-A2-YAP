@@ -25,13 +25,16 @@ struct DateSelectionView: View {
     VStack {
       HStack {
         Text(formattedShortDate(date: selectedDate))
-          .font(.title3).bold()
+          .font(.pretendard(type: .bold, size: 20))
+          .foregroundStyle(Color.text)
+          
         Button(action: {
           showDatePicker = true
         }, label: {
-          Image(systemName: "chevron.down")
-            .font(.subheadline).bold()
-            .foregroundColor(.gray)
+          Image(systemName: "arrowtriangle.down.fill")
+            .resizable()
+            .frame(width: 16, height: 10)
+            .foregroundStyle(Color.text)
         })
         Spacer()
         

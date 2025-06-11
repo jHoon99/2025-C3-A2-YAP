@@ -25,50 +25,58 @@ struct MainUIView: View {
   }
   
   var body: some View {
-    ScrollView {
-      VStack(spacing: 16) {
-        DateSelectionView(selectedDate: $selectedDate, showDatePicker: $showDatePicker)
-        
-        if let excessCalorieOfToday = calorieToBurnToday {
-          WorkOutNotification(calroieToBurn: excessCalorieOfToday.calorie)
+    NavigationStack {
+      ScrollView {
+        VStack(spacing: 16) {
+          DateSelectionView(selectedDate: $selectedDate, showDatePicker: $showDatePicker)
+          
+          if let excessCalorieOfToday = calorieToBurnToday {
+            WorkOutNotification(calroieToBurn: excessCalorieOfToday.calorie)
+          }
+          
+          CalorieSummaryView(selectedDate: $selectedDate)
+          NutrientSectionView(selectedDate: $selectedDate)
+          MealEntryView(selectedDate: $selectedDate)
         }
-        
-        CalorieSummaryView(selectedDate: $selectedDate)
-        NutrientSectionView(selectedDate: $selectedDate)
-        MealEntryView(selectedDate: $selectedDate)
+        .padding([.horizontal, .bottom], 16)
+        .padding(.top, 64)
+        .background(Color(.background))
+        .sheet(isPresented: $showDatePicker) {
+          CustomCalendarView(selectedDate: $selectedDate, onDismiss: {
+            showDatePicker = false
+          })
+          .presentationDetents([.height(500)])
+        }
       }
-      .padding([.horizontal, .bottom], 16)
-      .padding(.top, 64)
-      .background(Color(.systemGray6))
-      .sheet(isPresented: $showDatePicker) {
-        CustomCalendarView(selectedDate: $selectedDate, onDismiss: {
-          showDatePicker = false
-        })
-        .presentationDetents([.height(500)])
+      .onAppear {
+        checkTodayMealInitOnLaunch(testMode: false) // 테스트용(testMode가 true일 때)
+      }
+      .onChange(of: selectedDate) { newDate in
+        print("📅 selectedDate 변경됨: \(newDate)")
+        let today = Calendar.current.startOfDay(for: Date())
+        if Calendar.current.isDate(today, inSameDayAs: newDate) {
+          checkAndInsertMeal(for: newDate)
+        }
+      }
+      .onDisappear {
+        timer?.invalidate()
+      }
+      .navigationBarBackButtonHidden()
+      .ignoresSafeArea()
+    }
+    .toolbar {
+      ToolbarItem(placement: .principal) {
+        Text("")
       }
     }
-    .onAppear {
-      checkTodayMealInitOnLaunch(testMode: false) // 테스트용(testMode가 true일 때)
-    }
-    .onChange(of: selectedDate) { newDate in
-      print("📅 selectedDate 변경됨: \(newDate)")
-      let today = Calendar.current.startOfDay(for: Date())
-      if Calendar.current.isDate(today, inSameDayAs: newDate) {
-        checkAndInsertMeal(for: newDate)
-      }
-    }
-    .onDisappear {
-      timer?.invalidate()
-    }
-    .navigationBarBackButtonHidden()
-    .ignoresSafeArea()
+    .background(Color(.background))
   }
   
   private func checkTodayMealInitOnLaunch(testMode: Bool = false) {
     let calendar = Calendar.current
     let today = Calendar.current.startOfDay(for: Date())
     let lastInit = UserDefaults.standard.object(forKey: "lastMealInitDate") as? Date
-
+    
     if lastInit == nil || !Calendar.current.isDate(lastInit!, inSameDayAs: today) {
       print("🍽️ 앱 재실행 - 오늘 식사 데이터 없음 → 생성")
       checkAndInsertMeal(for: today)
@@ -82,7 +90,7 @@ struct MainUIView: View {
       Timer.scheduledTimer(withTimeInterval: 30, repeats: false) { _ in
         let fakeTomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
         print("🌙 [TEST] 30초 후 자정 도착! → 내일로 이동: \(formattedDate(fakeTomorrow))")
-
+        
         selectedDate = fakeTomorrow
         checkAndInsertMeal(for: fakeTomorrow)
       }
@@ -98,23 +106,23 @@ struct MainUIView: View {
   // MARK: Meal 자동 생성
   private func checkAndInsertMeal(for date: Date) {
     let dayToInsert = Calendar.current.startOfDay(for: date)
-
+    
     let todayMeals = mealData.filter {
       Calendar.current.isDate($0.day, inSameDayAs: dayToInsert)
     }
-
+    
     guard todayMeals.isEmpty,
           let calorie = calorieData.first?.calorie,
           let activity = activityData.first else {
       return
     }
-
+    
     let mealCount = activity.mealCount
     let kcalPerMeal = calorie / mealCount
     let carbPerMeal = (calorieData.first?.carbohydrates ?? 0) / Double(mealCount)
     let proteinPerMeal = (calorieData.first?.protein ?? 0) / Double(mealCount)
     let fatPerMeal = (calorieData.first?.lipid ?? 0) / Double(mealCount)
-
+    
     for index in 0..<mealCount {
       let meal = Meal(
         day: dayToInsert,

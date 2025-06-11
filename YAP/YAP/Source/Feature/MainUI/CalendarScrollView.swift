@@ -26,7 +26,7 @@ struct CalendarScrollView: View {
       ZStack {
         // 🎯 고정된 선택 원
         Circle()
-          .fill(Color.blue)
+          .fill(Color.main)
           .frame(width: itemWidth, height: 36)
           .position(x: centerX, y: 60)
 

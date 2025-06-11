@@ -16,9 +16,9 @@ struct NutrientSectionView: View {
   
   @State private var todayMeals: [Meal] = []
   
-  let carbonColor: Color = .main
-  let proteinColor: Color = .green
-  let lipidColor: Color = .dark
+  let carbonColor: Color = .carbohydrate
+  let proteinColor: Color = .protein
+  let lipidColor: Color = .fat
   
   var carbon: Double {
     return calorieData.first?.carbohydrates ?? 0
@@ -47,14 +47,14 @@ struct NutrientSectionView: View {
     VStack(alignment: .leading, spacing: 24) {
       Group {
         Text("아래 그래프에서 담을 수 있는 ") +
-        Text("탄").foregroundColor(.blue) +
+        Text("탄").foregroundColor(.main) +
         Text(".") +
-        Text("단").foregroundColor(.blue) +
+        Text("단").foregroundColor(.main) +
         Text(".") +
-        Text("지").foregroundColor(.blue) +
+        Text("지").foregroundColor(.main) +
         Text("를 확인해보세요!")
       }
-      .font(.pretendard(type: .medium, size: 14))
+      .font(.pretendard(type: .semibold, size: 15))
       .multilineTextAlignment(.center)
       .lineLimit(1)
       .minimumScaleFactor(0.5)
@@ -92,7 +92,7 @@ struct NutrientRing: View {
     VStack(spacing: 8) {
       ZStack {
         Circle()
-          .fill(Color.main.opacity(0.12))
+//          .fill(Color.main.opacity(0.12))
           .strokeBorder(Color.main.opacity(0.24), lineWidth: 8)
         
         TrimmedCircle(progress: value > total ? 1 : value / total)
@@ -102,14 +102,14 @@ struct NutrientRing: View {
           )
         
         Text("\(trimmedNumberString(from: total >= value ? (total - value) : -(total - value)))g")
-          .font(.pretendard(type: .regular, size: 20))
-          .foregroundColor(value > total ? .red : .black)
+          .font(.pretendard(type: .semibold, size: 18))
+          .foregroundColor(value > total ? .subText : mainColor)
       }
       .frame(width: 80, height: 80)
       
       Text(nutrient)
-        .font(.caption)
-        .foregroundColor(.black)
+        .font(.pretendard(type: .semibold, size: 14))
+        .foregroundColor(.text)
     }
   }
   
