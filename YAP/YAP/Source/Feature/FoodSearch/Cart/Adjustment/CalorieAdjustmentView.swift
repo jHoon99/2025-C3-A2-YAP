@@ -30,6 +30,7 @@ struct CalorieAdjustmentView: View {
   }
   
   var body: some View {
+    ScrollView {
     VStack(alignment: .leading, spacing: Spacing.large) {
       VStack(alignment: .leading, spacing: Spacing.small) {
         Text("권장 섭취량 보다")
@@ -49,12 +50,29 @@ struct CalorieAdjustmentView: View {
         .padding(.top, Spacing.medium)
       }
       .padding(.leading, Spacing.large)
-//      .padding(.top, Spacing.large)
       
       // MARK: - 케이스에 따른 옵션 선택
       VStack(spacing: Spacing.extrLarge) {
         if type == .overLimit {
-          ExerciseView(duration: "30분")
+          VStack(alignment: .leading, spacing: Spacing.large) {
+            Text("운동하기")
+              .overlay(Rectangle()
+                .frame(height: 3)
+                .foregroundColor(.main)
+                .offset(y: 16))
+              .padding(.bottom, Spacing.medium)
+            ExerciseView(
+              duration: "\(adjustmentAmount / 10)분",
+              imageName: "running",
+              title: "런닝"
+            )
+            ExerciseView(
+              duration: "\(adjustmentAmount / 9)분",
+              imageName: "stepmill",
+              title: "천국의 계단"
+            )
+          }
+          .padding(.leading, Spacing.small)
           DietView(
             remainingMealCount: remainingMealsCount,
             baseCaloriePerMeal: baseCaloriesPerMeal,
@@ -106,6 +124,7 @@ struct CalorieAdjustmentView: View {
     }
     .padding(.top, Spacing.large)
   }
+}
 }
 
 //#Preview {

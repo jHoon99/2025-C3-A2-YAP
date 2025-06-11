@@ -176,7 +176,6 @@ struct CartView: View {
         remainingMealsCount: remainingMeal.count,
         baseCaloriesPerMeal: avgCloriePerMeal
       )
-      .presentationDetents([.fraction(0.9)])
       .presentationDragIndicator(.visible)
     }
     )
@@ -185,7 +184,10 @@ struct CartView: View {
       Button("확인") {
         if saveMessage.contains("성공") {
           cartManager.cartItems.removeAll()
-          dismiss()
+          NotificationCenter.default.post(name: .didCompleteSaving, object: nil)
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            dismiss()
+          }
         }
       }
     } message: {
