@@ -65,16 +65,20 @@ struct MealInfo: View {
   var body: some View {
     HStack {
       Text(title)
-        .font(.subheadline)
+        .font(.pretendard(type: .medium, size: 16))
+        .foregroundStyle(Color.text)
       
       Spacer()
       
       if meal.isComplete {
-        Text("\(meal.kcal) / \(meal.targetKcal)")
+        Text("\(meal.kcal) / \(meal.targetKcal) kcal")
+          .font(.pretendard(type: .regular, size: 14))
+          .foregroundStyle(Color.text)
       } else {
-        Text("\(meal.targetKcal)")
+        Text("\(meal.kcal) / \(meal.targetKcal) kcal")
+          .font(.pretendard(type: .regular, size: 14))
+          .foregroundStyle(Color.subText)
       }
-      
       // MARK: - isComplete 식단 완료 상태에 따른 아이콘
       let iconName: String = meal.isComplete == true ? "checkmark" : "plus"
       let fgColor: Color = meal.isComplete == true ? .white : .main
@@ -86,9 +90,9 @@ struct MealInfo: View {
         }
       }, label: {
         Image(systemName: iconName)
-          .font(.system(size: 16, weight: .black))
+          .font(.system(size: 16, weight: .semibold))
           .foregroundColor(fgColor)
-          .frame(width: 36, height: 36)
+          .frame(width: 32, height: 32)
           .background(
             Circle()
               .fill(bgColor)

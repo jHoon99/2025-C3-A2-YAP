@@ -34,12 +34,12 @@ extension OnboardingItem {
   static let initItem: OnboardingItem = OnboardingItem(
     inbody: [
       InbodyInfoItem(type: .age, value: 19.0, unit: .age),
-      InbodyInfoItem(type: .height, value: 130, unit: .cm),
-      InbodyInfoItem(type: .weight, value: 0.0, unit: .kg),
-      InbodyInfoItem(type: .basalMetabolicRate, value: 0, unit: .kcal),
-      InbodyInfoItem(type: .skeletalMuscleMass, value: 0.0, unit: .kg),
-      InbodyInfoItem(type: .bodyFatMass, value: 0.0, unit: .kg),
-      InbodyInfoItem(type: .bodyFatPercentage, value: 0.0, unit: .percent),
+      InbodyInfoItem(type: .height, value: 150, unit: .cm),
+      InbodyInfoItem(type: .weight, value: 50.0, unit: .kg),
+      InbodyInfoItem(type: .basalMetabolicRate, value: 1500, unit: .kcal),
+      InbodyInfoItem(type: .skeletalMuscleMass, value: 25.0, unit: .kg),
+      InbodyInfoItem(type: .bodyFatMass, value: 25.0, unit: .kg),
+      InbodyInfoItem(type: .bodyFatPercentage, value: 25.0, unit: .percent),
       InbodyInfoItem(type: .leanBodyMass, value: 0.0, unit: .kg)
     ],
     activityInfo: ActivityInfoItem(
@@ -71,5 +71,28 @@ extension OnboardingItem {
     case .none:
       return Int(maintenanceCalories)
     }
+  }
+  
+  static func from(aiData: [String]) -> [InbodyInfoItem] {
+    let types: [InbodyInfoType] = [
+      .age, .height, .weight, .basalMetabolicRate,
+      .skeletalMuscleMass, .bodyFatMass, .bodyFatPercentage, .leanBodyMass
+    ]
+    
+    let units: [UnitType] = [
+      .age, .cm, .kg, .kcal, .kg, .kg, .percent, .kg
+    ]
+    
+    var items: [InbodyInfoItem] = []
+    
+    for (index, valueString) in aiData.enumerated() {
+      guard index < types.count,
+            let value = Double(valueString.trimmingCharacters(in: .whitespacesAndNewlines)) else { continue }
+      
+      let item = InbodyInfoItem(type: types[index], value: value, unit: units[index])
+      items.append(item)
+    }
+    
+    return items
   }
 }
