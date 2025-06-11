@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct OcrGuideLineView: View {
+struct GuideLineView: View {
   private let cornerLength: CGFloat = 25
   private let lineWidth: CGFloat = 5
   private let color: Color = .main
