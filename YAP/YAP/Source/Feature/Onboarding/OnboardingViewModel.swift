@@ -31,6 +31,7 @@ final class OnboardingViewModel: ObservableObject {
     calorie: 0
   )
   
+  @Published var isDataFormatError: Bool = false
   @Published var isInbodyDataReady: Bool = false
   @Published var currentIndex: Int = 0
   
@@ -78,6 +79,9 @@ private extension OnboardingViewModel {
           let bodyFatPercentage = Double(data[4]),
           let bodyFatMass = Double(data[5]),
           let skeletalMuscleMass = Double(data[6]) else {
+      DispatchQueue.main.async {
+        self.isDataFormatError = true
+      }
       print("잘못된 데이터 형식입니다.")
       return
     }

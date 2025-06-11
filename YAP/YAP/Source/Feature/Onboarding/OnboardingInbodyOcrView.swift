@@ -32,6 +32,11 @@ struct OnboardingInbodyOcrView: View {
     .onDisappear {
       cameraManager.stopSession()
     }
+    .alert("스캔 실패", isPresented: $viewModel.isDataFormatError) {
+      Button("확인", role: .cancel) { }
+    } message: {
+      Text("인바디 정보를 인식하지 못했어요.\n다시 시도하거나 직접 입력해주세요.")
+    }
     .toolbar(.hidden)
     .onChange(of: viewModel.isInbodyDataReady) { _, newValue in
       if newValue {
@@ -55,13 +60,13 @@ struct OnboardingInbodyOcrView: View {
         Spacer()
         
         Button {
-          print("Capture Button Tapped!")
           viewModel.captureImage()
         } label: {
-          Text("촬영")
-            .frame(width: 50, height: 50)
-            .background(Color.blue)
-            .clipShape(.circle)
+          Image(systemName: Icon.camera.name)
+            .imageScale(.large)
+            .fontWeight(.semibold)
+            .foregroundStyle(.subBackground)
+            .padding()
         }
         .buttonStyle(.plain)
         .padding(.bottom, 12)
