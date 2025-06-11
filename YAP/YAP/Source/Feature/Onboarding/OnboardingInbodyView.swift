@@ -41,6 +41,10 @@ struct OnboardingInbodyView: View {
             unit: .kg
           ) {
             selectedInfoType = .weight
+            viewModel.item.inbodyInfoItem.leanBodyMass = calculateLeanBodyMass(
+              weight: viewModel.item.inbodyInfoItem.weight,
+              bodyFatPercentage: viewModel.item.inbodyInfoItem.bodyFatPercentage
+            )
           }
           
           InbodySetRowView(
@@ -65,6 +69,10 @@ struct OnboardingInbodyView: View {
             unit: .kg
           ) {
             selectedInfoType = .bodyFatMass
+            viewModel.item.inbodyInfoItem.leanBodyMass = calculateLeanBodyMass(
+              weight: viewModel.item.inbodyInfoItem.weight,
+              bodyFatPercentage: viewModel.item.inbodyInfoItem.bodyFatPercentage
+            )
           }
           
           InbodySetRowView(
@@ -73,6 +81,10 @@ struct OnboardingInbodyView: View {
             unit: .kg
           ) {
             selectedInfoType = .bodyFatPercentage
+            viewModel.item.inbodyInfoItem.leanBodyMass = calculateLeanBodyMass(
+              weight: viewModel.item.inbodyInfoItem.weight,
+              bodyFatPercentage: viewModel.item.inbodyInfoItem.bodyFatPercentage
+            )
           }
           
           InbodySetRowView(
@@ -91,12 +103,14 @@ struct OnboardingInbodyView: View {
     }
     .navigationBarBackButtonHidden()
     .sheet(item: $selectedInfoType) { infoType in
-      if infoType == .age {
-        InputAgeSheet(infoItem: $viewModel.item.inbodyInfoItem)
-          .presentationDetents([.height(200)])
-      } else {
-        
-      }
+      inbodySheetView(for: infoType)
+        .presentationDetents([.height(200)])
+    }
+    .onChange(of: viewModel.item.inbodyInfoItem.weight) { _ in
+      updateLeanBodyMass()
+    }
+    .onChange(of: viewModel.item.inbodyInfoItem.bodyFatPercentage) { _ in
+      updateLeanBodyMass()
     }
   }
   
@@ -131,6 +145,7 @@ struct OnboardingInbodyView: View {
       ) {
         nextButtonTapped()
       }
+      .disabled(!viewModel.isInbodyInfoValid())
     }
   }
 }
@@ -146,6 +161,63 @@ private extension OnboardingInbodyView {
   
   func calculateLeanBodyMass(weight: Double, bodyFatPercentage: Double) -> Double {
     return weight * (1 - (bodyFatPercentage / 100))
+  }
+  
+  func updateLeanBodyMass() {
+    viewModel.item.inbodyInfoItem.leanBodyMass = calculateLeanBodyMass(
+      weight: viewModel.item.inbodyInfoItem.weight,
+      bodyFatPercentage: viewModel.item.inbodyInfoItem.bodyFatPercentage
+    )
+  }
+  
+  @ViewBuilder
+  func inbodySheetView(for type: InbodyInfoType) -> some View {
+    switch type {
+    case .age:
+      InputAgeSheet(value: $viewModel.item.inbodyInfoItem.age)
+      
+    case .height:
+      InbodyInputSheet(
+        value: $viewModel.item.inbodyInfoItem.height,
+        type: type
+      )
+      
+    case .weight:
+      InbodyInputSheet(
+        value: $viewModel.item.inbodyInfoItem.weight,
+        type: type
+      )
+      
+    case .basalMetabolicRate:
+      InbodyInputSheet(
+        value: $viewModel.item.inbodyInfoItem.basalMetabolicRate,
+        type: type
+      )
+      
+    case .skeletalMuscleMass:
+      InbodyInputSheet(
+        value: $viewModel.item.inbodyInfoItem.skeletalMuscleMass,
+        type: type
+      )
+      
+    case .bodyFatMass:
+      InbodyInputSheet(
+        value: $viewModel.item.inbodyInfoItem.bodyFatMass,
+        type: type
+      )
+      
+    case .bodyFatPercentage:
+      InbodyInputSheet(
+        value: $viewModel.item.inbodyInfoItem.bodyFatPercentage,
+        type: type
+      )
+      
+    case .leanBodyMass:
+      InbodyInputSheet(
+        value: $viewModel.item.inbodyInfoItem.leanBodyMass,
+        type: type
+      )
+    }
   }
 }
 
