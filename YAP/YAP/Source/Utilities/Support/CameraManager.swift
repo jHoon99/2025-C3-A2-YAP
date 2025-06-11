@@ -21,7 +21,29 @@ final class CameraManager: NSObject {
   
   override init() {
     super.init()
-    requestAndCheckPermissions()
+  }
+  
+  // 카메라 권한 확인 메소드
+  func requestAndCheckPermissions() {
+    switch AVCaptureDevice.authorizationStatus(for: .video) {
+    case .notDetermined:
+      AVCaptureDevice.requestAccess(for: .video) { [weak self] status in
+        if status {
+          self?.configureSession()
+          print("notDetermined")
+        }
+      }
+      
+    case .restricted:
+      print("restricted")
+      
+    case .authorized:
+      print("authorized")
+      configureSession()
+      
+    default:
+      print("거절")
+    }
   }
   
   func startSession() {
@@ -50,29 +72,6 @@ final class CameraManager: NSObject {
 
 // private method
 private extension CameraManager {
-  // 카메라 권한 확인 메소드
-  func requestAndCheckPermissions() {
-    switch AVCaptureDevice.authorizationStatus(for: .video) {
-    case .notDetermined:
-      AVCaptureDevice.requestAccess(for: .video) { [weak self] status in
-        if status {
-          self?.configureSession()
-          print("notDetermined")
-        }
-      }
-      
-    case .restricted:
-      print("restricted")
-      
-    case .authorized:
-      print("authorized")
-      configureSession()
-      
-    default:
-      print("거절")
-    }
-  }
-  
   // 카메라 세션 설정 메소드
   func configureSession() {
     session.beginConfiguration()

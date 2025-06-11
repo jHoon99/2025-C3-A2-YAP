@@ -26,6 +26,7 @@ struct OnboardingInbodyOcrView: View {
     .padding(.horizontal, Spacing.medium)
     .padding(.vertical, Spacing.extraLarge)
     .onAppear {
+      cameraManager.requestAndCheckPermissions()
       cameraManager.startSession()
     }
     .onDisappear {
