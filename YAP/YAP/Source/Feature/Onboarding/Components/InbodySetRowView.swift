@@ -21,13 +21,24 @@ struct InbodySetRowView: View {
       Spacer()
       
       InbodyInfoButton(
-        value: String(value),
+        value: displayValue(for: type, value: value),
         unit: unit
       ) {
         if type != .leanBodyMass {
           onTap()
         }
       }
+    }
+  }
+}
+
+private extension InbodySetRowView {
+  func displayValue(for type: InbodyInfoType, value: Double) -> String {
+    switch type {
+    case .age, .basalMetabolicRate:
+      return String(Int(value))
+    default:
+      return String(format: "%.1f", value)
     }
   }
 }
