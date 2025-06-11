@@ -57,6 +57,7 @@ struct FoodSearchView: View {
             .shadow(radius: 4, x: 0, y: 4)
         }
       }
+      .background(.mainWhite)
       .onReceive(NotificationCenter.default.publisher(for: .didCompleteSaving)) { _ in
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
           dismiss()
