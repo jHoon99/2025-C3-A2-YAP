@@ -69,6 +69,9 @@ struct OnboardingResultView: View {
       Spacer()
       
       Image(.celebrate)
+        .resizable()
+        .frame(width: 150, height: 180)
+        .padding(.leading, 25)
       
       Spacer()
     }
@@ -169,6 +172,5 @@ private extension OnboardingResultView {
       )
       modelContext.insert(meal)
     }
-    
   }
 }

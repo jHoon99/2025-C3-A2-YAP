@@ -19,7 +19,7 @@ extension WorkOutRowView {
       HStack {
         Image(asset: image)
           .resizable()
-          .frame(width: 50, height: 50)
+          .frame(width: 35, height: 35)
         
         VStack(alignment: .leading) {
           Text(title)

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SceneKit
 
 struct OnboardingView: View {
   @ObservedObject var viewModel: OnboardingViewModel
@@ -55,7 +56,7 @@ struct OnboardingView: View {
     HStack {
       Spacer()
       
-      Image(.healthMan)
+      CharacterRenderView()
       
       Spacer()
     }
