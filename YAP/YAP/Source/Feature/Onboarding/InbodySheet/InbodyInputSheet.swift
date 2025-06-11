@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct InbodyInputSheet: View {
-  @Binding var infoItem: InbodyInfoItem
-  
+  let infoItem: InbodyInfoItem
   let minimumValue: Double
   let maximumValue: Double
   let text: String
@@ -19,8 +18,9 @@ struct InbodyInputSheet: View {
       Text(text)
         .font(.pretendard(type: .medium, size: 16))
       
-      Slider(value: $infoItem.value, in: minimumValue...maximumValue, step: 1)
-        .tint(.main)
+      
+//      Slider(value: infoItem, in: minimumValue...maximumValue, step: 1)
+//        .tint(.main)
     }
     .padding(.horizontal, Spacing.small)
   }

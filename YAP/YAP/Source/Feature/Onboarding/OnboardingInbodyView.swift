@@ -8,38 +8,94 @@
 import SwiftUI
 
 struct OnboardingInbodyView: View {
+  @ObservedObject var viewModel: OnboardingViewModel
+  
   @Environment(\.dismiss) private var dismiss
-  @Binding var currentIndex: Int
-  
   @State var selectedInfoType: InbodyInfoType? = nil
-  
-  @Binding var infoItems: [InbodyInfoItem]
   
   var body: some View {
     ZStack(alignment: .topLeading) {
-      VStack(alignment: .leading, spacing: Spacing.extrLarge) {
+      VStack(alignment: .leading, spacing: Spacing.extraLarge) {
         titleView
-        infoView
+        
+        VStack(spacing: Spacing.medium) {
+          InbodySetRowView(
+            type: .age,
+            value: Double(viewModel.item.inbodyInfoItem.age),
+            unit: .age
+          ) {
+            selectedInfoType = .age
+          }
+          
+          InbodySetRowView(
+            type: .height,
+            value: viewModel.item.inbodyInfoItem.height,
+            unit: .cm
+          ) {
+            selectedInfoType = .height
+          }
+          
+          InbodySetRowView(
+            type: .weight,
+            value: viewModel.item.inbodyInfoItem.weight,
+            unit: .kg
+          ) {
+            selectedInfoType = .weight
+          }
+          
+          InbodySetRowView(
+            type: .basalMetabolicRate,
+            value: viewModel.item.inbodyInfoItem.basalMetabolicRate,
+            unit: .kcal
+          ) {
+            selectedInfoType = .basalMetabolicRate
+          }
+          
+          InbodySetRowView(
+            type: .skeletalMuscleMass,
+            value: viewModel.item.inbodyInfoItem.skeletalMuscleMass,
+            unit: .kg
+          ) {
+            selectedInfoType = .skeletalMuscleMass
+          }
+          
+          InbodySetRowView(
+            type: .bodyFatMass,
+            value: viewModel.item.inbodyInfoItem.bodyFatMass,
+            unit: .kg
+          ) {
+            selectedInfoType = .bodyFatMass
+          }
+          
+          InbodySetRowView(
+            type: .bodyFatPercentage,
+            value: viewModel.item.inbodyInfoItem.bodyFatPercentage,
+            unit: .kg
+          ) {
+            selectedInfoType = .bodyFatPercentage
+          }
+          
+          InbodySetRowView(
+            type: .leanBodyMass,
+            value: viewModel.item.inbodyInfoItem.leanBodyMass,
+            unit: .kg
+          ) {
+            selectedInfoType = .leanBodyMass
+          }
+        }
+        
+        Spacer()
+        
+        bottomButtonView
       }
     }
     .navigationBarBackButtonHidden()
     .sheet(item: $selectedInfoType) { infoType in
-      if let index = infoItems.firstIndex(where: { $0.type == infoType }) {
-        if infoType == .age {
-          InputAgeSheet(infoItem: $infoItems[index])
-            .presentationDetents([.height(200)])
-        } else {
-          InbodyInputSheet(
-            infoItem: $infoItems[index],
-            minimumValue: infoType.minValue,
-            maximumValue: infoType.maxValue,
-            text: infoType
-              .text(
-                value: infoItems[index].value
-              )
-          )
+      if infoType == .age {
+        InputAgeSheet(infoItem: $viewModel.item.inbodyInfoItem)
           .presentationDetents([.height(200)])
-        }
+      } else {
+        
       }
     }
   }
@@ -56,24 +112,24 @@ struct OnboardingInbodyView: View {
     }
   }
   
-  private var infoView: some View {
-    VStack(alignment: .leading, spacing: Spacing.large) {
-      ForEach($infoItems) { $item in
-        HStack {
-          Text(item.type.rawValue)
-            .font(.pretendard(type: .semibold, size: 16))
-          
-          Spacer()
-          
-          InbodyInfoButton(
-            value: formattedValue(for: item),
-            unit: item.unit
-          ) {
-            if item.type != .leanBodyMass {
-              selectedInfoType = item.type
-            }
-          }
-        }
+  private var bottomButtonView: some View {
+    HStack {
+      CtaButton(
+        buttonName: .before,
+        titleColor: .main,
+        bgColor: .light
+      ) {
+        dismiss()
+      }
+      
+      Spacer()
+      
+      CtaButton(
+        buttonName: .next,
+        titleColor: .white,
+        bgColor: .main
+      ) {
+        nextButtonTapped()
       }
     }
   }
@@ -81,31 +137,11 @@ struct OnboardingInbodyView: View {
 
 private extension OnboardingInbodyView {
   func nextButtonTapped() {
-    currentIndex += 1
+    viewModel.currentIndex += 1
   }
   
   func beforeButtonTapped() {
     dismiss()
-  }
-  
-  func formattedValue(for item: InbodyInfoItem) -> String {
-    switch item.type {
-    case .age, .basalMetabolicRate:
-      return "\(Int(item.value))"
-    case .leanBodyMass:
-      if let weightItem = infoItems.first(where: { $0.type == .weight }),
-         let fatPctItem = infoItems.first(where: { $0.type == .bodyFatPercentage }) {
-        let lbm = calculateLeanBodyMass(
-          weight: weightItem.value,
-          bodyFatPercentage: fatPctItem.value
-        )
-        return String(format: "%.1f", lbm)
-      } else {
-        return "-"
-      }
-    default:
-      return String(format: "%.1f", item.value)
-    }
   }
   
   func calculateLeanBodyMass(weight: Double, bodyFatPercentage: Double) -> Double {
@@ -113,6 +149,7 @@ private extension OnboardingInbodyView {
   }
 }
 
-#Preview {
-  OnboardingInbodyView(currentIndex: .constant(0), infoItems: .constant([]))
-}
+//
+//#Preview {
+//  OnboardingInbodyView(currentIndex: .constant(0), infoItems: .constant([]))
+//}

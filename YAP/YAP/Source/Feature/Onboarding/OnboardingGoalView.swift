@@ -8,17 +8,20 @@
 import SwiftUI
 
 struct OnboardingGoalView: View {
-  @Binding var currentIndex: Int
-  @Binding var selectedGoal: GoalType?
-  @Binding var onboardingItem: OnboardingItem
+  @ObservedObject var viewModel: OnboardingViewModel
+  @State var selectedGoal: GoalType? = nil
   
   var body: some View {
     ZStack(alignment: .topLeading) {
       Color.clear.ignoresSafeArea()
       
-      VStack(alignment: .leading, spacing: Spacing.extrLarge) {
+      VStack(alignment: .leading, spacing: Spacing.extraLarge) {
         titleView
         goalButtonView
+        
+        Spacer()
+        
+        bottomButtonView
       }
     }
     .navigationBarBackButtonHidden()
@@ -36,6 +39,28 @@ struct OnboardingGoalView: View {
     }
   }
   
+  private var bottomButtonView: some View {
+    HStack {
+      CtaButton(
+        buttonName: .before,
+        titleColor: .main,
+        bgColor: .light
+      ) {
+        viewModel.beforeButtonTapped()
+      }
+      
+      Spacer()
+      
+      CtaButton(
+        buttonName: .next,
+        titleColor: .white,
+        bgColor: .main
+      ) {
+        viewModel.nextButtonTapped()
+      }
+    }
+  }
+  
   private var goalButtonView: some View {
     VStack(spacing: Spacing.small) {
       ForEach(GoalType.allCases, id: \.self) { type in
@@ -44,7 +69,6 @@ struct OnboardingGoalView: View {
           isSelected: selectedGoal == type
         ) {
           goalButtonTapped(type)
-          onboardingItem.activityInfo.goalType = type
         }
       }
     }
@@ -54,13 +78,6 @@ struct OnboardingGoalView: View {
 private extension OnboardingGoalView {
   func goalButtonTapped(_ type: GoalType) {
     selectedGoal = type
+    viewModel.item.activityInfoItem.goalType = type
   }
-}
-
-#Preview {
-  OnboardingGoalView(
-    currentIndex: .constant(1),
-    selectedGoal: .constant(.diet),
-    onboardingItem: .constant(.initItem)
-  )
 }

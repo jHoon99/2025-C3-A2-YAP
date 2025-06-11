@@ -9,46 +9,19 @@ import SwiftData
 import SwiftUI
 
 struct OnboardingResultView: View {
-  @Binding var onboardingItem: OnboardingItem
-  
+  @ObservedObject var viewModel: OnboardingViewModel
   @State private var isNext: Bool = false
+  
   @Environment(\.modelContext) private var modelContext: ModelContext
   @Query private var inbodyData: [Inbody]
   @Query private var calorieData: [CalorieRequirements]
   @Query private var activityInfo: [ActivityInfo]
   
-  private var macros: (carb: Int, protein: Int, fat: Int) {
-    let leanMass = onboardingItem.inbody.first(where: { $0.type == .leanBodyMass })?.value ?? 0.0
-    let proteinGrams = leanMass * 2.1
-    let proteinCalories = proteinGrams * 4
-    
-    let remainingCalories = Double(onboardingItem.goalCalories) - proteinCalories
-    let carbCalories = remainingCalories * 0.6
-    let fatCalories = remainingCalories * 0.4
-    
-    let carbGrams = carbCalories / 4
-    let fatGrams = fatCalories / 9
-    
-    return (
-      carb: Int(carbGrams.rounded()),
-      protein: Int(proteinGrams.rounded()),
-      fat: Int(fatGrams.rounded())
-    )
-  }
-  
-  private var macrosRow: [MacroType: Int] {
-    [
-      .carbohydrate: macros.carb,
-      .protein: macros.protein,
-      .fat: macros.fat
-    ]
-  }
-
   var body: some View {
     ZStack(alignment: .topLeading) {
       Color.clear.ignoresSafeArea()
       
-      VStack(alignment: .leading, spacing: Spacing.extrLarge) {
+      VStack(alignment: .leading, spacing: Spacing.extraLarge) {
         titleView
         
         Spacer()
@@ -69,16 +42,10 @@ struct OnboardingResultView: View {
       }
     }
     .onAppear {
-      inbodyData.forEach {
-        print($0)
-      }
-      
-      calorieData.forEach {
-        print($0)
-      }
+      print(viewModel.item)
     }
     .padding(.horizontal, Spacing.medium)
-    .padding(.vertical, Spacing.extrLarge)
+    .padding(.vertical, Spacing.extraLarge)
     .navigationBarBackButtonHidden()
     .navigationDestination(isPresented: $isNext) {
       MainUIView()
@@ -116,7 +83,7 @@ struct OnboardingResultView: View {
           .font(.pretendard(type: .semibold, size: 20))
           .foregroundStyle(.text)
         
-        Text("\(onboardingItem.goalCalories )")
+        Text("\(viewModel.calorieRequirementsItem.calorie)")
           .font(.pretendard(type: .bold, size: 28))
           .foregroundStyle(.main)
         
@@ -126,16 +93,12 @@ struct OnboardingResultView: View {
         Spacer()
       }
       
-      HStack {
-        ForEach(MacroType.allCases) { type in
-          MacroView(title: type.title, value: macrosRow[type] ?? 0)
-          
-          if type != MacroType.allCases.last {
-            Spacer()
-          }
-        }
+      HStack(spacing: 64) {
+        MacroView(title: "탄수화물", value: viewModel.calorieRequirementsItem.carbohydrates)
+        MacroView(title: "단백질", value: viewModel.calorieRequirementsItem.protein)
+        MacroView(title: "지방", value: viewModel.calorieRequirementsItem.lipid)
       }
-      .padding(.horizontal, Spacing.extrLarge)
+      .padding(.horizontal, Spacing.extraLarge)
     }
   }
 }
@@ -156,56 +119,38 @@ private struct MacroView: View {
     }
   }
 }
+
 private extension OnboardingResultView {
   func save() {
-    if let age = onboardingItem.inbody.first(where: { $0.type == .age })?.intValue,
-       let height = onboardingItem.inbody.first(where: { $0.type == .height })?.value,
-       let weight = onboardingItem.inbody.first(where: { $0.type == .weight })?.value,
-       let bfm = onboardingItem.inbody.first(where: { $0.type == .bodyFatMass })?.value,
-       let bmr = onboardingItem.inbody.first(where: { $0.type == .basalMetabolicRate })?.value,
-       let smm = onboardingItem.inbody.first(where: { $0.type == .skeletalMuscleMass })?.value,
-       let lbm = onboardingItem.inbody.first(where: { $0.type == .leanBodyMass })?.value,
-       let bfp = onboardingItem.inbody.first(where: { $0.type == .bodyFatPercentage })?.value {
-      
-      let inbody = Inbody(
-        date: Date(),
-        weight: weight,
-        height: height,
-        age: Int(age),
-        bodyFatMass: bfm,
-        basalMetabolicRate: Int(bmr),
-        skeletalMuscleMass: smm,
-        leanBodyMass: lbm,
-        bodyFatPercentage: bfp
-      )
-      
-      modelContext.insert(inbody)
-    }
+    let inbody = Inbody(
+      date: Date(),
+      weight: viewModel.item.inbodyInfoItem.weight,
+      height: viewModel.item.inbodyInfoItem.height,
+      age: viewModel.item.inbodyInfoItem.age,
+      bodyFatMass: viewModel.item.inbodyInfoItem.bodyFatMass,
+      basalMetabolicRate: Int(viewModel.item.inbodyInfoItem.basalMetabolicRate),
+      skeletalMuscleMass: viewModel.item.inbodyInfoItem.skeletalMuscleMass,
+      leanBodyMass: viewModel.item.inbodyInfoItem.leanBodyMass,
+      bodyFatPercentage: viewModel.item.inbodyInfoItem.bodyFatPercentage
+    )
     
-    if let activityLevel = onboardingItem.activityInfo.activityLevel,
-       let goalType = onboardingItem.activityInfo.goalType,
-       let mealCount = onboardingItem.activityInfo.mealCount {
-      
-      let activityInfo = ActivityInfo(activityLevel: activityLevel, goalType: goalType, mealCount: mealCount)
-      
-      modelContext.insert(activityInfo)
-    }
-  
+    modelContext.insert(inbody)
+    
     let calorie = CalorieRequirements(
-      carbohydrates: Double(macros.carb),
-      protein: Double(macros.protein),
-      lipid: Double(macros.fat),
-      calorie: onboardingItem.goalCalories
+      carbohydrates: Double(viewModel.calorieRequirementsItem.carbohydrates),
+      protein: Double(viewModel.calorieRequirementsItem.protein),
+      lipid: Double(viewModel.calorieRequirementsItem.lipid),
+      calorie: viewModel.calorieRequirementsItem.calorie
     )
     
     modelContext.insert(calorie)
     
-    let mealCount = onboardingItem.activityInfo.mealCount ?? 3
+    let mealCount = viewModel.item.activityInfoItem.mealCount ?? 3
     
-    let caloriePerMeal = mealCount > 0 ? (onboardingItem.goalCalories / mealCount) : 0
-    let carbohydratesPerMeal = mealCount > 0 ? (Double(macros.carb) / Double(mealCount)) : 0.0
-    let proteinPerMeal = mealCount > 0 ? (Double(macros.protein) / Double(mealCount)) : 0.0
-    let fatPerMeal = mealCount > 0 ? (Double(macros.fat) / Double(mealCount)) : 0.0
+    let caloriePerMeal = mealCount > 0 ? (viewModel.calorieRequirementsItem.calorie / mealCount) : 0
+    let carbohydratesPerMeal = mealCount > 0 ? (Double(viewModel.calorieRequirementsItem.carbohydrates) / Double(mealCount)) : 0.0
+    let proteinPerMeal = mealCount > 0 ? (Double(viewModel.calorieRequirementsItem.protein) / Double(mealCount)) : 0.0
+    let fatPerMeal = mealCount > 0 ? (Double(viewModel.calorieRequirementsItem.lipid) / Double(mealCount)) : 0.0
     
     // 끼니 수 만큼 빈 Meal 객체 생성 (끼니 당 목표만 설정, 실제 섭취량은 0인 상태)
     for index in 0..<mealCount {
@@ -224,9 +169,6 @@ private extension OnboardingResultView {
       )
       modelContext.insert(meal)
     }
+    
   }
-}
-
-#Preview {
-  OnboardingResultView(onboardingItem: .constant(.initItem))
 }

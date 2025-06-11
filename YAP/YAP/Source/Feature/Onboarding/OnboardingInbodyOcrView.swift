@@ -9,9 +9,10 @@ import AVFoundation
 import SwiftUI
 
 struct OnboardingInbodyOcrView: View {
+  @ObservedObject var viewModel: OnboardingViewModel
+  
   @State private var isNext = false
-  @State private var onboardingItem: OnboardingItem? = nil
-  let cameraManager = CameraManager()
+  let cameraManager: CameraManager
   
   var body: some View {
     ZStack {
@@ -23,7 +24,7 @@ struct OnboardingInbodyOcrView: View {
       }
     }
     .padding(.horizontal, Spacing.medium)
-    .padding(.vertical, Spacing.extrLarge)
+    .padding(.vertical, Spacing.extraLarge)
     .onAppear {
       cameraManager.startSession()
     }
@@ -31,10 +32,13 @@ struct OnboardingInbodyOcrView: View {
       cameraManager.stopSession()
     }
     .toolbar(.hidden)
-    .navigationDestination(isPresented: $isNext) {
-      if let item = onboardingItem {
-        OnboardingMainView(onboardingItems: .constant(item))
+    .onChange(of: viewModel.isInbodyDataReady) { _, newValue in
+      if newValue {
+        isNext = true
       }
+    }
+    .navigationDestination(isPresented: $isNext) {
+      OnboardingMainView(viewModel: viewModel)
     }
   }
   
@@ -51,14 +55,7 @@ struct OnboardingInbodyOcrView: View {
         
         Button {
           print("Capture Button Tapped!")
-          Task {
-            if let image = cameraManager.capturedImage() {
-              let data = await FireBaseManager().callAI(image: image)
-              let inbodyItems = OnboardingItem.from(aiData: data)
-              onboardingItem = OnboardingItem(inbody: inbodyItems, activityInfo: ActivityInfoItem())
-              isNext = true
-            }
-          }
+          viewModel.captureImage()
         } label: {
           Text("촬영")
             .frame(width: 50, height: 50)
@@ -100,11 +97,10 @@ struct OnboardingInbodyOcrView: View {
 
 private extension OnboardingInbodyOcrView {
   func isEditButtonTapped() {
-    onboardingItem = .initItem
     isNext = true
   }
 }
 
-#Preview {
-  OnboardingInbodyOcrView()
-}
+//#Preview {
+//  OnboardingInbodyOcrView()
+//}

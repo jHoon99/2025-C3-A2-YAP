@@ -41,7 +41,6 @@ final class CameraManager: NSObject {
   }
   
   func capturedImage() -> UIImage? {
-    print("캡처 이미지")
     guard let buffer = latestSampleBuffer else {
       return nil
     }

@@ -9,15 +9,14 @@ import SwiftUI
 
 struct InputAgeSheet: View {
   @Binding var infoItem: InbodyInfoItem
-  
   private let ageRange = Array(19...100)
   
   var body: some View {
     VStack {
       Picker("나이",
              selection: Binding(
-              get: { Int(infoItem.value) },
-              set: { newAge in infoItem.value = Double(newAge) })
+              get: { Int(infoItem.age) },
+              set: { newAge in infoItem.age = newAge })
       ) {
         ForEach(ageRange, id: \.self) { age in
           Text("\(age) 세")
@@ -29,8 +28,4 @@ struct InputAgeSheet: View {
       .frame(height: 200)
     }
   }
-}
-
-#Preview {
-  InputAgeSheet(infoItem: .constant(InbodyInfoItem.init(type: .age, value: 18.0, unit: .age)))
 }
