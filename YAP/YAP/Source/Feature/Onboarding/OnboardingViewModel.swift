@@ -67,6 +67,18 @@ final class OnboardingViewModel: ObservableObject {
     
     self.calorieRequirementsItem = CalorieRequirementsItem(carbohydrates: Int(carbohydrates), protein: Int(protein), lipid: Int(lipid), calorie: Int(calorie))
   }
+  
+  func isInbodyInfoValid() -> Bool {
+    let info = item.inbodyInfoItem
+    return info.age != 0 &&
+    info.height != 0 &&
+    info.weight != 0 &&
+    info.basalMetabolicRate != 0 &&
+    info.skeletalMuscleMass != 0 &&
+    info.bodyFatMass != 0 &&
+    info.bodyFatPercentage != 0 &&
+    info.leanBodyMass != 0
+  }
 }
 
 private extension OnboardingViewModel {
@@ -95,7 +107,7 @@ private extension OnboardingViewModel {
         bodyFatPercentage: bodyFatPercentage,
         basalMetabolicRate: bmr,
         skeletalMuscleMass: skeletalMuscleMass,
-        leanBodyMass: weight - bodyFatMass // 예시: 제지방량 = 체중 - 체지방량
+        leanBodyMass: weight * (1 - (bodyFatPercentage / 100))
       )
       
       self.isInbodyDataReady = true
