@@ -23,19 +23,22 @@ public struct CtaButton: View {
   let titleColor: String
   let bgColor: String
   let action: () -> Void
-  
+  let isDisabled: Bool
+
   public init(
     buttonName: CtaButtonLabel,
     titleColor: CtaButtonColor,
     bgColor: CtaButtonColor,
+    isDisabled: Bool = false,
     action: @escaping () -> Void
   ) {
     self.title = buttonName.rawValue
     self.titleColor = titleColor.rawValue
     self.bgColor = bgColor.rawValue
+    self.isDisabled = isDisabled
     self.action = action
   }
-  
+
   public var body: some View {
     Button(action: action) {
       Text(title)
@@ -44,7 +47,9 @@ public struct CtaButton: View {
         .padding(Spacing.medium)
         .background(Color(bgColor), in: RoundedRectangle(cornerRadius: 12))
         .foregroundStyle(titleColor == "white" ? Color.white : Color(titleColor))
+        .opacity(isDisabled ? 0.5 : 1.0)
     }
     .buttonStyle(.plain)
+    .disabled(isDisabled) 
   }
 }

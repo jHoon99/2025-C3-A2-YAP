@@ -60,7 +60,8 @@ struct OnboardingMealCountView: View {
       CtaButton(
         buttonName: .next,
         titleColor: .white,
-        bgColor: .main
+        bgColor: .main,
+        isDisabled: selectedMealCount == nil
       ) {
         isNext = true 
       }

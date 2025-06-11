@@ -54,7 +54,8 @@ struct OnboardingGoalView: View {
       CtaButton(
         buttonName: .next,
         titleColor: .white,
-        bgColor: .main
+        bgColor: .main,
+        isDisabled: selectedGoal == nil
       ) {
         viewModel.nextButtonTapped()
       }

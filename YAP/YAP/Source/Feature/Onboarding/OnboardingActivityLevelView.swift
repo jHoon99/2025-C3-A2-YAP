@@ -58,7 +58,8 @@ struct OnboardingActivityLevelView: View {
       CtaButton(
         buttonName: .next,
         titleColor: .white,
-        bgColor: .main
+        bgColor: .main,
+        isDisabled: selectedActivityLevel == nil
       ) {
         viewModel.nextButtonTapped()
       }
