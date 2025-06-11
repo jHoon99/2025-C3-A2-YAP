@@ -7,9 +7,22 @@
 
 import SwiftData
 import SwiftUI
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    AppCheckManager.shared.setProviderFactory()
+    FirebaseApp.configure()
+
+    return true
+  }
+}
 
 @main
 struct YAPApp: App {
+  @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+  
   var yapModelContainer: ModelContainer = {
     let schema = Schema([
       Inbody.self,

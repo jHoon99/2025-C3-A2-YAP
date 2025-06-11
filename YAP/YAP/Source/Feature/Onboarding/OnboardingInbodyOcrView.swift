@@ -5,34 +5,69 @@
 //  Created by 여성일 on 6/2/25.
 //
 
+import AVFoundation
 import SwiftUI
 
 struct OnboardingInbodyOcrView: View {
   @State private var isNext = false
+  @State private var onboardingItem: OnboardingItem? = nil
+  let cameraManager = CameraManager()
   
   var body: some View {
     ZStack {
       Color.clear.ignoresSafeArea()
       
       VStack(spacing: Spacing.large) {
-        ocrPreviewView
+        previewView
         ocrBottomButtonView
       }
     }
     .padding(.horizontal, Spacing.medium)
     .padding(.vertical, Spacing.extrLarge)
+    .onAppear {
+      cameraManager.startSession()
+    }
+    .onDisappear {
+      cameraManager.stopSession()
+    }
     .toolbar(.hidden)
     .navigationDestination(isPresented: $isNext) {
-      OnboardingMainView()
+      if let item = onboardingItem {
+        OnboardingMainView(onboardingItems: .constant(item))
+      }
     }
   }
   
-  private var ocrPreviewView: some View {
-    VStack(spacing: Spacing.large) {
-      Text("가이드 영역에 인바디 결과지를 맞춰주세요.")
-        .font(.pretendard(type: .bold, size: 16))
-        .foregroundStyle(.text)
-      OcrGuideLineView()
+  private var previewView: some View {
+    ZStack {
+      GuideLineView()
+        .padding(.horizontal, -5)
+        .padding(.vertical, -5)
+      
+      CameraPreviewView(session: cameraManager.session)
+      
+      VStack {
+        Spacer()
+        
+        Button {
+          print("Capture Button Tapped!")
+          Task {
+            if let image = cameraManager.capturedImage() {
+              let data = await FireBaseManager().callAI(image: image)
+              let inbodyItems = OnboardingItem.from(aiData: data)
+              onboardingItem = OnboardingItem(inbody: inbodyItems, activityInfo: ActivityInfoItem())
+              isNext = true
+            }
+          }
+        } label: {
+          Text("촬영")
+            .frame(width: 50, height: 50)
+            .background(Color.blue)
+            .clipShape(.circle)
+        }
+        .buttonStyle(.plain)
+        .padding(.bottom, 12)
+      }
     }
   }
   
@@ -65,9 +100,11 @@ struct OnboardingInbodyOcrView: View {
 
 private extension OnboardingInbodyOcrView {
   func isEditButtonTapped() {
+    onboardingItem = .initItem
     isNext = true
   }
 }
+
 #Preview {
   OnboardingInbodyOcrView()
 }

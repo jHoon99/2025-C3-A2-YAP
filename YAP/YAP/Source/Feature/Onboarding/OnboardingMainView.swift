@@ -16,7 +16,7 @@ struct OnboardingMainView: View {
   @State private var selectedActivityLevel: ActivityType? = nil
   @State private var selectedMealCount: MealCountType? = nil
   
-  @State private var onboardingItems: OnboardingItem = .initItem
+  @Binding var onboardingItems: OnboardingItem
   
   private let totalPage = 4
   
@@ -136,8 +136,4 @@ private extension OnboardingMainView {
   func goToResultButtonTapped() {
     isNext = true
   }
-}
-
-#Preview {
-  OnboardingMainView()
 }
