@@ -95,13 +95,13 @@ struct NutrientRing: View {
           .fill(Color.main.opacity(0.12))
           .strokeBorder(Color.main.opacity(0.24), lineWidth: 8)
         
-        TrimmedCircle(progress: value / total)
+        TrimmedCircle(progress: value > total ? 1 : value / total)
           .strokeBorder(
             mainColor,
             style: StrokeStyle(lineWidth: 8, lineCap: .round)
           )
         
-        Text("\(trimmedNumberString(from: (total - value)))g")
+        Text("\(trimmedNumberString(from: total >= value ? (total - value) : -(total - value)))g")
           .font(.pretendard(type: .regular, size: 20))
           .foregroundColor(value > total ? .red : .black)
       }
