@@ -36,7 +36,7 @@ struct CalorieSummaryView: View {
           Text("오늘 남은 칼로리는 ")
             .font(.pretendard(type: .medium, size: 24))
           Text("\((calorieData.first?.calorie ?? 0) - totalCalories)kcal")
-            .font(.pretendard(type: .medium, size: 24))
+            .font(.pretendard(type: .semibold, size: 24))
             .foregroundColor(.main) +
           Text("예요")
             .font(.pretendard(type: .medium, size: 24))
@@ -44,7 +44,7 @@ struct CalorieSummaryView: View {
           Text("오늘 ")
             .font(.pretendard(type: .medium, size: 24))
           Text("\(-remainingCalories)kcal")
-            .font(.pretendard(type: .medium, size: 24))
+            .font(.pretendard(type: .semibold, size: 24))
             .foregroundColor(.red) +
           Text(" 초과했어요")
             .font(.pretendard(type: .medium, size: 24))
@@ -62,14 +62,14 @@ struct CalorieSummaryView: View {
         HStack {
           Spacer()
           Text("\(totalCalories)")
-            .font(.inter(type: .bold, size: 20.4))
+            .font(.pretendard(type: .bold, size: 24))
             .foregroundStyle(.main)
           HStack(spacing: 4) {
             Text("/")
             Text("\(calorieData.first?.calorie ?? 0)")
             Text("kcal")
           }
-          .font(.inter(type: .regular, size: 15.3))
+          .font(.pretendard(type: .regular, size: 20))
           .foregroundColor(Color(.systemGray))
         }
       }
@@ -96,7 +96,7 @@ struct GradientProgressView: View {
     GeometryReader { geometry in
       ZStack(alignment: .leading) {
         Capsule()
-          .fill(Color.gray.opacity(0.3))
+          .fill(Color.background)
           .frame(height: 20)
         
         Capsule()
