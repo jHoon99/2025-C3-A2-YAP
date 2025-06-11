@@ -39,6 +39,11 @@ final class OnboardingViewModel: ObservableObject {
     self.cameraManager = cameraManager
   }
   
+  func resetOcrState() {
+    isInbodyDataReady = false
+    isDataFormatError = false
+  }
+  
   func captureImage() {
     Task {
       if let image = cameraManager.capturedImage() {

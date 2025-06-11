@@ -12,6 +12,8 @@ struct OnboardingInbodyOcrView: View {
   @ObservedObject var viewModel: OnboardingViewModel
   
   @State private var isNext = false
+  @State private var showProgress = false
+  
   let cameraManager: CameraManager
   
   var body: some View {
@@ -28,12 +30,18 @@ struct OnboardingInbodyOcrView: View {
     .onAppear {
       cameraManager.requestAndCheckPermissions()
       cameraManager.startSession()
+      showProgress = false
+      isNext = false
+      viewModel.resetOcrState()
     }
     .onDisappear {
       cameraManager.stopSession()
+      showProgress = false
     }
     .alert("스캔 실패", isPresented: $viewModel.isDataFormatError) {
-      Button("확인", role: .cancel) { }
+      Button("확인", role: .cancel) {
+        showProgress = false
+      }
     } message: {
       Text("인바디 정보를 인식하지 못했어요.\n다시 시도하거나 직접 입력해주세요.")
     }
@@ -41,11 +49,25 @@ struct OnboardingInbodyOcrView: View {
     .onChange(of: viewModel.isInbodyDataReady) { _, newValue in
       if newValue {
         isNext = true
+        showProgress = false
       }
     }
     .navigationDestination(isPresented: $isNext) {
       OnboardingMainView(viewModel: viewModel)
     }
+    .overlay(
+      Group {
+        if showProgress {
+          Color.black.opacity(0.4) // 배경을 살짝 어둡게
+            .ignoresSafeArea()
+          ProgressView("인바디 정보를 인식 중입니다...") // 로딩 텍스트 추가
+            .progressViewStyle(CircularProgressViewStyle(tint: .white)) // 로딩 인디케이터 색상
+            .font(.pretendard(type: .medium, size: 16))
+            .foregroundStyle(.white)
+        }
+      }
+    )
+    .allowsHitTesting(!showProgress)
   }
   
   private var previewView: some View {
@@ -60,6 +82,7 @@ struct OnboardingInbodyOcrView: View {
         Spacer()
         
         Button {
+          showProgress = true
           viewModel.captureImage()
         } label: {
           Image(systemName: Icon.camera.name)
