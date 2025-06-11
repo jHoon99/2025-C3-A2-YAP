@@ -25,10 +25,10 @@ struct OnboardingActivityLevelView: View {
         bottomButtonView
       }
     }
-    .navigationBarBackButtonHidden()
     .onAppear {
-      print(viewModel.item)
+      selectedActivityLevel = viewModel.item.activityInfoItem.activityLevel
     }
+    .navigationBarBackButtonHidden()
   }
   
   private var titleView: some View {

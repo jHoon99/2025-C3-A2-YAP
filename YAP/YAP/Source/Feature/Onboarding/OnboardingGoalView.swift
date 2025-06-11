@@ -24,6 +24,9 @@ struct OnboardingGoalView: View {
         bottomButtonView
       }
     }
+    .onAppear {
+      selectedGoal = viewModel.item.activityInfoItem.goalType
+    }
     .navigationBarBackButtonHidden()
   }
   
