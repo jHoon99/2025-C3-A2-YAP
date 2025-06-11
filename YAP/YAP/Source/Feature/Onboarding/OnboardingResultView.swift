@@ -148,6 +148,14 @@ private extension OnboardingResultView {
     
     modelContext.insert(calorie)
     
+    let activityInfo = ActivityInfo(
+      activityLevel: viewModel.item.activityInfoItem.activityLevel ?? .middleActivity,
+      goalType: viewModel.item.activityInfoItem.goalType ?? .diet,
+      mealCount: viewModel.item.activityInfoItem.mealCount ?? 3
+    )
+    
+    modelContext.insert(activityInfo)
+    
     let mealCount = viewModel.item.activityInfoItem.mealCount ?? 3
     
     let caloriePerMeal = mealCount > 0 ? (viewModel.calorieRequirementsItem.calorie / mealCount) : 0
