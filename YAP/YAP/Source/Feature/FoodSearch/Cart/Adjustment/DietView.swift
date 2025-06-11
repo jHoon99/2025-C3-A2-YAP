@@ -33,9 +33,8 @@ struct DietView: View {
             mealTitle: mealTitle,
             originalCal: baseCaloriePerMeal,
             adjustCal:
-              isCalorieReduction ?
-              baseCaloriePerMeal - adjustmentPerMeal :
-              baseCaloriePerMeal + adjustmentPerMeal
+            max(0, isCalorieReduction ? baseCaloriePerMeal - adjustmentPerMeal :
+                  baseCaloriePerMeal + adjustmentPerMeal)
           )
           if index < remainingMealCount - 1 {
             Divider()

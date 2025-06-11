@@ -22,6 +22,7 @@ struct CartItemRow: View {
           .foregroundColor(Color.placeholder)
       }
       .padding(.vertical, Spacing.small)
+      
   }
 }
 

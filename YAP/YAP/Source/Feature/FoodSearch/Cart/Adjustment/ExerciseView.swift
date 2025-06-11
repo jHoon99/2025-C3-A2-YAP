@@ -23,6 +23,7 @@ struct ExerciseView: View {
           .font(.pretendard(type: .medium, size: 16))
         Text(duration)
           .font(.pretendard(type: .semibold, size: 16))
+          .foregroundColor(.main)
       }
       Spacer()
     }

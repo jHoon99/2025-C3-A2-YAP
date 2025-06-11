@@ -51,6 +51,7 @@ struct NutritionCircle: View {
           Image(systemName: "exclamationmark.triangle.fill")
             .frame(width: 16, height: 16)
             .font(.pretendard(type: .bold, size: 15))
+            .foregroundColor(.main)
         }
       }
       .frame(height: 16)

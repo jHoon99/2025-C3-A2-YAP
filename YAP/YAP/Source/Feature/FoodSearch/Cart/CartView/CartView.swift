@@ -85,7 +85,7 @@ struct CartView: View {
         Section {
           
           Text("추가된 음식이 없습니다.")
-            .foregroundColor(.gray)
+            .foregroundColor(.subText)
             .frame(maxWidth: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
