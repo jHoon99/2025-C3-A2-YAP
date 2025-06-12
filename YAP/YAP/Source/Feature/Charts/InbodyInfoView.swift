@@ -57,7 +57,7 @@ struct InbodyInfoView: View {
       ToolbarItem(placement: .navigationBarTrailing) {
         NavigationLink {
           // TODO: OnboardingInbodyOcrView을 온보딩과 decouple해야 합니다.
-          OnboardingInbodyOcrView()
+          //OnboardingInbodyOcrView()
         } label: {
           Image(systemName: "plus.square.dashed")
         }

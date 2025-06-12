@@ -135,7 +135,7 @@ struct CartView: View {
               }
             }
           }
-          .padding(.top, Spacing.extrLarge)
+          .padding(.top, Spacing.extraLarge)
         }
       }
       .listRowClearStyle()

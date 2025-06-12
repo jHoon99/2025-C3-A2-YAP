@@ -8,19 +8,20 @@
 import SwiftUI
 
 struct InbodyInputSheet: View {
-  @Binding var infoItem: InbodyInfoItem
-  
-  let minimumValue: Double
-  let maximumValue: Double
-  let text: String
+  @Binding var value: Double
+  let type: InbodyInfoType
   
   var body: some View {
     VStack(alignment: .leading) {
-      Text(text)
+      Text(type.text(value: value))
         .font(.pretendard(type: .medium, size: 16))
-      
-      Slider(value: $infoItem.value, in: minimumValue...maximumValue, step: 1)
+
+      Slider(value: $value, in: type.minValue...type.maxValue, step: 1)
         .tint(.main)
+
+      Text("\(Int(value))")
+        .font(.pretendard(type: .medium, size: 16))
+        .frame(maxWidth: .infinity, alignment: .center)
     }
     .padding(.horizontal, Spacing.small)
   }

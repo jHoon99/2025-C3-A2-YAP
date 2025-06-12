@@ -25,51 +25,43 @@ struct MainUIView: View {
   }
   
   var body: some View {
-    NavigationStack {
-      ScrollView {
-        VStack(spacing: 16) {
-          DateSelectionView(selectedDate: $selectedDate, showDatePicker: $showDatePicker)
-          
-          if let excessCalorieOfToday = calorieToBurnToday {
-            WorkOutNotification(calroieToBurn: excessCalorieOfToday.calorie)
-          }
-          
-          CalorieSummaryView(selectedDate: $selectedDate)
-          NutrientSectionView(selectedDate: $selectedDate)
-          MealEntryView(selectedDate: $selectedDate)
+    ScrollView {
+      VStack(spacing: 16) {
+        DateSelectionView(selectedDate: $selectedDate, showDatePicker: $showDatePicker)
+        
+        if let excessCalorieOfToday = calorieToBurnToday {
+          WorkOutNotification(calroieToBurn: excessCalorieOfToday.calorie)
         }
-        .padding([.horizontal, .bottom], 16)
-        .padding(.top, 64)
-        .background(Color(.background))
-        .sheet(isPresented: $showDatePicker) {
-          CustomCalendarView(selectedDate: $selectedDate, onDismiss: {
-            showDatePicker = false
-          })
-          .presentationDetents([.height(500)])
-        }
+        
+        CalorieSummaryView(selectedDate: $selectedDate)
+        NutrientSectionView(selectedDate: $selectedDate)
+        MealEntryView(selectedDate: $selectedDate)
       }
-      .onAppear {
-        checkTodayMealInitOnLaunch(testMode: false) // 테스트용(testMode가 true일 때)
-      }
-      .onChange(of: selectedDate) { newDate in
-        print("📅 selectedDate 변경됨: \(newDate)")
-        let today = Calendar.current.startOfDay(for: Date())
-        if Calendar.current.isDate(today, inSameDayAs: newDate) {
-          checkAndInsertMeal(for: newDate)
-        }
-      }
-      .onDisappear {
-        timer?.invalidate()
-      }
-      .navigationBarBackButtonHidden()
-      .ignoresSafeArea()
-    }
-    .toolbar {
-      ToolbarItem(placement: .principal) {
-        Text("")
+      .padding([.horizontal, .bottom], 16)
+      .padding(.top, 64)
+      .background(Color(.background))
+      .sheet(isPresented: $showDatePicker) {
+        CustomCalendarView(selectedDate: $selectedDate, onDismiss: {
+          showDatePicker = false
+        })
+        .presentationDetents([.height(500)])
       }
     }
-    .background(Color(.background))
+    .onAppear {
+      checkTodayMealInitOnLaunch(testMode: false) // 테스트용(testMode가 true일 때)
+    }
+    .onChange(of: selectedDate) { newDate in
+      print("📅 selectedDate 변경됨: \(newDate)")
+      let today = Calendar.current.startOfDay(for: Date())
+      if Calendar.current.isDate(today, inSameDayAs: newDate) {
+        checkAndInsertMeal(for: newDate)
+      }
+    }
+    .onDisappear {
+      timer?.invalidate()
+    }
+    .navigationBarBackButtonHidden()
+    .ignoresSafeArea()
   }
   
   private func checkTodayMealInitOnLaunch(testMode: Bool = false) {

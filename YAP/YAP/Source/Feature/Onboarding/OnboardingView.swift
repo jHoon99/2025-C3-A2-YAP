@@ -6,9 +6,17 @@
 //
 
 import SwiftUI
+import SceneKit
 
 struct OnboardingView: View {
+  @ObservedObject var viewModel: OnboardingViewModel
   @State private var isNext = false
+  
+  let cameraManager = CameraManager()
+  
+  init() {
+    self.viewModel = OnboardingViewModel(cameraManager: cameraManager)
+  }
   
   var body: some View {
     ZStack(alignment: .topLeading) {
@@ -28,9 +36,9 @@ struct OnboardingView: View {
       }
     }
     .padding(.horizontal, Spacing.medium)
-    .padding(.vertical, Spacing.extrLarge)
+    .padding(.vertical, Spacing.extraLarge)
     .navigationDestination(isPresented: $isNext) {
-      OnboardingInbodyOcrView()
+      OnboardingInbodyOcrView(viewModel: viewModel, cameraManager: cameraManager)
     }
   }
   
@@ -48,7 +56,7 @@ struct OnboardingView: View {
     HStack {
       Spacer()
       
-      Image(.healthMan)
+      CharacterRenderView()
       
       Spacer()
     }

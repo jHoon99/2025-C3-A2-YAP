@@ -8,18 +8,25 @@
 import SwiftUI
 
 struct OnboardingActivityLevelView: View {
-  @Binding var currentIndex: Int
-  @Binding var selectedActivityLevel: ActivityType?
-  @Binding var onboardingItem: OnboardingItem
+  @ObservedObject var viewModel: OnboardingViewModel
+  
+  @State var selectedActivityLevel: ActivityType? = nil
   
   var body: some View {
     ZStack(alignment: .topLeading) {
       Color.clear.ignoresSafeArea()
       
-      VStack(alignment: .leading, spacing: Spacing.extrLarge) {
+      VStack(alignment: .leading, spacing: Spacing.extraLarge) {
         titleView
         activityLevelButtonView
+        
+        Spacer()
+        
+        bottomButtonView
       }
+    }
+    .onAppear {
+      selectedActivityLevel = viewModel.item.activityInfoItem.activityLevel
     }
     .navigationBarBackButtonHidden()
   }
@@ -36,6 +43,29 @@ struct OnboardingActivityLevelView: View {
     }
   }
   
+  private var bottomButtonView: some View {
+    HStack {
+      CtaButton(
+        buttonName: .before,
+        titleColor: .main,
+        bgColor: .light
+      ) {
+        viewModel.beforeButtonTapped()
+      }
+      
+      Spacer()
+      
+      CtaButton(
+        buttonName: .next,
+        titleColor: .white,
+        bgColor: .main,
+        isDisabled: selectedActivityLevel == nil
+      ) {
+        viewModel.nextButtonTapped()
+      }
+    }
+  }
+  
   private var activityLevelButtonView: some View {
     VStack(spacing: Spacing.small) {
       ForEach(ActivityType.allCases, id: \.self) { type in
@@ -45,7 +75,6 @@ struct OnboardingActivityLevelView: View {
           isSelected: selectedActivityLevel == type
         ) {
           activityButtonTapped(type)
-          onboardingItem.activityInfo.activityLevel = type
         }
       }
     }
@@ -55,13 +84,6 @@ struct OnboardingActivityLevelView: View {
 private extension OnboardingActivityLevelView {
   func activityButtonTapped(_ type: ActivityType) {
     selectedActivityLevel = type
+    viewModel.item.activityInfoItem.activityLevel = type
   }
-}
-
-#Preview {
-  OnboardingActivityLevelView(
-    currentIndex: .constant(2),
-    selectedActivityLevel: .constant(.middleActivity),
-    onboardingItem: .constant(.initItem)
-  )
 }

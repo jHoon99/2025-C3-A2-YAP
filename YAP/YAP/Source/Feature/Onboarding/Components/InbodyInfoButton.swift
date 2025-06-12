@@ -7,13 +7,6 @@
 
 import SwiftUI
 
-/// **
-/// 인바디 정보 수정 버튼
-/// ```swift
-/// InbodyInfoButton(value: "70", unit: .kg) {
-///    print("버튼 눌림 액션")
-/// }
-
 struct InbodyInfoButton: View {
   let value: String
   let unit: String

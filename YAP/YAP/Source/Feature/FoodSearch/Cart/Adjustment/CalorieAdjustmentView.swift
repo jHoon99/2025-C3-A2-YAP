@@ -52,7 +52,7 @@ struct CalorieAdjustmentView: View {
         .padding(.leading, Spacing.large)
         
         // MARK: - 케이스에 따른 옵션 선택
-        VStack(spacing: Spacing.extrLarge) {
+        VStack(spacing: Spacing.extraLarge) {
           if type == .overLimit {
             VStack(alignment: .leading, spacing: Spacing.large) {
               Text("운동하기")
@@ -93,7 +93,7 @@ struct CalorieAdjustmentView: View {
         }
         .padding()
       }
-      .padding(.top, Spacing.extrLarge)
+      .padding(.top, Spacing.extraLarge)
     }
     .scrollIndicators(.hidden)
     Spacer()

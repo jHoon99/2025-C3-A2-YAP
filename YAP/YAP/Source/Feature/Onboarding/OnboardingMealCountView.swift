@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct OnboardingMealCountView: View {
-  @Binding var currentIndex: Int
-  @Binding var selectedMealCount: MealCountType?
-  @Binding var onboardingItem: OnboardingItem
+  @ObservedObject var viewModel: OnboardingViewModel
+  @State var selectedMealCount: MealCountType? = nil
+  @Binding var isNext: Bool
   
   private let columns = [
     GridItem(.flexible()),
@@ -21,9 +21,13 @@ struct OnboardingMealCountView: View {
     ZStack(alignment: .topLeading) {
       Color.clear.ignoresSafeArea()
       
-      VStack(alignment: .leading, spacing: Spacing.extrLarge) {
+      VStack(alignment: .leading, spacing: Spacing.extraLarge) {
         titleView
         mealCountButtonView
+        
+        Spacer()
+        
+        bottomButtonView
       }
     }
     .navigationBarBackButtonHidden()
@@ -41,6 +45,29 @@ struct OnboardingMealCountView: View {
     }
   }
   
+  private var bottomButtonView: some View {
+    HStack {
+      CtaButton(
+        buttonName: .before,
+        titleColor: .main,
+        bgColor: .light
+      ) {
+        viewModel.beforeButtonTapped()
+      }
+      
+      Spacer()
+      
+      CtaButton(
+        buttonName: .next,
+        titleColor: .white,
+        bgColor: .main,
+        isDisabled: selectedMealCount == nil
+      ) {
+        isNext = true 
+      }
+    }
+  }
+  
   private var mealCountButtonView: some View {
     LazyVGrid(columns: columns, spacing: Spacing.small) {
       ForEach(MealCountType.allCases, id: \.self) { type in
@@ -49,7 +76,6 @@ struct OnboardingMealCountView: View {
           isSelected: selectedMealCount == type
         ) {
           mealCountButtonTapped(type)
-          onboardingItem.activityInfo.mealCount = type.intValue
         }
       }
     }
@@ -59,21 +85,7 @@ struct OnboardingMealCountView: View {
 private extension OnboardingMealCountView {
   func mealCountButtonTapped(_ type: MealCountType) {
     selectedMealCount = type
+    viewModel.item.activityInfoItem.mealCount = type.intValue
+    viewModel.calculrateCalorieRequirements()
   }
-  
-  func beforeButtonTapped() {
-    currentIndex -= 1
-  }
-  
-  func nextButtonTapped() {
-    currentIndex += 1
-  }
-}
-
-#Preview {
-  OnboardingMealCountView(
-    currentIndex: .constant(3),
-    selectedMealCount: .constant(.five),
-    onboardingItem: .constant(.initItem )
-  )
 }

@@ -17,7 +17,7 @@ struct ExerciseView: View {
     HStack(spacing: Spacing.large) {
       Image(imageName)
         .resizable()
-        .frame(width: 48, height: 48)
+        .frame(width: 35, height: 35)
       VStack(alignment: .leading, spacing: Spacing.small) {
         Text(title)
           .font(.pretendard(type: .medium, size: 16))

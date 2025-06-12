@@ -9,9 +9,12 @@ import AVFoundation
 import SwiftUI
 
 struct OnboardingInbodyOcrView: View {
+  @ObservedObject var viewModel: OnboardingViewModel
+  
   @State private var isNext = false
-  @State private var onboardingItem: OnboardingItem? = nil
-  let cameraManager = CameraManager()
+  @State private var showProgress = false
+  
+  let cameraManager: CameraManager
   
   var body: some View {
     ZStack {
@@ -23,19 +26,48 @@ struct OnboardingInbodyOcrView: View {
       }
     }
     .padding(.horizontal, Spacing.medium)
-    .padding(.vertical, Spacing.extrLarge)
+    .padding(.vertical, Spacing.extraLarge)
     .onAppear {
+      cameraManager.requestAndCheckPermissions()
       cameraManager.startSession()
+      showProgress = false
+      isNext = false
+      viewModel.resetOcrState()
     }
     .onDisappear {
       cameraManager.stopSession()
+      showProgress = false
+    }
+    .alert("스캔 실패", isPresented: $viewModel.isDataFormatError) {
+      Button("확인", role: .cancel) {
+        showProgress = false
+      }
+    } message: {
+      Text("인바디 정보를 인식하지 못했어요.\n다시 시도하거나 직접 입력해주세요.")
     }
     .toolbar(.hidden)
-    .navigationDestination(isPresented: $isNext) {
-      if let item = onboardingItem {
-        OnboardingMainView(onboardingItems: .constant(item))
+    .onChange(of: viewModel.isInbodyDataReady) { _, newValue in
+      if newValue {
+        isNext = true
+        showProgress = false
       }
     }
+    .navigationDestination(isPresented: $isNext) {
+      OnboardingMainView(viewModel: viewModel)
+    }
+    .overlay(
+      Group {
+        if showProgress {
+          Color.black.opacity(0.4) // 배경을 살짝 어둡게
+            .ignoresSafeArea()
+          ProgressView("인바디 정보를 인식 중입니다...") // 로딩 텍스트 추가
+            .progressViewStyle(CircularProgressViewStyle(tint: .white)) // 로딩 인디케이터 색상
+            .font(.pretendard(type: .medium, size: 16))
+            .foregroundStyle(.white)
+        }
+      }
+    )
+    .allowsHitTesting(!showProgress)
   }
   
   private var previewView: some View {
@@ -50,20 +82,14 @@ struct OnboardingInbodyOcrView: View {
         Spacer()
         
         Button {
-          print("Capture Button Tapped!")
-          Task {
-            if let image = cameraManager.capturedImage() {
-              let data = await FireBaseManager().callAI(image: image)
-              let inbodyItems = OnboardingItem.from(aiData: data)
-              onboardingItem = OnboardingItem(inbody: inbodyItems, activityInfo: ActivityInfoItem())
-              isNext = true
-            }
-          }
+          showProgress = true
+          viewModel.captureImage()
         } label: {
-          Text("촬영")
-            .frame(width: 50, height: 50)
-            .background(Color.blue)
-            .clipShape(.circle)
+          Image(systemName: Icon.camera.name)
+            .imageScale(.large)
+            .fontWeight(.semibold)
+            .foregroundStyle(.subBackground)
+            .padding()
         }
         .buttonStyle(.plain)
         .padding(.bottom, 12)
@@ -100,11 +126,10 @@ struct OnboardingInbodyOcrView: View {
 
 private extension OnboardingInbodyOcrView {
   func isEditButtonTapped() {
-    onboardingItem = .initItem
     isNext = true
   }
 }
 
-#Preview {
-  OnboardingInbodyOcrView()
-}
+//#Preview {
+//  OnboardingInbodyOcrView()
+//}
