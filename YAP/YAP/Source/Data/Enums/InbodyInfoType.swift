@@ -52,6 +52,6 @@ enum InbodyInfoType: String, CaseIterable, Codable, Identifiable {
   }
   
   func text(value: any Numeric) -> String {
-    return "당신의 \(rawValue)은(는) \(value)인가요?"
+    return "당신의 \(rawValue)는(은) \(value)인가요?"
   }
 }
