@@ -63,8 +63,9 @@
 
 | 이름  | 역할     | GitHub        |
 |-------|----------|----------------|
-| iL     | DT    | [@](https://github.com/YeoSeongil) |
-| Hong   | DT    | [@Yoon](https://github.com/dbsghdz1) |
+| iL     | DT    | [@iL](https://github.com/YeoSeongil) |
+| Hong   | DT    | [@Hong](https://github.com/dbsghdz1) |
 | Gyeong | Tech  | [@Gyeong](https://github.com/UnkyungJo) |
 | Kadan  | Tech| [@Kadan](https://github.com/jHoon99) |
 | Oliver | Tech| [@Oliver](https://github.com/cherry-go-round) |
+| Yuha | Tech|
