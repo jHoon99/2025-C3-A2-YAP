@@ -3,7 +3,7 @@
 <img width="820" alt="스크린샷 2025-06-13 10 32 52" src="https://github.com/user-attachments/assets/257a1e6d-8a6a-40e2-9e01-5cf5214b5998" />
 
 > **간단한 한 줄 소개**  
-> 프로젝트의 핵심 가치 또는 기능을 간단하게 설명합니다.
+> 매번 작심삼일로 끝나는 A씨의 다이어트를 도와주자
 
 ---
 
@@ -55,9 +55,9 @@
 
 | 이름  | 역할     | GitHub        |
 |-------|----------|----------------|
-| iL     | DT    | [@iL](https://github.com/YeoSeongil) |
-| Hong   | DT    | [@Hong](https://github.com/dbsghdz1) |
+| iL     | Design & Tech    | [@iL](https://github.com/YeoSeongil) |
+| Hong   | Design & Tech    | [@Hong](https://github.com/dbsghdz1) |
 | Gyeong | Tech  | [@Gyeong](https://github.com/UnkyungJo) |
 | Kadan  | Tech| [@Kadan](https://github.com/jHoon99) |
 | Oliver | Tech| [@Oliver](https://github.com/cherry-go-round) |
-| Yuha | Tech|
+| Yuha | Design|
